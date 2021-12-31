@@ -11,7 +11,7 @@ Components forming the platform:
 |signomix-adm||Administration: user & content management|
 |signomix-iot||IoT device management service|
 |signomix-iotdata||IoT data management|
-|[signomix-ta-ms(https://github.com/gskorupa/signomix-ta-ms)]||Messaging service|
-|[signomix-ta-ps](https://github.com/gskorupa/signomix-ta-ps)||Publication service|
-|[signomix-proxy](https://github.com/gskorupa/signomix-proxy)||Reverse Proxy & API Gateway service|
+|[signomix-ta-ms](https://github.com/signomix/signomix-ta-ms)||Messaging service|
+|[signomix-ta-ps](https://github.com/signomix/signomix-ta-ps)||Publication service|
+|[signomix-proxy](https://github.com/signomix/signomix-proxy)||Reverse Proxy & API Gateway service|
 |[signomix-common-library](https://github.com/gskorupa/signomix-common-library)||Java library used by other components|
