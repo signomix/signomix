@@ -8,7 +8,7 @@ The target platform architecture will consist of the microservices listed below.
 
 |Component|Version|Description|
 |---|---|---|
-|[signomix-ta-webapps](https://github.com/signomix/signomix-ta-webapps)||Web GUI|
+|[signomix-ta-app](https://github.com/signomix/signomix-ta-app)||Web GUI|
 |[signomix-ta-receiver](https://github.com/signomix/signomix-ta-receiver)||IoT data receiver service|
 |[signomix-ta-provider](https://github.com/signomix/signomix-ta-provider)||IoT data provider service|
 |[signomix-ta-mq](https://github.com/signomix/signomix-ta-mq)||Message broker|
