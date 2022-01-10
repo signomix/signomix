@@ -19,7 +19,9 @@ The target platform architecture will consist of the microservices listed below.
 |[signomix-database](https://github.com/signomix/signomix-database)||Administration: the service management|
 |[signomix-adm](https://github.com/signomix/signomix-ta-adm)||Administration: the service management|
 
+> Use mermaid-diagrams Chrome extension to render the diagram 
 ```mermaid
 flowchart TD
+  info1[the diagram will be created soon]
     Start-->Stop{{stop}}
 ```
