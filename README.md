@@ -21,5 +21,5 @@ The target platform architecture will consist of the microservices listed below.
 
 ```mermaid
 flowchart TD
-    Start-->Stop[stop]
+    Start-->Stop{{stop}}
 ```
