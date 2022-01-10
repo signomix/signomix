@@ -18,3 +18,8 @@ The target platform architecture will consist of the microservices listed below.
 |[signomix-common-library](https://github.com/gskorupa/signomix-common-library)||Java library used by other components|
 |[signomix-database](https://github.com/signomix/signomix-database)||Administration: the service management|
 |[signomix-adm](https://github.com/signomix/signomix-ta-adm)||Administration: the service management|
+
+```mermaid
+flowchart TD
+    Start --> Stop
+```
