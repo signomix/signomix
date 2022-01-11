@@ -31,7 +31,7 @@ flowchart TD
   ta-mq{{signomix-ta-mq}}
   ta-database[(signomix-ta-database)]
   proxy --> ta-app
-  proxy ---> ta-adm
+  proxy --> ta-adm
   proxy --> ta-receiver
   proxy --> ta-provider
 ```
