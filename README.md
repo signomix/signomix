@@ -23,7 +23,6 @@ The target platform architecture will consist of the microservices listed below.
 ```mermaid
 flowchart TD
   info1[the diagram will be created soon]
-  
   proxy
   ta-app{{signomix-ta-app}}
   ta-adm{{signomix-ta-adm}}
@@ -31,10 +30,8 @@ flowchart TD
   ta-provider{{signomix-ta-provider}}
   ta-mq{{signomix-ta-mq}}
   ta-database[(signomix-ta-database)]
-  
   proxy-->ta-app
   proxy--->ta-adm
   proxy-->ta-receiver
-  proxy-ta-provider
-  
+  proxy-->ta-provider
 ```
