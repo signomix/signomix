@@ -21,7 +21,7 @@ The target platform architecture will consist of the microservices listed below.
 
 > Use mermaid-diagrams Chrome extension to render the diagram 
 ```mermaid
-flowchart TD
+flowchart LR
   info1[the diagram will be created soon]
   proxy
   ta-app{{signomix-ta-app}}
