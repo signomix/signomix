@@ -2,7 +2,7 @@
 
 **IoT & data management platform**
 
->*Signomix is in the process of refactoring, including migration to the latest version of Cricket MSF and division into a set of microservices. Stay tuned.*
+>*Signomix is in the process of refactoring, including migration to the latest version of Cricket MSF and splitting it into a set of microservices. Stay tuned.*
 
 Components forming the platform:
 
