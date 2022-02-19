@@ -8,21 +8,20 @@ The target platform architecture will consist of the microservices listed below.
 
 |Component|Version|Description|
 |---|---|---|
-|[signomix-ta-app](https://github.com/signomix/signomix-ta-app)||Web GUI|
+|[signomix-ta-app](https://github.com/signomix/signomix-ta-app)|1.0.3|Web GUI|
 |[signomix-ta-receiver](https://github.com/signomix/signomix-ta-receiver)||IoT data receiver service|
 |[signomix-ta-provider](https://github.com/signomix/signomix-ta-provider)||IoT data provider service|
-|[signomix-ta-rabbitmq](https://github.com/signomix/signomix-ta-rabbitmq)||Message broker|
-|[signomix-ta-ms](https://github.com/signomix/signomix-ta-ms)||Messaging service|
-|[signomix-ta-ps](https://github.com/signomix/signomix-ta-ps)||Public service (home page, blog)|
-|[signomix-proxy](https://github.com/signomix/signomix-proxy)||Reverse Proxy & API Gateway service|
-|[signomix-common-library](https://github.com/gskorupa/signomix-common-library)||Java library used by other components|
-|[signomix-database](https://github.com/signomix/signomix-database)||Administration: the service management|
-|[signomix-adm](https://github.com/signomix/signomix-ta-adm)||Administration: the service management|
+|[signomix-ta-rabbitmq](https://github.com/signomix/signomix-ta-rabbitmq)|1.0.0|Message broker|
+|[signomix-ta-ms](https://github.com/signomix/signomix-ta-ms)|1.0.0|Messaging service|
+|[signomix-ta-ps](https://github.com/signomix/signomix-ta-ps)|1.2.0.10|Public service (home page, blog)|
+|[signomix-proxy](https://github.com/signomix/signomix-proxy)|1.1.2|Reverse Proxy & API Gateway service|
+|[signomix-database](https://github.com/signomix/signomix-database)|1.0.5|Database|
+|[signomix-ta-adm](https://github.com/signomix/signomix-ta-adm)||Administration: the service management|
 |[signomix](https://github.com/signomix/signomix)|1.2.226|Previous version containing the following components functionalities: signomix-ta-provider, signomix-ta-receiver, signomix-ta-adm.|
 
 ```mermaid
 flowchart LR
-  info1[the diagram will be created soon]
+  info1[the diagram will be updated]
   signomix-proxy
   signomix{{signomix}}
   ta-ps{{signomix-ta-ps}}
