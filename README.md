@@ -13,14 +13,13 @@ The target platform architecture will consist of the microservices listed below.
 |[signomix-ta-provider](https://github.com/signomix/signomix-ta-provider)||IoT data provider service|
 |[signomix-ta-rabbitmq](https://github.com/signomix/signomix-ta-rabbitmq)||Message broker|
 |[signomix-ta-ms](https://github.com/signomix/signomix-ta-ms)||Messaging service|
-|[signomix-ta-ps](https://github.com/signomix/signomix-ta-ps)||Publication service|
+|[signomix-ta-ps](https://github.com/signomix/signomix-ta-ps)||Public service (home page, blog)|
 |[signomix-proxy](https://github.com/signomix/signomix-proxy)||Reverse Proxy & API Gateway service|
 |[signomix-common-library](https://github.com/gskorupa/signomix-common-library)||Java library used by other components|
 |[signomix-database](https://github.com/signomix/signomix-database)||Administration: the service management|
 |[signomix-adm](https://github.com/signomix/signomix-ta-adm)||Administration: the service management|
 |[signomix](https://github.com/signomix/signomix)|1.2.226|Previous version containing the following components functionalities: signomix-ta-provider, signomix-ta-receiver, signomix-ta-adm.|
 
-> Use mermaid-diagrams Chrome extension to render the diagram 
 ```mermaid
 flowchart LR
   info1[the diagram will be created soon]
