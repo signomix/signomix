@@ -1,78 +1,127 @@
 version: "3.7"
 
-services:
-
-  # nginx
-  haproxy:
-    #build: src/nginx-new
-    image: gskorupa/signomix-proxy:0.0.8
-    depends_on:
-      - signomix
-      - signomix-ps
-      - signomix-iot
-    deploy:
-      restart_policy:
-        condition: on-failure
-    ports:
-      - 8080:8080
-#      - 443:443
-
-  # signomix
-  signomix:
-    image: gskorupa/signomix-ce:1.4.3
-    restart: always
-    environment:
-      SIGNOMIX_INITIAL_ADMIN_SECRET: test123
-    depends_on:
-      - rabbitmq
-      - dbserver
-    expose:
-      - 8080
-    volumes:
-      - mydata:/dbdata
-      
-  signomix-ps:
-    image: gskorupa/signomix-ps:1.0.0
-    restart: always
-    depends_on:
-      - rabbitmq
-      - dbserver
-    expose:
-      - 8080
-    volumes:
-      - mydata:/dbdata
+volumes:
+  cms-assets:
   
-  signomix-iot:
-    image: gskorupa/signomix-iot:0.0.19
-    depends_on:
-      - rabbitmq
-      - dbserver
-    restart: always
-    expose:
-      - 8080
-    
-  # database
-  dbserver:
-    image: gskorupa/signomix-h2:latest
-    restart: always
-    expose:
-      - 9092
+  services:
+
+    # API Gateway
+  nginx:
+    image: signomix-proxy:1.1.2
+    networks:
+      - signomix-network
     volumes:
-      - mydata:/dbdata
+      - /home/signomix/volume-proxy:/etc/nginx/keys:rw
 
   rabbitmq:
-    image: rabbitmq:3-management-alpine
-#    container_name: 'rabbitmq'
-    environment: 
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: rabbit
+    image: signomix-rabbitmq:1.0.0
+    hostname: rabbitmq
+    container_name: rabbitmq
+    networks:
+      - signomix-network
+    environment:
+      RABBITMQ_USER: user
+      RABBITMQ_PASSWORD: user
     ports:
-      - 5672:5672
       - 15672:15672
+      - 5672:5672
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+
+  # signomix
+  signomix-main:
+    image: signomix:1.2.226
+    networks:
+      - signomix-network
+    depends_on:
+      #- dbserver
+      - rabbitmq
+    environment:
+      - SIGNOMIX_INITIAL_ADMIN_EMAIL=admin@myhost
+      - SIGNOMIX_INITIAL_ADMIN_SECRET=test123
+      - SIGNOMIX_ADMIN_NOTIFICATION_EMAIL=admin@myhost
+      - SIGNOMIX_URL=https://myhost
+      - SIGNOMIX_TITLE="Signomix"
+      #- GATRACKINGID=my_google_tracking_id
+      - SIGNOMIX_DB_SERVER=127.0.0.1
+      - SIGNOMIX_APP_KEY=myappkey
+      - QUEUE_HOST=rabbitmq
+      - QUEUE_PORT=5672
+      - QUEUE_USER=user
+      - QUEUE_PASSWORD=user
+      - QUEUE_NOTIFICATIONS=notifications
+      - QUEUE_MAILING=mailing
+      - QUEUE_ADMIN_EMAIL=admin_email
     volumes:
-      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
-      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq
+      - cms-assets:/usr/signomix/dbdata/assets
+      - /home/signomix/volume-service/db:/usr/signomix/dbdata/db:rw
+      - /home/signomix/volume-service/logs:/usr/signomix/dbdata/logs:rw
+      - /home/signomix/volume-service/files:/usr/signomix/dbdata/files:rw
+      - /home/signomix/volume-service/assets:/usr/signomix/dbdata/assets:rw
+      - /home/signomix/volume-service/backup:/usr/signomix/dbdata/backup:rw
+    
+  # signomix publication service
+  signomix-ta-ps:
+    image: signomix-ta-ps:1.0.2.10
+    networks:
+      - signomix-network
+    environment:
+      - SIGNOMIX_TITLE='Signomix'
+      #- SIGNOMIX_SENTRY_DNS=
+    volumes:
+      - cms-assets:/usr/signomix/www/assets
+      - /home/signomix/volume-ps:/usr/signomix/dbdata:rw
+      - /home/signomix/volume-ps/logs:/usr/signomix/dbdata/logs:rw
+      - /home/signomix/volume-ps/assets:/usr/signomix/dbdata/assets:rw
+  
+  signomix-ta-app:
+    image: signomix-ta-app:1.0.3
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - rabbitmq
+    environment:
+      - SIGNOMIX_APP_KEY=myappkey
+      - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
+      #- SIGNOMIX_GOOGLE_TRACKING_ID=my_google_tracking_id
+      - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
 
-volumes:
-    mydata:
+  signomix-ta-ms:
+    image: signomix-ta-ms:1.0.2
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - rabbitmq
+    environment:
+      - SIGNOMIX_TITLE=Signomix
+      - SIGNOMIX_ENV_NAME=prod
+      - SIGNOMIX_PUSHOVER_TOKEN=mypushovertoken
+      - SIGNOMIX_SMTP_FROM=signomix@myhost
+      - SIGNOMIX_SMTP_HOST=smtp.gmail.com
+      - SIGNOMIX_SMTP_USER=admin@myhost
+      - SIGNOMIX_SMTP_PASSWORD=mypassword
+      - SIGNOMIX_SMTP_PORT=587
+      - SIGNOMIX_SMTP_SSL=false
+      - SIGNOMIX_SMTP_START_TLS=REQUIRED
+      - SIGNOMIX_SMTP_AUTH_METHODS='DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN'
+      #- SIGNOMIX_SENTRY_DNS=mysentrydns
+      - SIGNOMIX_SENTRY_PACKAGES=com.signomix
+      - SIGNOMIX_SENTRY_LEVEL=ERROR
+      - QUEUE_HOST=rabbitmq
+      - QUEUE_PORT=5672
+      - QUEUE_USER=user
+      - QUEUE_PASSWORD=user
+      - QUEUE_NOTIFICATIONS=notifications
+      - QUEUE_MAILING=mailing
+      - QUEUE_ADMIN_EMAIL=admin_email
+      # SIGNOMIX_SMS_LOGIN=testuser
+      # SIGNOMIX_SMS_PASSWORD=haslotest
 
+networks:
+  signomix-network:
+    driver: bridge
