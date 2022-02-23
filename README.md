@@ -11,7 +11,7 @@ The target platform architecture will consist of the microservices listed below.
 |[signomix-ta-app](https://github.com/signomix/signomix-ta-app)|1.0.3|Web GUI|
 |[signomix-ta-receiver](https://github.com/signomix/signomix-ta-receiver)||IoT data receiver service|
 |[signomix-ta-provider](https://github.com/signomix/signomix-ta-provider)||IoT data provider service|
-|[signomix-ta-rabbitmq](https://github.com/signomix/signomix-ta-rabbitmq)|1.0.0|Message broker|
+|[signomix-rabbitmq](https://github.com/signomix/signomix-rabbitmq)|1.0.0|Message broker|
 |[signomix-ta-ms](https://github.com/signomix/signomix-ta-ms)|1.0.0|Messaging service|
 |[signomix-ta-ps](https://github.com/signomix/signomix-ta-ps)|1.2.0.10|Public service (home page, blog)|
 |[signomix-proxy](https://github.com/signomix/signomix-proxy)|1.1.2|Reverse Proxy & API Gateway service|
