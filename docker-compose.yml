@@ -1,20 +1,27 @@
-version: "3.7"
+version: "3"
 
 volumes:
   cms-assets:
   
-  services:
+services:
 
     # API Gateway
   nginx:
-    image: signomix-proxy:1.1.2
+    build:
+      context: ../signomix-proxy
+      dockerfile: ../signomix-proxy/Dockerfile
     networks:
       - signomix-network
-    volumes:
-      - /home/signomix/volume-proxy:/etc/nginx/keys:rw
+    ports:
+      - 80:80
+      - 443:443
+#    volumes:
+#      - ~/signomix/volumes/volume-proxy:/etc/nginx/keys:rw
 
   rabbitmq:
-    image: signomix-rabbitmq:1.0.0
+    build:
+      context: ../signomix-rabbitmq
+      dockerfile: ../signomix-rabbitmq/Dockerfile
     hostname: rabbitmq
     container_name: rabbitmq
     networks:
@@ -33,11 +40,13 @@ volumes:
 
   # signomix
   signomix-main:
-    image: signomix:1.2.226
+    build:
+      context: ../signomix
+      dockerfile: ../signomix/Dockerfile
     networks:
       - signomix-network
     depends_on:
-      #- dbserver
+      - dbserver
       - rabbitmq
     environment:
       - SIGNOMIX_INITIAL_ADMIN_EMAIL=admin@myhost
@@ -45,8 +54,7 @@ volumes:
       - SIGNOMIX_ADMIN_NOTIFICATION_EMAIL=admin@myhost
       - SIGNOMIX_URL=https://myhost
       - SIGNOMIX_TITLE="Signomix"
-      #- GATRACKINGID=my_google_tracking_id
-      - SIGNOMIX_DB_SERVER=127.0.0.1
+      - SIGNOMIX_DB_SERVER=dbserver
       - SIGNOMIX_APP_KEY=myappkey
       - QUEUE_HOST=rabbitmq
       - QUEUE_PORT=5672
@@ -57,28 +65,29 @@ volumes:
       - QUEUE_ADMIN_EMAIL=admin_email
     volumes:
       - cms-assets:/usr/signomix/dbdata/assets
-      - /home/signomix/volume-service/db:/usr/signomix/dbdata/db:rw
-      - /home/signomix/volume-service/logs:/usr/signomix/dbdata/logs:rw
-      - /home/signomix/volume-service/files:/usr/signomix/dbdata/files:rw
-      - /home/signomix/volume-service/assets:/usr/signomix/dbdata/assets:rw
-      - /home/signomix/volume-service/backup:/usr/signomix/dbdata/backup:rw
+      - ~/signomix/volumes/volume-service/db:/usr/signomix/dbdata/db:rw
+      - ~/signomix/volumes/volume-service/logs:/usr/signomix/dbdata/logs:rw
+      - ~/signomix/volumes/volume-service/files:/usr/signomix/dbdata/files:rw
+      - ~/signomix/volumes/volume-service/backup:/usr/signomix/dbdata/backup:rw
     
   # signomix publication service
   signomix-ta-ps:
-    image: signomix-ta-ps:1.0.2.10
+    build:
+      context: ../signomix-ta-ps
+      dockerfile: ../signomix-ta-ps/src/main/docker/Dockerfile.jvm
     networks:
       - signomix-network
     environment:
       - SIGNOMIX_TITLE='Signomix'
-      #- SIGNOMIX_SENTRY_DNS=
     volumes:
       - cms-assets:/usr/signomix/www/assets
-      - /home/signomix/volume-ps:/usr/signomix/dbdata:rw
-      - /home/signomix/volume-ps/logs:/usr/signomix/dbdata/logs:rw
-      - /home/signomix/volume-ps/assets:/usr/signomix/dbdata/assets:rw
+      - ~/signomix/volumes/volume-ps:/usr/signomix/dbdata:rw
+      - ~/signomix/volumes/volume-ps/logs:/usr/signomix/dbdata/logs:rw
   
   signomix-ta-app:
-    image: signomix-ta-app:1.0.3
+    build:
+      context: ../signomix-ta-app
+      dockerfile: ../signomix-ta-app/src/main/docker/Dockerfile.jvm
     restart: always
     networks:
       - signomix-network
@@ -87,11 +96,12 @@ volumes:
     environment:
       - SIGNOMIX_APP_KEY=myappkey
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
-      #- SIGNOMIX_GOOGLE_TRACKING_ID=my_google_tracking_id
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
 
   signomix-ta-ms:
-    image: signomix-ta-ms:1.0.2
+    build:
+      context: ../signomix-ta-ms
+      dockerfile: ../signomix-ta-ms/src/main/docker/Dockerfile.jvm
     restart: always
     networks:
       - signomix-network
@@ -109,7 +119,6 @@ volumes:
       - SIGNOMIX_SMTP_SSL=false
       - SIGNOMIX_SMTP_START_TLS=REQUIRED
       - SIGNOMIX_SMTP_AUTH_METHODS='DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN'
-      #- SIGNOMIX_SENTRY_DNS=mysentrydns
       - SIGNOMIX_SENTRY_PACKAGES=com.signomix
       - SIGNOMIX_SENTRY_LEVEL=ERROR
       - QUEUE_HOST=rabbitmq
@@ -119,8 +128,20 @@ volumes:
       - QUEUE_NOTIFICATIONS=notifications
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
-      # SIGNOMIX_SMS_LOGIN=testuser
-      # SIGNOMIX_SMS_PASSWORD=haslotest
+
+  dbserver:
+    build:
+      context: ../signomix-database
+      dockerfile: ../signomix-database/Dockerfile
+    restart: always
+    networks:
+      - signomix-network
+    expose:
+      - 9092
+    ports:
+      - 9092:9092
+    volumes:
+      - ~/signomix/volumes/volume-db:/h2data:rw
 
 networks:
   signomix-network:
