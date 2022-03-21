@@ -9,6 +9,8 @@ services:
   nginx:
     build:
       context: ../signomix-proxy
+      args:
+        DOMAIN: localhost
       dockerfile: ../signomix-proxy/Dockerfile
     networks:
       - signomix-network
