@@ -6,7 +6,7 @@ volumes:
 services:
 
     # API Gateway
-  nginx:
+  signomix-proxy:
     build:
       context: ../signomix-proxy
       args:
@@ -20,12 +20,12 @@ services:
 #    volumes:
 #      - ~/signomix/volumes/volume-proxy:/etc/nginx/keys:rw
 
-  rabbitmq:
+  signomix-mq:
     build:
       context: ../signomix-rabbitmq
       dockerfile: ../signomix-rabbitmq/Dockerfile
-    hostname: rabbitmq
-    container_name: rabbitmq
+    hostname: signomix-mq
+    container_name: signomix-mq
     networks:
       - signomix-network
     environment:
@@ -49,16 +49,16 @@ services:
       - signomix-network
     depends_on:
       - dbserver
-      - rabbitmq
+      - signomix-mq
     environment:
       - SIGNOMIX_INITIAL_ADMIN_EMAIL=admin@myhost
       - SIGNOMIX_INITIAL_ADMIN_SECRET=test123
       - SIGNOMIX_ADMIN_NOTIFICATION_EMAIL=admin@myhost
       - SIGNOMIX_URL=https://myhost
-      - SIGNOMIX_TITLE="Signomix"
+      - SIGNOMIX_TITLE=Signomix
       - SIGNOMIX_DB_SERVER=dbserver
       - SIGNOMIX_APP_KEY=myappkey
-      - QUEUE_HOST=rabbitmq
+      - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
       - QUEUE_USER=user
       - QUEUE_PASSWORD=user
@@ -80,7 +80,7 @@ services:
     networks:
       - signomix-network
     environment:
-      - SIGNOMIX_TITLE='Signomix'
+      - SIGNOMIX_TITLE=Signomix
     volumes:
       - cms-assets:/usr/signomix/www/assets
       - ~/signomix/volumes/volume-ps:/usr/signomix/dbdata:rw
@@ -94,7 +94,7 @@ services:
     networks:
       - signomix-network
     depends_on:
-      - rabbitmq
+      - signomix-mq
     environment:
       - SIGNOMIX_APP_KEY=myappkey
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
@@ -108,7 +108,7 @@ services:
     networks:
       - signomix-network
     depends_on:
-      - rabbitmq
+      - signomix-mq
     environment:
       - SIGNOMIX_TITLE=Signomix
       - SIGNOMIX_ENV_NAME=prod
@@ -123,7 +123,7 @@ services:
       - SIGNOMIX_SMTP_AUTH_METHODS='DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN'
       - SIGNOMIX_SENTRY_PACKAGES=com.signomix
       - SIGNOMIX_SENTRY_LEVEL=ERROR
-      - QUEUE_HOST=rabbitmq
+      - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
       - QUEUE_USER=user
       - QUEUE_PASSWORD=user
