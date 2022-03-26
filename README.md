@@ -4,6 +4,51 @@
 
 >*Signomix is in the process of refactoring, including migration to the latest version of Cricket MSF and splitting it into a set of microservices. Stay tuned.*
 
+## Installation
+
+### Installing from source
+
+#### Requirements
+- Git
+- Java 13 (17 recommended)
+- Maven
+- npm
+- Docker
+- Docker Compose
+
+#### Steps
+
+1. Clone the main project from GitHub
+
+```shell
+git clone https://github.com/signomix/signomix-ta.git
+```
+
+2. Clone the rest and initialize the infrastructure
+
+```
+cd signomix-ta
+sh init.sh
+```
+
+3. Configure
+
+DO BE DESCRIBED
+
+4. Build 
+
+```shell
+sh build.sh
+```
+
+5. Start the service with docker-compose
+
+```shell
+docker-compose up -d
+```
+
+## Architecture
+
 The target platform architecture will consist of the microservices listed below. 
 
 |Component|Version|Description|
@@ -57,3 +102,6 @@ flowchart LR
   ta-ms-->Webhook
 
 ```
+
+
+
