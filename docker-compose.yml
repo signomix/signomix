@@ -99,7 +99,7 @@ services:
       - SIGNOMIX_APP_KEY=myappkey
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
-
+      
   signomix-ta-ms:
     build:
       context: ../signomix-ta-ms

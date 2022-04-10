@@ -1,5 +1,7 @@
 # Signomix IoT Platform (target architecture)
 
+## v. 1.3.0
+
 **IoT & data management platform**
 
 >*Signomix is in the process of refactoring, including migration to the latest version of Cricket MSF and splitting it into a set of microservices. Stay tuned.*
@@ -62,7 +64,7 @@ The target platform architecture will consist of the microservices listed below.
 |[signomix-proxy](https://github.com/signomix/signomix-proxy)|1.1.2|Reverse Proxy & API Gateway service|
 |[signomix-database](https://github.com/signomix/signomix-database)|1.0.5|Database|
 |[signomix-ta-adm](https://github.com/signomix/signomix-ta-adm)||Administration: the service management|
-|[signomix](https://github.com/signomix/signomix)|1.2.226|Previous version containing the following components functionalities: signomix-ta-provider, signomix-ta-receiver, signomix-ta-adm.|
+|[signomix](https://github.com/signomix/signomix)|1.3.0|Previous version containing the following components functionalities: signomix-ta-provider, signomix-ta-receiver, signomix-ta-adm.|
 
 ```mermaid
 flowchart LR
