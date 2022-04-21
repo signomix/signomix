@@ -12,6 +12,7 @@ services:
       args:
         DOMAIN: localhost
       dockerfile: ../signomix-proxy/Dockerfile
+    restart: always
     networks:
       - signomix-network
     ports:
@@ -130,6 +131,39 @@ services:
       - QUEUE_NOTIFICATIONS=notifications
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
+
+  signomix-ta-receiver:
+    build:
+      context: ../signomix-ta-receiver
+      dockerfile: ../signomix-ta-receiver/src/main/docker/Dockerfile.jvm
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+
+  signomix-ta-account:
+    build:
+      context: ../signomix-ta-account
+      dockerfile: ../signomix-ta-account/src/main/docker/Dockerfile.jvm
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+      - MQ_EVENTS_QUEUE=events.account
 
   dbserver:
     build:

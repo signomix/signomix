@@ -6,7 +6,7 @@ export SIGNOMIX_STATUSPAGE_URL=/
 
 ### signomix
 cd ../signomix
-mvn package
+mvn clean package
 
 ### signomix-ta-ps
 cd ../signomix-ta-ps
@@ -18,16 +18,24 @@ npm install
 npm run build
 cd ../../../..
 sh update-webapps.sh
-./mvnw package
+./mvnw clean package
 
 ### signomix-ta-app
 cd ../signomix-ta-app
 sh update-webapps.sh
-./mvnw package
+./mvnw clean package
 
 ### signomix-ta-ms
 cd ../signomix-ta-ms
-./mvnw package
+./mvnw clean package
+
+### signomix-ta-receiver
+cd ../signomix-ta-receiver
+./mvnw clean package
+
+### signomix-ta-account
+cd ../signomix-ta-account
+./mvnw clean package
 
 cd ../signomix-ta
 docker-compose build
