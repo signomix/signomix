@@ -142,6 +142,9 @@ services:
     depends_on:
       - signomix-mq
     environment:
+      - SIGNOMIX_DATABASE_URL=jdbc:h2:tcp://dbserver/iotdata
+      - SIGNOMIX_DATABASE_USER=sa
+      - SIGNOMIX_DATABASE_PASSWORD=
       - MQ_HOST=signomix-mq
       - MQ_PORT=5672
       - MQ_USER=user
