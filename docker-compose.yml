@@ -22,24 +22,24 @@ services:
 #      - ~/signomix/volumes/volume-proxy:/etc/nginx/keys:rw
 
   signomix-mq:
-    build:
-      context: ../signomix-rabbitmq
-      dockerfile: ../signomix-rabbitmq/Dockerfile
-    hostname: signomix-mq
     container_name: signomix-mq
+    hostname: signomix-mq
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=user
     networks:
       - signomix-network
-    environment:
-      RABBITMQ_USER: user
-      RABBITMQ_PASSWORD: user
     ports:
-      - 15672:15672
-      - 5672:5672
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
     healthcheck:
       test: [ "CMD", "nc", "-z", "localhost", "5672" ]
       interval: 5s
       timeout: 15s
-      retries: 1
+      retries: 3
 
   # signomix
   signomix-main:
@@ -58,7 +58,7 @@ services:
       - SIGNOMIX_URL=https://myhost
       - SIGNOMIX_TITLE=Signomix
       - SIGNOMIX_DB_SERVER=dbserver
-      - SIGNOMIX_APP_KEY=myappkey
+      - SIGNOMIX_APP_KEY=d136b449-17c6-48fc-8334-9a90800387f1
       - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
       - QUEUE_USER=user
@@ -73,6 +73,39 @@ services:
       - ~/signomix/volumes/volume-service/files:/usr/signomix/dbdata/files:rw
       - ~/signomix/volumes/volume-service/backup:/usr/signomix/dbdata/backup:rw
     
+  signomix-ta-ms:
+    build:
+      context: ../signomix-ta-ms
+      dockerfile: ../signomix-ta-ms/src/main/docker/Dockerfile.jvm
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - SIGNOMIX_TITLE=Signomix
+      - SIGNOMIX_ENV_NAME=prod
+      - SIGNOMIX_PUSHOVER_TOKEN=mypushovertoken
+      - SIGNOMIX_SMTP_FROM=signomix@myhost
+      - SIGNOMIX_SMTP_HOST=smtp.gmail.com
+      - SIGNOMIX_SMTP_USER=admin@myhost
+      - SIGNOMIX_SMTP_PASSWORD=mypassword
+      - SIGNOMIX_SMTP_PORT=587
+      - SIGNOMIX_SMTP_SSL=false
+      - SIGNOMIX_SMTP_START_TLS=REQUIRED
+      - SIGNOMIX_SMTP_AUTH_METHODS='DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN'
+      - SIGNOMIX_SENTRY_PACKAGES=com.signomix
+      - SIGNOMIX_SENTRY_LEVEL=ERROR
+      - SIGNOMIX_APP_KEY=d136b449-17c6-48fc-8334-9a90800387f1
+      - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
+      - QUEUE_HOST=signomix-mq
+      - QUEUE_PORT=5672
+      - QUEUE_USER=user
+      - QUEUE_PASSWORD=user
+      - QUEUE_NOTIFICATIONS=notifications
+      - QUEUE_MAILING=mailing
+      - QUEUE_ADMIN_EMAIL=admin_email
+
   # signomix publication service
   signomix-ta-ps:
     build:
@@ -97,41 +130,10 @@ services:
     depends_on:
       - signomix-mq
     environment:
-      - SIGNOMIX_APP_KEY=myappkey
+      - SIGNOMIX_APP_KEY=d136b449-17c6-48fc-8334-9a90800387f1
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
       
-  signomix-ta-ms:
-    build:
-      context: ../signomix-ta-ms
-      dockerfile: ../signomix-ta-ms/src/main/docker/Dockerfile.jvm
-    restart: always
-    networks:
-      - signomix-network
-    depends_on:
-      - signomix-mq
-    environment:
-      - SIGNOMIX_TITLE=Signomix
-      - SIGNOMIX_ENV_NAME=prod
-      - SIGNOMIX_PUSHOVER_TOKEN=mypushovertoken
-      - SIGNOMIX_SMTP_FROM=signomix@myhost
-      - SIGNOMIX_SMTP_HOST=smtp.gmail.com
-      - SIGNOMIX_SMTP_USER=admin@myhost
-      - SIGNOMIX_SMTP_PASSWORD=mypassword
-      - SIGNOMIX_SMTP_PORT=587
-      - SIGNOMIX_SMTP_SSL=false
-      - SIGNOMIX_SMTP_START_TLS=REQUIRED
-      - SIGNOMIX_SMTP_AUTH_METHODS='DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN'
-      - SIGNOMIX_SENTRY_PACKAGES=com.signomix
-      - SIGNOMIX_SENTRY_LEVEL=ERROR
-      - QUEUE_HOST=signomix-mq
-      - QUEUE_PORT=5672
-      - QUEUE_USER=user
-      - QUEUE_PASSWORD=user
-      - QUEUE_NOTIFICATIONS=notifications
-      - QUEUE_MAILING=mailing
-      - QUEUE_ADMIN_EMAIL=admin_email
-
   signomix-ta-receiver:
     build:
       context: ../signomix-ta-receiver
@@ -141,6 +143,7 @@ services:
       - signomix-network
     depends_on:
       - signomix-mq
+      - signomix-ta-ms
     environment:
       - SIGNOMIX_DATABASE_URL=jdbc:h2:tcp://dbserver/iotdata
       - SIGNOMIX_DATABASE_USER=sa
