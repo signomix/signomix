@@ -33,7 +33,7 @@ statusPage=https://status.mydomain.com
 dockerRepository=
 
 # the above variables can be overridden by local configuration
-source local/configuration.cfg
+source local/build-images.cfg
 
 
 # printing config
