@@ -163,5 +163,10 @@ else
 fi
 echo
 
+# saving images
+if [ -z "$dockerRepository" ]
+then
+    docker save $imageNameApp:$versionApp | gzip > local-images/$imageNameApp-$versionApp.tar.gz
+fi
 # done
 cd ../signomix-ta

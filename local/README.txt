@@ -1,1 +1,1 @@
-There may be local configuration files in this folder.
+There may be local configuration files in this folder: configuration.cfg, docker-compose-test.yml, docker-compose-production.yml, etc.
