@@ -19,7 +19,7 @@ services:
       - 80:80
       - 443:443
 #    volumes:
-#      - ~/signomix/volumes/volume-proxy:/received 'topic' but current is 'fanout'etc/nginx/keys:rw
+#      - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
 
   signomix-mq:
     container_name: signomix-mq
