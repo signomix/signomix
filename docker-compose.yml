@@ -19,7 +19,7 @@ services:
       - 80:80
       - 443:443
 #    volumes:
-#      - ~/signomix/volumes/volume-proxy:/etc/nginx/keys:rw
+#      - ~/signomix/volumes/volume-proxy:/received 'topic' but current is 'fanout'etc/nginx/keys:rw
 
   signomix-mq:
     container_name: signomix-mq
@@ -51,6 +51,7 @@ services:
     depends_on:
       - dbserver
       - signomix-mq
+      - signomix-ta-ms
     environment:
       - SIGNOMIX_INITIAL_ADMIN_EMAIL=admin@myhost
       - SIGNOMIX_INITIAL_ADMIN_SECRET=test123
