@@ -1,0 +1,173 @@
+version: "3"
+
+volumes:
+  cms-assets:
+  
+services:
+
+    # API Gateway
+  signomix-proxy:
+    image: ${SGX_PROXY_NAME}:${SGX_PROXY_VERSION}
+    restart: always
+    networks:
+      - signomix-network
+    ports:
+      - 7777:7777
+      - 443:443
+#    volumes:
+#      - ~/straznik/volumes/volume-proxy:/etc/nginx/keys:rw
+
+  signomix-mq:
+    image: rabbitmq:3-management-alpine
+    container_name: signomix-mq
+    hostname: signomix-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=user
+    networks:
+      - signomix-network
+    ports:
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 3
+  
+  # signomix
+  signomix-main:
+    image: ${SGX_MAIN_NAME}:${SGX_MAIN_VERSION}
+    networks:
+      - signomix-network
+    depends_on:
+      - dbserver
+      - signomix-mq
+    environment:
+      - SIGNOMIX_INITIAL_ADMIN_EMAIL=gskorupa@nmg.pl
+      - SIGNOMIX_INITIAL_ADMIN_SECRET=test123
+      - SIGNOMIX_ADMIN_NOTIFICATION_EMAIL=gskorupa@nmg.pl
+      - SIGNOMIX_URL=https://iotdemo.nmg.pl
+      - SIGNOMIX_TITLE=IoT Demo
+      - SIGNOMIX_DB_SERVER=dbserver
+      - SIGNOMIX_APP_KEY=myappkey
+      - QUEUE_HOST=signomix-mq
+      - QUEUE_PORT=5672
+      - QUEUE_USER=user
+      - QUEUE_PASSWORD=user
+      - QUEUE_NOTIFICATIONS=notifications
+      - QUEUE_MAILING=mailing
+      - QUEUE_ADMIN_EMAIL=admin_email
+    volumes:
+      - cms-assets:/usr/signomix/dbdata/assets
+      - ~/straznik/volumes/volume-service/db:/usr/signomix/dbdata/db:rw
+      - ~/straznik/volumes/volume-service/logs:/usr/signomix/dbdata/logs:rw
+      - ~/straznik/volumes/volume-service/files:/usr/signomix/dbdata/files:rw
+      - ~/straznik/volumes/volume-service/backup:/usr/signomix/dbdata/backup:rw
+    
+  signomix-ta-ms:
+    image: ${SGX_MS_NAME}:${SGX_MS_VERSION}
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - SIGNOMIX_TITLE=IoT Demo
+      - SIGNOMIX_ENV_NAME=prod
+      - SIGNOMIX_PUSHOVER_TOKEN=mypushovertoken
+      - SIGNOMIX_SMTP_FROM=iot@nmg.pl
+      - SIGNOMIX_SMTP_HOST=192.168.200.4
+      - SIGNOMIX_SMTP_USER=iot@nmg.pl
+      - SIGNOMIX_SMTP_PASSWORD=
+      - SIGNOMIX_SMTP_PORT=25
+      - SIGNOMIX_SMTP_SSL=false
+      - SIGNOMIX_SMTP_LOGIN=DISABLED
+      - SIGNOMIX_SMTP_START_TLS=DISABLED
+      - SIGNOMIX_SENTRY_PACKAGES=com.signomix
+      - SIGNOMIX_SENTRY_LEVEL=ERROR
+      - SIGNOMIX_APP_KEY=myappkey
+      - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
+      - QUEUE_HOST=signomix-mq
+      - QUEUE_PORT=5672
+      - QUEUE_USER=user
+      - QUEUE_PASSWORD=user
+      - QUEUE_NOTIFICATIONS=notifications
+      - QUEUE_MAILING=mailing
+      - QUEUE_ADMIN_EMAIL=admin_email
+
+  # signomix publication service
+  signomix-ta-ps:
+    image: ${SGX_PS_NAME}:${SGX_PS_VERSION}
+    networks:
+      - signomix-network
+    environment:
+      - SIGNOMIX_TITLE=IoT Demo
+    volumes:
+      - cms-assets:/usr/signomix/www/assets
+      - ~/straznik/volumes/volume-ps:/usr/signomix/dbdata:rw
+      - ~/straznik/volumes/volume-ps/logs:/usr/signomix/dbdata/logs:rw
+  
+  signomix-ta-app:
+    image: ${SGX_APP_NAME}:${SGX_APP_VERSION}
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - SIGNOMIX_APP_KEY=myappkey
+      - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
+      - SIGNOMIX_STATUSPAGE_UR=https://iotdemo.nmg.pl
+      
+  signomix-ta-receiver:
+    image: ${SGX_RECEIVER_NAME}:${SGX_RECEIVER_VERSION}
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+      - signomix-ta-ms
+    environment:
+      - SIGNOMIX_DATABASE_URL=jdbc:h2:tcp://dbserver/iotdata
+      - SIGNOMIX_DATABASE_USER=sa
+      - SIGNOMIX_DATABASE_PASSWORD=
+      - SIGNOMIX_LOG_LEVEL=WARN
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+
+  signomix-ta-account:
+    image: ${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+      - MQ_EVENTS_QUEUE=events.account
+
+  dbserver:
+    image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
+    restart: always
+    networks:
+      - signomix-network
+    expose:
+      - 9092
+    ports:
+      - 9092:9092
+    volumes:
+      - ~/straznik/volumes/volume-db:/h2data:rw
+
+networks:
+  signomix-network:
+    driver: bridge

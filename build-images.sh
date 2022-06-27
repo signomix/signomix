@@ -33,11 +33,22 @@ statusPage=https://status.mydomain.com
 dockerRepository=
 
 # the above variables can be overridden by local configuration
-source local/build-images.cfg
-
+env_location="$1"
+echo "$1"
+if [ -z "$env_location" ]
+then
+    # default configuration
+    env_location=local/build-images.cfg
+fi
+if [ -f "$env_location" ]
+then
+    echo "Building Signomix using configuration from "$env_location":"
+    . "$env_location"
+else
+    echo "Building Signomix using default config:"
+fi
 
 # printing config
-echo "Building Signomix using the configuration:"
 echo
 echo "versionApp=$versionApp"
 echo "versionAccount=$versionAccount"
