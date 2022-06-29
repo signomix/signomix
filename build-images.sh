@@ -175,8 +175,10 @@ fi
 echo
 
 # saving images
+cd ../signomix-ta
 if [ -z "$dockerRepository" ]
 then
+    mkdir local-images
     docker save $imageNameAccount:$versionAccount | gzip > local-images/$imageNameAccount-$versionAccount.tar.gz
     docker save $imageNameApp:$versionApp | gzip > local-images/$imageNameApp-$versionApp.tar.gz
     docker save $imageNameDb:$versionDb | gzip > local-images/$imageNameDb-$versionDb.tar.gz
@@ -187,4 +189,4 @@ then
     docker save $imageNameReceiver:$versionReceiver | gzip > local-images/$imageNameReceiver-$versionReceiver.tar.gz
 fi
 # done
-cd ../signomix-ta
+
