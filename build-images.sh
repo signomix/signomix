@@ -128,9 +128,9 @@ cd ../signomix-ta-ps
 ./update-webapps.sh
 if [ -z "$dockerRepository" ]
 then
-    ./mvnw clean package -Dsignomix_image_name=$imageNamePs -Dquarkus.container-image.build=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNamePs -Dsignomix_image_tag=$versionPs -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -Dsignomix_image_name=$imageNamePs -Dquarkus.container-image.push=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNamePs -Dsignomix_image_tag=$versionPs -Dquarkus.container-image.push=true
 fi
 echo
 
@@ -138,9 +138,9 @@ echo
 cd ../signomix-ta-app
 if [ -z "$dockerRepository" ]
 then
-    ./mvnw clean package -Dsignomix_image_name=$imageNameApp -Dquarkus.container-image.build=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNameApp -Dsignomix_image_tag=$versionApp -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -Dsignomix_image_name=$imageNameApp -Dquarkus.container-image.push=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNameApp -Dsignomix_image_tag=$versionApp -Dquarkus.container-image.push=true
 fi
 echo
 
@@ -148,9 +148,9 @@ echo
 cd ../signomix-ta-ms
 if [ -z "$dockerRepository" ]
 then
-    ./mvnw clean package -Dsignomix_image_name=$imageNameMs -Dquarkus.container-image.build=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNameMs -Dsignomix_image_tag=$versionMs -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -Dsignomix_image_name=$imageNameMs -Dquarkus.container-image.push=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNameMs -Dsignomix_image_tag=$versionMs -Dquarkus.container-image.push=true
 fi
 echo
 
@@ -158,9 +158,9 @@ echo
 cd ../signomix-ta-receiver
 if [ -z "$dockerRepository" ]
 then
-    ./mvnw clean package -Dsignomix_image_name=$imageNameReceiver -Dquarkus.container-image.build=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNameReceiver -Dsignomix_image_tag=$versionReceiver -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -Dsignomix_image_name=$imageNameReceiver -Dquarkus.container-image.push=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNameReceiver -Dsignomix_image_tag=$versionReceiver -Dquarkus.container-image.push=true
 fi
 echo
 
@@ -168,9 +168,9 @@ echo
 cd ../signomix-ta-account
 if [ -z "$dockerRepository" ]
 then
-    ./mvnw clean package -Dsignomix_image_name=$imageNameAccount -Dquarkus.container-image.build=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNameAccount -Dsignomix_image_tag=$versionAccount -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -Dsignomix_image_name=$imageNameAccount -Dquarkus.container-image.push=true
+    ./mvnw clean package -Dsignomix_image_name=$imageNameAccount -Dsignomix_image_tag=$versionAccount -Dquarkus.container-image.push=true
 fi
 echo
 
