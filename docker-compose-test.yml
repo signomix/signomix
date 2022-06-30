@@ -5,7 +5,7 @@ volumes:
   
 services:
 
-    # API Gateway
+  # API Gateway
   signomix-proxy:
     image: ${SGX_PROXY_NAME}:${SGX_PROXY_VERSION}
     restart: always
@@ -17,6 +17,7 @@ services:
 #    volumes:
 #      - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
 
+  # MQ
   signomix-mq:
     image: rabbitmq:3-management-alpine
     container_name: signomix-mq
