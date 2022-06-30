@@ -12,10 +12,10 @@ services:
     networks:
       - signomix-network
     ports:
-      - 7777:7777
+      - 80:80
       - 443:443
 #    volumes:
-#      - ~/straznik/volumes/volume-proxy:/etc/nginx/keys:rw
+#      - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
 
   signomix-mq:
     image: rabbitmq:3-management-alpine
@@ -36,7 +36,7 @@ services:
       interval: 5s
       timeout: 15s
       retries: 3
-  
+
   # signomix
   signomix-main:
     image: ${SGX_MAIN_NAME}:${SGX_MAIN_VERSION}
@@ -45,14 +45,15 @@ services:
     depends_on:
       - dbserver
       - signomix-mq
+      - signomix-ta-ms
     environment:
-      - SIGNOMIX_INITIAL_ADMIN_EMAIL=gskorupa@nmg.pl
-      - SIGNOMIX_INITIAL_ADMIN_SECRET=test123
-      - SIGNOMIX_ADMIN_NOTIFICATION_EMAIL=gskorupa@nmg.pl
-      - SIGNOMIX_URL=https://iotdemo.nmg.pl
-      - SIGNOMIX_TITLE=IoT Demo
+      - SIGNOMIX_INITIAL_ADMIN_EMAIL=${SGX_INITIAL_ADMIN_EMAIL}
+      - SIGNOMIX_INITIAL_ADMIN_SECRET=${SGX_INITIAL_ADMIN_SECRET}
+      - SIGNOMIX_ADMIN_NOTIFICATION_EMAIL=${SGX_ADMIN_NOTIFICATION_EMAIL}
+      - SIGNOMIX_URL=${SGX_URL}
+      - SIGNOMIX_TITLE=${SGX_TITLE}
       - SIGNOMIX_DB_SERVER=dbserver
-      - SIGNOMIX_APP_KEY=myappkey
+      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
       - QUEUE_USER=user
@@ -62,10 +63,10 @@ services:
       - QUEUE_ADMIN_EMAIL=admin_email
     volumes:
       - cms-assets:/usr/signomix/dbdata/assets
-      - ~/straznik/volumes/volume-service/db:/usr/signomix/dbdata/db:rw
-      - ~/straznik/volumes/volume-service/logs:/usr/signomix/dbdata/logs:rw
-      - ~/straznik/volumes/volume-service/files:/usr/signomix/dbdata/files:rw
-      - ~/straznik/volumes/volume-service/backup:/usr/signomix/dbdata/backup:rw
+      - ~/signomix/volumes/volume-service/db:/usr/signomix/dbdata/db:rw
+      - ~/signomix/volumes/volume-service/logs:/usr/signomix/dbdata/logs:rw
+      - ~/signomix/volumes/volume-service/files:/usr/signomix/dbdata/files:rw
+      - ~/signomix/volumes/volume-service/backup:/usr/signomix/dbdata/backup:rw
     
   signomix-ta-ms:
     image: ${SGX_MS_NAME}:${SGX_MS_VERSION}
@@ -75,20 +76,20 @@ services:
     depends_on:
       - signomix-mq
     environment:
-      - SIGNOMIX_TITLE=IoT Demo
-      - SIGNOMIX_ENV_NAME=prod
-      - SIGNOMIX_PUSHOVER_TOKEN=mypushovertoken
-      - SIGNOMIX_SMTP_FROM=iot@nmg.pl
-      - SIGNOMIX_SMTP_HOST=192.168.200.4
-      - SIGNOMIX_SMTP_USER=iot@nmg.pl
-      - SIGNOMIX_SMTP_PASSWORD=
-      - SIGNOMIX_SMTP_PORT=25
-      - SIGNOMIX_SMTP_SSL=false
-      - SIGNOMIX_SMTP_LOGIN=DISABLED
-      - SIGNOMIX_SMTP_START_TLS=DISABLED
+      - SIGNOMIX_TITLE=${SGX_TITLE}
+      - SIGNOMIX_ENV_NAME=${SGX_ENV_NAME}
+      - SIGNOMIX_PUSHOVER_TOKEN=${SGX_PUSHOVER_TOKEN}
+      - SIGNOMIX_SMTP_FROM=${SGX_SMTP_FROM}
+      - SIGNOMIX_SMTP_HOST=${SGX_SMTP_HOST}
+      - SIGNOMIX_SMTP_USER=${SGX_SMTP_USER}
+      - SIGNOMIX_SMTP_PASSWORD=${SGX_SMTP_PASSWORD}
+      - SIGNOMIX_SMTP_PORT=${SGX_SMTP_PORT}
+      - SIGNOMIX_SMTP_SSL=${SGX_SMTP_SSL}
+      - SIGNOMIX_SMTP_START_TLS=${SGX_SMTP_START_TLS}
+      - SIGNOMIX_SMTP_AUTH_METHODS=${SGX_SMTP_AUTH_METHODS}
       - SIGNOMIX_SENTRY_PACKAGES=com.signomix
       - SIGNOMIX_SENTRY_LEVEL=ERROR
-      - SIGNOMIX_APP_KEY=myappkey
+      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
       - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
@@ -104,11 +105,11 @@ services:
     networks:
       - signomix-network
     environment:
-      - SIGNOMIX_TITLE=IoT Demo
+      - SIGNOMIX_TITLE=${SGX_TITLE}
     volumes:
       - cms-assets:/usr/signomix/www/assets
-      - ~/straznik/volumes/volume-ps:/usr/signomix/dbdata:rw
-      - ~/straznik/volumes/volume-ps/logs:/usr/signomix/dbdata/logs:rw
+      - ~/signomix/volumes/volume-ps:/usr/signomix/dbdata:rw
+      - ~/signomix/volumes/volume-ps/logs:/usr/signomix/dbdata/logs:rw
   
   signomix-ta-app:
     image: ${SGX_APP_NAME}:${SGX_APP_VERSION}
@@ -118,9 +119,9 @@ services:
     depends_on:
       - signomix-mq
     environment:
-      - SIGNOMIX_APP_KEY=myappkey
+      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
-      - SIGNOMIX_STATUSPAGE_UR=https://iotdemo.nmg.pl
+      - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
       
   signomix-ta-receiver:
     image: ${SGX_RECEIVER_NAME}:${SGX_RECEIVER_VERSION}
@@ -166,7 +167,7 @@ services:
     ports:
       - 9092:9092
     volumes:
-      - ~/straznik/volumes/volume-db:/h2data:rw
+      - ~/signomix/volumes/volume-db:/h2data:rw
 
 networks:
   signomix-network:
