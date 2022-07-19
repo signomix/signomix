@@ -4,6 +4,8 @@
 export SIGNOMIX_GA_TRACKING_ID=NONE
 export SIGNOMIX_STATUSPAGE_URL=/
 
+signomixDomain=localhost
+statusPage=/
 # the above variables can be overridden by local configuration
 cfg_location="$1"
 echo "$1"
