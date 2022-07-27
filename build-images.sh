@@ -71,6 +71,7 @@ echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
 echo "dockerRepository=$dockerRepository"
+echo "SIGNOMIX_TITLE=$SIGNOMIX_TITLE"
 
 ##
 ## end CONFIGURATION

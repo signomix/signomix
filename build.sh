@@ -3,6 +3,7 @@
 ###  env variables
 export SIGNOMIX_GA_TRACKING_ID=NONE
 export SIGNOMIX_STATUSPAGE_URL=/
+export SIGNOMIX_TITLE=Signomix
 
 signomixDomain=localhost
 statusPage=/
@@ -45,6 +46,7 @@ echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
 echo "dockerRepository=$dockerRepository"
+echo "SIGNOMIX_TITLE=$SIGNOMIX_TITLE"
 
 ##
 ## end CONFIGURATION
