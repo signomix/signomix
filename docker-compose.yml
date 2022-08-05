@@ -60,6 +60,7 @@ services:
       - SIGNOMIX_TITLE=${SGX_TITLE}
       - SIGNOMIX_DB_SERVER=dbserver
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
+      - SIGNOMIX_COMMAND_ID_SIZE=8
       - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
       - QUEUE_USER=user
@@ -146,6 +147,8 @@ services:
       - signomix-mq
       - signomix-ta-ms
     environment:
+      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
+      - SIGNOMIX_CORE_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_DATABASE_URL=jdbc:h2:tcp://dbserver/iotdata
       - SIGNOMIX_DATABASE_USER=sa
       - SIGNOMIX_DATABASE_PASSWORD=
@@ -154,6 +157,7 @@ services:
       - MQ_USER=user
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
+      - SIGNOMIX_LOG_LEVEL=INFO
 
   signomix-ta-account:
     build:
