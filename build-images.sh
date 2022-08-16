@@ -33,17 +33,17 @@ statusPage=https://status.mydomain.com
 dockerRepository=
 
 # the above variables can be overridden by local configuration
-env_location="$1"
+cfg_location="$1"
 echo "$1"
-if [ -z "$env_location" ]
+if [ -z "$cfg_location" ]
 then
     # default configuration
-    env_location=local/build-images.cfg
+    cfg_location=local/build-images.cfg
 fi
-if [ -f "$env_location" ]
+if [ -f "$cfg_location" ]
 then
-    echo "Building Signomix using configuration from "$env_location":"
-    . "$env_location"
+    echo "Building Signomix using configuration from "$cfg_location":"
+    . "$cfg_location"
 else
     echo "Building Signomix using default config:"
 fi
@@ -114,6 +114,7 @@ echo
 
 # signomix-main
 cd ../signomix
+./mvnw versions:set -DnewVersion=$versionMain
 mvn package
 if [ -z "$dockerRepository" ]
 then
@@ -127,6 +128,7 @@ echo
 # signomix-ta-ps
 cd ../signomix-ta-ps
 ./update-webapps.sh
+./mvnw versions:set -DnewVersion=$versionPs
 if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNamePs -DSIGNOMIX_IMAGE_TAG=$versionPs -Dquarkus.container-image.build=true
@@ -137,6 +139,7 @@ echo
 
 # signomix-ta-app
 cd ../signomix-ta-app
+./mvnw versions:set -DnewVersion=$versionApp
 if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.build=true
@@ -147,6 +150,7 @@ echo
 
 # signomix-ta-ms
 cd ../signomix-ta-ms
+./mvnw versions:set -DnewVersion=$versionMs
 if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameMs -DSIGNOMIX_IMAGE_TAG=$versionMs -Dquarkus.container-image.build=true
@@ -157,6 +161,7 @@ echo
 
 # signomix-ta-receiver
 cd ../signomix-ta-receiver
+./mvnw versions:set -DnewVersion=$versionReceiver
 if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameReceiver -DSIGNOMIX_IMAGE_TAG=$versionReceiver -Dquarkus.container-image.build=true
@@ -167,6 +172,7 @@ echo
 
 # signomix-ta-account
 cd ../signomix-ta-account
+./mvnw versions:set -DnewVersion=$versionAccount
 if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameAccount -DSIGNOMIX_IMAGE_TAG=$versionAccount -Dquarkus.container-image.build=true

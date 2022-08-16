@@ -51,14 +51,15 @@ docker-compose up -d
 
 ## Architecture
 
-The target platform architecture will consist of the microservices listed below. 
+The target platform architecture consist of the microservices listed below. 
 
 |Component|Version|Description|
 |---|---|---|
+|[signomix-ta-account](https://github.com/signomix/signomix-ta-account)|||
 |[signomix-ta-app](https://github.com/signomix/signomix-ta-app)|1.0.3|Web GUI|
 |[signomix-ta-receiver](https://github.com/signomix/signomix-ta-receiver)||IoT data receiver service|
 |[signomix-ta-provider](https://github.com/signomix/signomix-ta-provider)||IoT data provider service|
-|[signomix-rabbitmq](https://github.com/signomix/signomix-rabbitmq)|1.0.0|Message broker|
+|signomix-mq|1.0.0|Message broker|
 |[signomix-ta-ms](https://github.com/signomix/signomix-ta-ms)|1.0.0|Messaging service|
 |[signomix-ta-ps](https://github.com/signomix/signomix-ta-ps)|1.2.0.10|Public service (home page, blog)|
 |[signomix-proxy](https://github.com/signomix/signomix-proxy)|1.1.2|Reverse Proxy & API Gateway service|
@@ -72,16 +73,20 @@ flowchart LR
   signomix-proxy
   signomix{{signomix}}
   ta-ps{{signomix-ta-ps}}
+  ta-account{{signomix-ta-account}}
   ta-app{{signomix-ta-app}}
   ta-adm{{signomix-ta-adm}}
   ta-receiver{{signomix-ta-receiver}}
   ta-provider{{signomix-ta-provider}}
-  ta-mq{{signomix-rabbitmq}}
+  ta-mq{{signomix-mq}}
   ta-ms{{signomix-ta-ms}}
   ta-database[(signomix-database)]
-  client-->signomix-proxy
+  LoRaWAN-device<-->signomix-proxy
+  Internet-device<-->signomix-proxy
+  WebApplication<-->signomix-proxy
   signomix-proxy-->signomix
   signomix-proxy-->ta-ps
+  signomix-proxy-->ta-account
   signomix-proxy-->ta-app
   signomix-proxy-->ta-adm
   signomix-proxy-->ta-receiver

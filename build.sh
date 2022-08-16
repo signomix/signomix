@@ -8,17 +8,34 @@ export SIGNOMIX_TITLE=Signomix
 signomixDomain=localhost
 statusPage=/
 # the above variables can be overridden by local configuration
-cfg_location="$1"
-echo "$1"
-if [ -z "$cfg_location" ]
+env_name="$1"
+config_path="$2"
+yml_file="$3"
+echo "Passed arguments:"
+echo "1. environment:" "$1"
+echo "2. config folder" "$2"
+echo "3. compose yml file:" "$3"
+
+cfg_file="$2"/"$1".cfg
+env_file="$2"/"$1".env
+
+if [ -z "$yml_file" ]
+then
+    # default yml
+    yml_file=docker_compose.yml
+    config_path=.
+fi
+
+if [ -z "$cfg_file" ]
 then
     # default configuration
-    cfg_location=local/build-images.cfg
+    env_name=dev
+    config_path=.
 fi
-if [ -f "$cfg_location" ]
+if [ -f "$cfg_file" ]
 then
-    echo "Building Signomix using configuration from "$cfg_location":"
-    . "$cfg_location"
+    echo "Building Signomix using configuration from "$cfg_file
+    . "$cfg_file"
 else
     echo "Building Signomix using default config:"
 fi
@@ -96,4 +113,6 @@ cd ../signomix-ta-account
 ./mvnw clean package
 
 cd ../signomix-ta
-docker-compose build
+# docker-compose --project-directory . --env-file local/dev.env -f local/docker-compose.yml build
+
+docker-compose --project-directory . --env-file "$env_file" -f docker-compose.yml build
