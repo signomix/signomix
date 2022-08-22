@@ -48,7 +48,7 @@ else
     echo "Building Signomix using default config:"
 fi
 
-# printing config
+# print config
 echo
 echo "versionApp=$versionApp"
 echo "versionAccount=$versionAccount"
