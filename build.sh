@@ -7,6 +7,7 @@ export SIGNOMIX_TITLE=Signomix
 
 signomixDomain=localhost
 statusPage=/
+dbpassword=signomixdbpwd
 # the above variables can be overridden by local configuration
 env_name="$1"
 config_path="$2"

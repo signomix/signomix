@@ -28,6 +28,7 @@ imageNameReceiver=signomix-ta-receiver
 # domain [mydomain.com | localhost ]
 signomixDomain=mydomain.com
 statusPage=https://status.mydomain.com
+dbpassword=signomixdbpwd
 
 # repository
 dockerRepository=
@@ -71,6 +72,7 @@ echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
 echo "dockerRepository=$dockerRepository"
+echo "dbpassword=$dbpassword"
 echo "SIGNOMIX_TITLE=$SIGNOMIX_TITLE"
 
 ##
@@ -105,9 +107,9 @@ fi
 cd ../signomix-database
 if [ -z "$dockerRepository" ]
 then
-    docker build -t $imageNameDb:$versionDb .
+    docker build --build-arg dbpassword=$dbpassword -t $imageNameDb:$versionDb .
 else
-    docker build -t "$dockerRepository"/$imageNameDb:$versionDb .
+    docker build --build-arg dbpassword=$dbpassword -t "$dockerRepository"/$imageNameDb:$versionDb .
     docker push "$dockerRepository"/$imageNameDb:$versionDb
 fi
 echo
@@ -133,7 +135,7 @@ if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNamePs -DSIGNOMIX_IMAGE_TAG=$versionPs -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNamePs -DSIGNOMIX_IMAGE_TAG=$versionPs -Dquarkus.container-image.push=true
+    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNamePs -DSIGNOMIX_IMAGE_TAG=$versionPs -Dquarkus.container-image.push=true
 fi
 echo
 
@@ -144,7 +146,7 @@ if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.push=true
+    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.push=true
 fi
 echo
 
@@ -155,7 +157,7 @@ if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameMs -DSIGNOMIX_IMAGE_TAG=$versionMs -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameMs -DSIGNOMIX_IMAGE_TAG=$versionMs -Dquarkus.container-image.push=true
+    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameMs -DSIGNOMIX_IMAGE_TAG=$versionMs -Dquarkus.container-image.push=true
 fi
 echo
 
@@ -166,7 +168,7 @@ if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameReceiver -DSIGNOMIX_IMAGE_TAG=$versionReceiver -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameReceiver -DSIGNOMIX_IMAGE_TAG=$versionReceiver -Dquarkus.container-image.push=true
+    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameReceiver -DSIGNOMIX_IMAGE_TAG=$versionReceiver -Dquarkus.container-image.push=true
 fi
 echo
 
@@ -177,7 +179,7 @@ if [ -z "$dockerRepository" ]
 then
     ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameAccount -DSIGNOMIX_IMAGE_TAG=$versionAccount -Dquarkus.container-image.build=true
 else
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameAccount -DSIGNOMIX_IMAGE_TAG=$versionAccount -Dquarkus.container-image.push=true
+    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameAccount -DSIGNOMIX_IMAGE_TAG=$versionAccount -Dquarkus.container-image.push=true
 fi
 echo
 
