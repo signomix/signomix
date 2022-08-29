@@ -20,6 +20,12 @@ echo "3. compose yml file:" "$3"
 cfg_file="$2"/"$1".cfg
 env_file="$2"/"$1".env
 
+if [ -z "$env_file" ]
+then
+    # default yml
+    env_file=.env
+    config_path=.
+fi
 if [ -z "$yml_file" ]
 then
     # default yml
@@ -64,6 +70,7 @@ echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
 echo "dockerRepository=$dockerRepository"
+
 echo "SIGNOMIX_TITLE=$SIGNOMIX_TITLE"
 
 ##

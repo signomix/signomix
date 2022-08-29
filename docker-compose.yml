@@ -58,7 +58,9 @@ services:
       - SIGNOMIX_ADMIN_NOTIFICATION_EMAIL=${SGX_ADMIN_NOTIFICATION_EMAIL}
       - SIGNOMIX_URL=${SGX_URL}
       - SIGNOMIX_TITLE=${SGX_TITLE}
-      - SIGNOMIX_DB_SERVER=dbserver
+      - SIGNOMIX_DB_SERVER=${SGX_DBSERVER}
+      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_COMMAND_ID_SIZE=8
       - QUEUE_HOST=signomix-mq
@@ -149,9 +151,9 @@ services:
     environment:
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_CORE_HOST_URL=http://signomix-main:8080
-      - SIGNOMIX_DATABASE_URL=jdbc:h2:tcp://dbserver/iotdata
-      - SIGNOMIX_DATABASE_USER=sa
-      - SIGNOMIX_DATABASE_PASSWORD=
+      - SIGNOMIX_DATABASE_URL=${SGX_DATABASE_URL}
+      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
       - MQ_HOST=signomix-mq
       - MQ_PORT=5672
       - MQ_USER=user
@@ -180,6 +182,8 @@ services:
     build:
       context: ../signomix-database
       dockerfile: ../signomix-database/Dockerfile
+      args:
+        dbpassword: ${SGX_DATABASE_PASSWORD}
     restart: always
     networks:
       - signomix-network
@@ -187,6 +191,8 @@ services:
       - 9092
     ports:
       - 9092:9092
+    environment:
+      - dbpassword=${SGX_DATABASE_PASSWORD}
     volumes:
       - ~/signomix/volumes/volume-db:/h2data:rw
 
