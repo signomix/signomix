@@ -123,4 +123,4 @@ cd ../signomix-ta-account
 cd ../signomix-ta
 # docker-compose --project-directory . --env-file local/dev.env -f local/docker-compose.yml build
 
-docker-compose --project-directory . --env-file "$env_file" -f docker-compose.yml build
+docker-compose --project-directory . --env-file "$env_file" -f "$yml_file" build
