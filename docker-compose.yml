@@ -18,8 +18,8 @@ services:
     ports:
       - 80:80
       - 443:443
-#    volumes:
-#      - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
+    volumes:
+      - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
 
   signomix-mq:
     image: rabbitmq:3-management-alpine
