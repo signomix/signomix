@@ -11,7 +11,7 @@ dbpassword=signomixdbpwd
 # the above variables can be overridden by local configuration
 env_name="$1"
 config_path="$2"
-yml_file="$3"
+yml_file_name="$3"
 echo "Passed arguments:"
 echo "1. environment:" "$1"
 echo "2. config folder" "$2"
@@ -19,6 +19,7 @@ echo "3. compose yml file:" "$3"
 
 cfg_file="$2"/"$1".cfg
 env_file="$2"/"$1".env
+yml_file="$2"/"$yml_file_name"
 
 if [ -z "$env_file" ]
 then
