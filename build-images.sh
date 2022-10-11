@@ -172,6 +172,17 @@ else
 fi
 echo
 
+# signomix-ta-provider
+cd ../signomix-ta-provider
+./mvnw versions:set -DnewVersion=$versionProvider
+if [ -z "$dockerRepository" ]
+then
+    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameProvider -DSIGNOMIX_IMAGE_TAG=$versionProvider -Dquarkus.container-image.build=true
+else
+    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameProvider -DSIGNOMIX_IMAGE_TAG=$versionProvider -Dquarkus.container-image.push=true
+fi
+echo
+
 # signomix-ta-account
 cd ../signomix-ta-account
 ./mvnw versions:set -DnewVersion=$versionAccount
@@ -197,6 +208,7 @@ then
     docker save $imageNameProxy:$versionProxy | gzip > local-images/$imageNameProxy.tar.gz
     docker save $imageNamePs:$versionPs | gzip > local-images/$imageNamePs.tar.gz
     docker save $imageNameReceiver:$versionReceiver | gzip > local-images/$imageNameReceiver.tar.gz
+    docker save $imageNameProvider:$versionProvider | gzip > local-images/$imageNameProvider.tar.gz
 fi
 # done
 

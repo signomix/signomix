@@ -55,6 +55,7 @@ echo "versionAccount=$versionAccount"
 echo "versionDb=$versionDb"
 echo "versionMain=$versionMain"
 echo "versionMs=$versionMs"
+echo "versionProvider=$versionProvider"
 echo "versionProxy=$versionProxy"
 echo "versionPs=$versionPs"
 echo "versionReceiver=$versionReceiver"
@@ -64,6 +65,7 @@ echo "imageNameAccount=$imageNameAccount"
 echo "imageNameDb=$imageNameDb"
 echo "imageNameMain=$imageNameMain"
 echo "imageNameMs=$imageNameMs"
+echo "imageNameProvider=$imageNameProvider"
 echo "imageNameProxy=$imageNameProxy"
 echo "imageNamePs=$imageNamePs"
 echo "imageNameReceiver=$imageNameReceiver"
@@ -111,6 +113,10 @@ sh update-webapps.sh
 
 ### signomix-ta-ms
 cd ../signomix-ta-ms
+./mvnw clean package
+
+### signomix-ta-provider
+cd ../signomix-ta-provider
 ./mvnw clean package
 
 ### signomix-ta-receiver

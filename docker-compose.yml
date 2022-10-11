@@ -19,7 +19,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
+        - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
 
   signomix-mq:
     image: rabbitmq:3-management-alpine
@@ -140,6 +140,32 @@ services:
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
       
+  signomix-ta-provider:
+    build:
+      context: ../signomix-ta-provider
+      dockerfile: ../signomix-ta-provider/src/main/docker/Dockerfile.jvm
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+      - signomix-ta-ms
+    environment:
+      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
+      - SIGNOMIX_CORE_HOST_URL=http://signomix-main:8080
+      - SIGNOMIX_DATABASE_URL=${SGX_DATABASE_URL}
+      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
+      - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
+      - SIGNOMIX_AUTH_DATABASE_USER=${SGX_AUTH_DATABASE_USER}
+      - SIGNOMIX_AUTH_DATABASE_PASSWORD=${SGX_AUTH_DATABASE_PASSWORD}
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+      - SIGNOMIX_LOG_LEVEL=INFO
+
   signomix-ta-receiver:
     build:
       context: ../signomix-ta-receiver
