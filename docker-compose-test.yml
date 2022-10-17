@@ -41,6 +41,8 @@ services:
   # signomix
   signomix-main:
     image: ${SGX_MAIN_NAME}:${SGX_MAIN_VERSION}
+    container_name: signomix-main
+    hostname: signomix-main
     networks:
       - signomix-network
     depends_on:
@@ -74,6 +76,8 @@ services:
     
   signomix-ta-ms:
     image: ${SGX_MS_NAME}:${SGX_MS_VERSION}
+    container_name: signomix-ta-ms
+    hostname: signomix-ta-ms
     restart: always
     networks:
       - signomix-network
@@ -108,6 +112,8 @@ services:
   # signomix publication service
   signomix-ta-ps:
     image: ${SGX_PS_NAME}:${SGX_PS_VERSION}
+    container_name: signomix-ta-ps
+    hostname: signomix-ta-ps
     networks:
       - signomix-network
     environment:
@@ -119,6 +125,8 @@ services:
   
   signomix-ta-app:
     image: ${SGX_APP_NAME}:${SGX_APP_VERSION}
+    container_name: signomix-ta-app
+    hostname: signomix-ta-app
     restart: always
     networks:
       - signomix-network
@@ -129,8 +137,37 @@ services:
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
       
+  signomix-ta-provider:
+    image: ${SGX_PROIDER_NAME}:${SGX_PROVIDER_VERSION}
+    container_name: signomix-ta-provider
+    hostname: signomix-ta-provider
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+      - signomix-ta-ms
+    environment:
+      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
+      - SIGNOMIX_CORE_HOST_URL=http://signomix-main:8080
+      - SIGNOMIX_DATABASE_URL=${SGX_DATABASE_URL}
+      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
+      - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
+      - SIGNOMIX_AUTH_DATABASE_USER=${SGX_AUTH_DATABASE_USER}
+      - SIGNOMIX_AUTH_DATABASE_PASSWORD=${SGX_AUTH_DATABASE_PASSWORD}
+      - SIGNOMIX_QUERY_LIMIT=${SGX_QUERY_LIMIT}
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+      - SIGNOMIX_LOG_LEVEL=INFO
+
   signomix-ta-receiver:
     image: ${SGX_RECEIVER_NAME}:${SGX_RECEIVER_VERSION}
+    container_name: signomix-ta-receiver
+    hostname: signomix-ta-receiver
     restart: always
     networks:
       - signomix-network
@@ -148,22 +185,22 @@ services:
       - MQ_USER=user
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
-      - SIGNOMIX_LOG_LEVEL=WARN
+      - SIGNOMIX_LOG_LEVEL=INFO
 
-  signomix-ta-account:
-    image: ${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
-    restart: always
-    networks:
-      - signomix-network
-    depends_on:
-      - signomix-mq
-    environment:
-      - MQ_HOST=signomix-mq
-      - MQ_PORT=5672
-      - MQ_USER=user
-      - MQ_PASSWORD=user
-      - MQ_EVENTS_EXCHANGE=events
-      - MQ_EVENTS_QUEUE=events.account
+#  signomix-ta-account:
+#    image: ${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
+#    restart: always
+#    networks:
+#      - signomix-network
+#    depends_on:
+#      - signomix-mq
+#    environment:
+#      - MQ_HOST=signomix-mq
+#      - MQ_PORT=5672
+#      - MQ_USER=user
+#      - MQ_PASSWORD=user
+#      - MQ_EVENTS_EXCHANGE=events
+#      - MQ_EVENTS_QUEUE=events.account
 
   dbserver:
     image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
