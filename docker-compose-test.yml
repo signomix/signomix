@@ -1,7 +1,13 @@
 version: "3"
 
-volumes:
-  cms-assets:
+#volumes:
+#  cms-assets:
+
+x-services-volume:
+  &services-volume
+  type: bind
+  source: /home/signomix/signomix/volumes/assets
+  target: /usr/signomix/dbdata/assets
   
 services:
 
@@ -68,7 +74,8 @@ services:
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
     volumes:
-      - cms-assets:/usr/signomix/dbdata/assets
+      #- cms-assets:/usr/signomix/dbdata/assets
+      - *services-volume
       - ~/signomix/volumes/volume-service/db:/usr/signomix/dbdata/db:rw
       - ~/signomix/volumes/volume-service/logs:/usr/signomix/dbdata/logs:rw
       - ~/signomix/volumes/volume-service/files:/usr/signomix/dbdata/files:rw
@@ -119,7 +126,9 @@ services:
     environment:
       - SIGNOMIX_TITLE=${SGX_TITLE}
     volumes:
-      - cms-assets:/usr/signomix/www/assets
+      #- cms-assets:/usr/signomix/www/assets
+      - <<: *services-volume
+        target: /usr/signomix/www/assets
       - ~/signomix/volumes/volume-ps:/usr/signomix/dbdata:rw
       - ~/signomix/volumes/volume-ps/logs:/usr/signomix/dbdata/logs:rw
   
@@ -138,7 +147,7 @@ services:
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
       
   signomix-ta-provider:
-    image: ${SGX_PROIDER_NAME}:${SGX_PROVIDER_VERSION}
+    image: ${SGX_PROVIDER_NAME}:${SGX_PROVIDER_VERSION}
     container_name: signomix-ta-provider
     hostname: signomix-ta-provider
     restart: always
@@ -204,6 +213,8 @@ services:
 
   dbserver:
     image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
+    container_name: dbserver
+    hostname: dbserver
     restart: always
     networks:
       - signomix-network
