@@ -59,6 +59,9 @@ echo "versionProvider=$versionProvider"
 echo "versionProxy=$versionProxy"
 echo "versionPs=$versionPs"
 echo "versionReceiver=$versionReceiver"
+echo "versionCommon=$versionCommon"
+echo "versionCore=$versionCore"
+echo "versionJobs=$versionJobs"
 echo
 echo "imageNameApp=$imageNameApp"
 echo "imageNameAccount=$imageNameAccount"
@@ -69,6 +72,8 @@ echo "imageNameProvider=$imageNameProvider"
 echo "imageNameProxy=$imageNameProxy"
 echo "imageNamePs=$imageNamePs"
 echo "imageNameReceiver=$imageNameReceiver"
+echo "imageNameCore=$imageNameCore"
+echo "imageNameJobs=$imageNameJobs"
 echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
@@ -89,6 +94,18 @@ case $yn in
         echo exiting...;
 		exit 1;;
 esac
+
+### signomix-common
+cd ../signomix-common
+mvn clean install
+
+### signomix-jobs
+cd ../signomix-ta-jobs
+./mvnw clean package
+
+### signomix-core
+cd ../signomix-ta-core
+./mvnw clean package
 
 ### signomix
 cd ../signomix

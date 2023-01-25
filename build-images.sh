@@ -14,6 +14,8 @@ versionProvider=0.0.1
 versionProxy=1.1.3
 versionPs=1.0.2.10
 versionReceiver=1.0.0
+versionCore=1.0.0
+versionJobs=1.0.0
 
 # names
 imageNameApp=signomix-ta-app
@@ -25,6 +27,8 @@ imageNameProvider=signomix-ta-provider
 imageNameProxy=signomix-proxy
 imageNamePs=signomix-ta-ps
 imageNameReceiver=signomix-ta-receiver
+imageNameCore=signomix-ta-core
+imageNameJobs=signomix-ta-jobs
 
 ## proxy config
 # domain [mydomain.com | localhost ]
@@ -62,6 +66,8 @@ echo "versionProvider=$versionProvider"
 echo "versionProxy=$versionProxy"
 echo "versionPs=$versionPs"
 echo "versionReceiver=$versionReceiver"
+echo "versionCore=$versionCore"
+echo "versionJobs=$versionJobs"
 echo
 echo "imageNameApp=$imageNameApp"
 echo "imageNameAccount=$imageNameAccount"
@@ -72,6 +78,8 @@ echo "imageNameProvider=$imageNameProvider"
 echo "imageNameProxy=$imageNameProxy"
 echo "imageNamePs=$imageNamePs"
 echo "imageNameReceiver=$imageNameReceiver"
+echo "imageNameCore=$imageNameCore"
+echo "imageNameJobs=$imageNameJobs"
 echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
@@ -117,6 +125,30 @@ else
     docker push "$dockerRepository"/$imageNameDb:$versionDb
 fi
 echo
+
+### signomix-common
+cd ../signomix-common
+mvn clean install
+
+### signomix-jobs
+cd ../signomix-ta-jobs
+./mvnw versions:set -DnewVersion=$versionJobs
+if [ -z "$dockerRepository" ]
+then
+    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameJobs -DSIGNOMIX_IMAGE_TAG=$versionJobs -Dquarkus.container-image.build=true
+else
+    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameJobs -DSIGNOMIX_IMAGE_TAG=$versionJobs -Dquarkus.container-image.push=true
+fi
+
+### signomix-core
+cd ../signomix-ta-core
+./mvnw versions:set -DnewVersion=$versionCore
+if [ -z "$dockerRepository" ]
+then
+    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameCore -DSIGNOMIX_IMAGE_TAG=$versionCore -Dquarkus.container-image.build=true
+else
+    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameCore -DSIGNOMIX_IMAGE_TAG=$versionCore -Dquarkus.container-image.push=true
+fi
 
 # signomix-main
 cd ../signomix

@@ -214,6 +214,39 @@ services:
 #      - MQ_EVENTS_EXCHANGE=events
 #      - MQ_EVENTS_QUEUE=events.account
 
+signomix-ta-core:
+    image: ${SGX_CORE_NAME}:${SGX_CORE_VERSION}
+    container_name: signomix-ta-core
+    hostname: signomix-ta-core
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+      - MQ_EVENTS_QUEUE=events.core
+
+  signomix-ta-jobs:
+    image: ${SGX_JOBS_NAME}:${SGX_JOBS_VERSION}
+    container_name: signomix-ta-jobs
+    hostname: signomix-ta-jobs
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+
   dbserver:
     image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
     container_name: dbserver

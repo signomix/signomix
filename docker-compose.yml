@@ -210,6 +210,40 @@ services:
       - MQ_EVENTS_EXCHANGE=events
       - MQ_EVENTS_QUEUE=events.account
 
+  signomix-ta-core:
+    build:
+      context: ../signomix-ta-core
+      dockerfile: ../signomix-ta-core/src/main/docker/Dockerfile.jvm
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+      - MQ_EVENTS_QUEUE=events.core
+
+  signomix-ta-jobs:
+    build:
+      context: ../signomix-ta-jobs
+      dockerfile: ../signomix-ta-jobs/src/main/docker/Dockerfile.jvm
+    restart: always
+    networks:
+      - signomix-network
+    depends_on:
+      - signomix-mq
+    environment:
+      - MQ_HOST=signomix-mq
+      - MQ_PORT=5672
+      - MQ_USER=user
+      - MQ_PASSWORD=user
+      - MQ_EVENTS_EXCHANGE=events
+      - SIGNOMIX_LOG_LEVEL=INFO
+
   dbserver:
     build:
       context: ../signomix-database
