@@ -1,17 +1,19 @@
 version: "3"
 
-volumes:
-  cms-assets:
+#volumes:
+#  cms-assets:
+
+x-services-volume:
+  &services-volume
+  type: bind
+  source: /home/signomix/signomix/volumes/assets
+  target: /usr/signomix/dbdata/assets
   
 services:
 
-    # API Gateway
+  # API Gateway
   signomix-proxy:
-    build:
-      context: ../signomix-proxy
-      args:
-        DOMAIN: ${SGX_DOMAIN}
-      dockerfile: ../signomix-proxy/Dockerfile
+    image: ${SGX_PROXY_NAME}:${SGX_PROXY_VERSION}
     restart: always
     networks:
       - signomix-network
@@ -19,8 +21,9 @@ services:
       - 80:80
       - 443:443
     volumes:
-        - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
+      - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
 
+  # MQ
   signomix-mq:
     image: rabbitmq:3-management-alpine
     container_name: signomix-mq
@@ -43,9 +46,9 @@ services:
 
   # signomix
   signomix-main:
-    build:
-      context: ../signomix
-      dockerfile: ../signomix/Dockerfile
+    image: ${SGX_MAIN_NAME}:${SGX_MAIN_VERSION}
+    container_name: signomix-main
+    hostname: signomix-main
     networks:
       - signomix-network
     depends_on:
@@ -73,16 +76,17 @@ services:
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
     volumes:
-      - cms-assets:/usr/signomix/dbdata/assets
+      #- cms-assets:/usr/signomix/dbdata/assets
+      - *services-volume
       - ~/signomix/volumes/volume-service/db:/usr/signomix/dbdata/db:rw
       - ~/signomix/volumes/volume-service/logs:/usr/signomix/dbdata/logs:rw
       - ~/signomix/volumes/volume-service/files:/usr/signomix/dbdata/files:rw
       - ~/signomix/volumes/volume-service/backup:/usr/signomix/dbdata/backup:rw
     
   signomix-ta-ms:
-    build:
-      context: ../signomix-ta-ms
-      dockerfile: ../signomix-ta-ms/src/main/docker/Dockerfile.jvm
+    image: ${SGX_MS_NAME}:${SGX_MS_VERSION}
+    container_name: signomix-ta-ms
+    hostname: signomix-ta-ms
     restart: always
     networks:
       - signomix-network
@@ -95,13 +99,13 @@ services:
       - SIGNOMIX_SMTP_FROM=${SGX_SMTP_FROM}
       - SIGNOMIX_SMTP_HOST=${SGX_SMTP_HOST}
       - SIGNOMIX_SMTP_LOGIN=${SGX_SMTP_LOGIN}
-      - SIGNOMIX_SMTP_TRUST_ALL=${SGX_SMTP_TRUST_ALL}
       - SIGNOMIX_SMTP_USER=${SGX_SMTP_USER}
       - SIGNOMIX_SMTP_PASSWORD=${SGX_SMTP_PASSWORD}
       - SIGNOMIX_SMTP_PORT=${SGX_SMTP_PORT}
       - SIGNOMIX_SMTP_SSL=${SGX_SMTP_SSL}
       - SIGNOMIX_SMTP_START_TLS=${SGX_SMTP_START_TLS}
       - SIGNOMIX_SMTP_AUTH_METHODS=${SGX_SMTP_AUTH_METHODS}
+      - SIGNOMIX_SMTP_TRUST_ALL=${SGX_SMTP_TRUST_ALL}
       - SIGNOMIX_SENTRY_PACKAGES=com.signomix
       - SIGNOMIX_SENTRY_LEVEL=ERROR
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
@@ -119,22 +123,24 @@ services:
 
   # signomix publication service
   signomix-ta-ps:
-    build:
-      context: ../signomix-ta-ps
-      dockerfile: ../signomix-ta-ps/src/main/docker/Dockerfile.jvm
+    image: ${SGX_PS_NAME}:${SGX_PS_VERSION}
+    container_name: signomix-ta-ps
+    hostname: signomix-ta-ps
     networks:
       - signomix-network
     environment:
       - SIGNOMIX_TITLE=${SGX_TITLE}
     volumes:
-      - cms-assets:/usr/signomix/www/assets
+      #- cms-assets:/usr/signomix/www/assets
+      - <<: *services-volume
+        target: /usr/signomix/www/assets
       - ~/signomix/volumes/volume-ps:/usr/signomix/dbdata:rw
       - ~/signomix/volumes/volume-ps/logs:/usr/signomix/dbdata/logs:rw
   
   signomix-ta-app:
-    build:
-      context: ../signomix-ta-app
-      dockerfile: ../signomix-ta-app/src/main/docker/Dockerfile.jvm
+    image: ${SGX_APP_NAME}:${SGX_APP_VERSION}
+    container_name: signomix-ta-app
+    hostname: signomix-ta-app
     restart: always
     networks:
       - signomix-network
@@ -146,9 +152,9 @@ services:
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
       
   signomix-ta-provider:
-    build:
-      context: ../signomix-ta-provider
-      dockerfile: ../signomix-ta-provider/src/main/docker/Dockerfile.jvm
+    image: ${SGX_PROVIDER_NAME}:${SGX_PROVIDER_VERSION}
+    container_name: signomix-ta-provider
+    hostname: signomix-ta-provider
     restart: always
     networks:
       - signomix-network
@@ -173,9 +179,9 @@ services:
       - SIGNOMIX_LOG_LEVEL=INFO
 
   signomix-ta-receiver:
-    build:
-      context: ../signomix-ta-receiver
-      dockerfile: ../signomix-ta-receiver/src/main/docker/Dockerfile.jvm
+    image: ${SGX_RECEIVER_NAME}:${SGX_RECEIVER_VERSION}
+    container_name: signomix-ta-receiver
+    hostname: signomix-ta-receiver
     restart: always
     networks:
       - signomix-network
@@ -194,11 +200,11 @@ services:
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
       - SIGNOMIX_LOG_LEVEL=INFO
+      - SIGNOMIX_EUI_HEADER_FIRST=${SGX_EUI_HEADER_FIRST}
+      - SIGNOMIX_AUTHORIZATION_HEADER_REQUIRED=${SGX_AUTHORIZATION_HEADER_REQUIRED}
 
   signomix-ta-account:
-    build:
-      context: ../signomix-ta-account
-      dockerfile: ../signomix-ta-account/src/main/docker/Dockerfile.jvm
+    image: ${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
     restart: always
     networks:
       - signomix-network
@@ -213,9 +219,9 @@ services:
       - MQ_EVENTS_QUEUE=events.account
 
   signomix-ta-core:
-    build:
-      context: ../signomix-ta-core
-      dockerfile: ../signomix-ta-core/src/main/docker/Dockerfile.jvm
+    image: ${SGX_CORE_NAME}:${SGX_CORE_VERSION}
+    container_name: signomix-ta-core
+    hostname: signomix-ta-core
     restart: always
     networks:
       - signomix-network
@@ -230,9 +236,9 @@ services:
       - MQ_EVENTS_QUEUE=events.core
 
   signomix-ta-jobs:
-    build:
-      context: ../signomix-ta-jobs
-      dockerfile: ../signomix-ta-jobs/src/main/docker/Dockerfile.jvm
+    image: ${SGX_JOBS_NAME}:${SGX_JOBS_VERSION}
+    container_name: signomix-ta-jobs
+    hostname: signomix-ta-jobs
     restart: always
     networks:
       - signomix-network
@@ -247,11 +253,9 @@ services:
       - SIGNOMIX_LOG_LEVEL=INFO
 
   dbserver:
-    build:
-      context: ../signomix-database
-      dockerfile: ../signomix-database/Dockerfile
-      args:
-        dbpassword: ${SGX_DATABASE_PASSWORD}
+    image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
+    container_name: dbserver
+    hostname: dbserver
     restart: always
     networks:
       - signomix-network

@@ -38,6 +38,7 @@ dbpassword=signomixdbpwd
 
 # repository
 dockerRepository=
+exportImages=true
 
 # the above variables can be overridden by local configuration
 cfg_location="$1"
@@ -85,6 +86,7 @@ echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
 echo "dockerRepository=$dockerRepository"
 echo "dbpassword=$dbpassword"
+echo "exportImages=$exportImages"
 echo "SIGNOMIX_TITLE=$SIGNOMIX_TITLE"
 
 ##
@@ -234,6 +236,10 @@ echo
 cd ../signomix-ta
 if [ -z "$dockerRepository" ]
 then
+    if [ $exportImages != "true" ]
+    then
+    echo "image export skipped"
+    else
     mkdir local-images
     rm local-images/*
     docker save $imageNameAccount:$versionAccount | gzip > local-images/$imageNameAccount.tar.gz
@@ -245,6 +251,10 @@ then
     docker save $imageNamePs:$versionPs | gzip > local-images/$imageNamePs.tar.gz
     docker save $imageNameReceiver:$versionReceiver | gzip > local-images/$imageNameReceiver.tar.gz
     docker save $imageNameProvider:$versionProvider | gzip > local-images/$imageNameProvider.tar.gz
+    docker save $imageNameCore:$versionCore | gzip > local-images/$imageNameCore.tar.gz
+    docker save $imageNameJobs:$versionJobs | gzip > local-images/$imageNameJobs.tar.gz
+    echo "saved"
+    fi
 fi
 # done
 
