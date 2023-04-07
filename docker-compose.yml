@@ -228,6 +228,9 @@ services:
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
       - MQ_EVENTS_QUEUE=events.core
+      - SIGNOMIX_DATABASE_URL=${SGX_DATABASE_URL}
+      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
 
   signomix-ta-jobs:
     build:

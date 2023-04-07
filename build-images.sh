@@ -16,6 +16,8 @@ versionPs=1.0.2.10
 versionReceiver=1.0.0
 versionCore=1.0.0
 versionJobs=1.0.0
+orderformUrlPl=https://orderform.mydomain.com/pl
+orderformUrlEn=https://orderform.mydomain.com/en
 
 # names
 imageNameApp=signomix-ta-app
@@ -60,6 +62,8 @@ fi
 echo
 echo "versionApp=$versionApp"
 echo "versionAccount=$versionAccount"
+echo "versionCommon=$versionCommon"
+cat ../signomix-common/pom.xml|grep versionCommon
 echo "versionDb=$versionDb"
 echo "versionMain=$versionMain"
 echo "versionMs=$versionMs"
@@ -86,13 +90,15 @@ echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
 echo "dockerRepository=$dockerRepository"
 echo "dbpassword=$dbpassword"
+echo "withGraylog=$withGraylog"
 echo "exportImages=$exportImages"
+echo "orderformUrlPl=$orderformUrlPl"
+echo "orderformUrlEn=$orderformUrlEn"
 echo "SIGNOMIX_TITLE=$SIGNOMIX_TITLE"
 
 ##
 ## end CONFIGURATION
 ##################################
-
 read -p "Do you want to proceed? (yes/no) " yn
 case $yn in 
 	yes ) echo ok, building ...;;
@@ -109,6 +115,13 @@ export SIGNOMIX_STATUSPAGE_URL=$statusPage
 
 # signomix-proxy
 cd ../signomix-proxy
+if [ $withGraylog = "true" ]
+then
+    cp nginx-with-graylog.conf nginx.conf
+else
+    cp nginx-no-graylog.conf nginx.conf
+fi
+
 if [ -z "$dockerRepository" ]
 then
     docker build --build-arg DOMAIN=$signomixDomain -t $imageNameProxy:$versionProxy .
@@ -182,9 +195,9 @@ cd ../signomix-ta-app
 ./mvnw versions:set -DnewVersion=$versionApp
 if [ -z "$dockerRepository" ]
 then
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.build=true
+    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.build=true -Dorderform.url.pl=$orderformUrlPl -Dorderform.url.en=$orderformUrlEn
 else
-    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.push=true
+    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.push=true -Dorderform.url.pl=$orderformUrlPl -Dorderform.url.en=$orderformUrlEn
 fi
 echo
 
