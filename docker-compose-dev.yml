@@ -15,6 +15,11 @@ services:
   signomix-proxy:
     image: ${SGX_PROXY_NAME}:${SGX_PROXY_VERSION}
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     ports:
@@ -28,6 +33,11 @@ services:
     image: rabbitmq:3-management-alpine
     container_name: signomix-mq
     hostname: signomix-mq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=user
@@ -49,6 +59,11 @@ services:
     image: ${SGX_MAIN_NAME}:${SGX_MAIN_VERSION}
     container_name: signomix-main
     hostname: signomix-main
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -88,6 +103,11 @@ services:
     container_name: signomix-ta-ms
     hostname: signomix-ta-ms
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -126,6 +146,11 @@ services:
     image: ${SGX_PS_NAME}:${SGX_PS_VERSION}
     container_name: signomix-ta-ps
     hostname: signomix-ta-ps
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     environment:
@@ -142,6 +167,11 @@ services:
     container_name: signomix-ta-app
     hostname: signomix-ta-app
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -156,6 +186,11 @@ services:
     container_name: signomix-ta-provider
     hostname: signomix-ta-provider
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -183,6 +218,11 @@ services:
     container_name: signomix-ta-receiver
     hostname: signomix-ta-receiver
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -206,6 +246,11 @@ services:
   signomix-ta-account:
     image: ${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -223,6 +268,11 @@ services:
     container_name: signomix-ta-core
     hostname: signomix-ta-core
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -240,6 +290,11 @@ services:
     container_name: signomix-ta-jobs
     hostname: signomix-ta-jobs
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -257,6 +312,11 @@ services:
     container_name: dbserver
     hostname: dbserver
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     expose:

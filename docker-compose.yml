@@ -13,6 +13,11 @@ services:
         DOMAIN: ${SGX_DOMAIN}
       dockerfile: ../signomix-proxy/Dockerfile
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     ports:
@@ -25,6 +30,11 @@ services:
     image: rabbitmq:3-management-alpine
     container_name: signomix-mq
     hostname: signomix-mq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=user
@@ -46,6 +56,11 @@ services:
     build:
       context: ../signomix
       dockerfile: ../signomix/Dockerfile
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -84,6 +99,11 @@ services:
       context: ../signomix-ta-ms
       dockerfile: ../signomix-ta-ms/src/main/docker/Dockerfile.jvm
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -122,6 +142,11 @@ services:
     build:
       context: ../signomix-ta-ps
       dockerfile: ../signomix-ta-ps/src/main/docker/Dockerfile.jvm
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     environment:
@@ -136,6 +161,11 @@ services:
       context: ../signomix-ta-app
       dockerfile: ../signomix-ta-app/src/main/docker/Dockerfile.jvm
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -150,6 +180,11 @@ services:
       context: ../signomix-ta-provider
       dockerfile: ../signomix-ta-provider/src/main/docker/Dockerfile.jvm
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -177,6 +212,11 @@ services:
       context: ../signomix-ta-receiver
       dockerfile: ../signomix-ta-receiver/src/main/docker/Dockerfile.jvm
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -200,6 +240,11 @@ services:
       context: ../signomix-ta-account
       dockerfile: ../signomix-ta-account/src/main/docker/Dockerfile.jvm
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -217,6 +262,11 @@ services:
       context: ../signomix-ta-core
       dockerfile: ../signomix-ta-core/src/main/docker/Dockerfile.jvm
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -237,6 +287,11 @@ services:
       context: ../signomix-ta-jobs
       dockerfile: ../signomix-ta-jobs/src/main/docker/Dockerfile.jvm
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     depends_on:
@@ -256,6 +311,11 @@ services:
       args:
         dbpassword: ${SGX_DATABASE_PASSWORD}
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - signomix-network
     expose:

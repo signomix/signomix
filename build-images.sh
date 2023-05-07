@@ -39,7 +39,7 @@ statusPage=https://status.mydomain.com
 dbpassword=signomixdbpwd
 
 # repository
-dockerRepository=
+dockerRegistry=
 exportImages=true
 
 # the above variables can be overridden by local configuration
@@ -88,7 +88,10 @@ echo "imageNameJobs=$imageNameJobs"
 echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
-echo "dockerRepository=$dockerRepository"
+echo "dockerRegistry=$dockerRegistry"
+echo "dockerGroup=$dockerGroup"
+echo "dockerUser=$dockerUser"
+echo "dockerPassword=$dockerPassword"
 echo "dbpassword=$dbpassword"
 echo "withGraylog=$withGraylog"
 echo "exportImages=$exportImages"
@@ -109,10 +112,6 @@ case $yn in
 		exit 1;;
 esac
 
-# set env variables
-export SIGNOMIX_IMAGE_GROUP=$dockerRepository
-export SIGNOMIX_STATUSPAGE_URL=$statusPage
-
 # signomix-proxy
 cd ../signomix-proxy
 if [ $withGraylog = "true" ]
@@ -122,59 +121,86 @@ else
     cp nginx-no-graylog.conf nginx.conf
 fi
 
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
     docker build --build-arg DOMAIN=$signomixDomain -t $imageNameProxy:$versionProxy .
 else
-    docker build --build-arg DOMAIN=$signomixDomain -t "$dockerRepository"/$imageNameProxy:$versionProxy .
-    docker push "$dockerRepository"/$imageNameProxy:$versionProxy
+    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy .
+    docker push $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy
 fi
 
 # signomix-database
 cd ../signomix-database
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
     docker build --build-arg dbpassword=$dbpassword -t $imageNameDb:$versionDb .
 else
-    docker build --build-arg dbpassword=$dbpassword -t "$dockerRepository"/$imageNameDb:$versionDb .
-    docker push "$dockerRepository"/$imageNameDb:$versionDb
+    docker build --build-arg dbpassword=$dbpassword -t $dockerRegistry/$dockerGroup/$imageNameDb:$versionDb .
+    docker push $dockerRegistry/$dockerGroup/$imageNameDb:$versionDb
 fi
 echo
 
 ### signomix-common
 cd ../signomix-common
+mvn versions:set -DnewVersion=$versionCommon
 mvn clean install
 
 ### signomix-jobs
 cd ../signomix-ta-jobs
 ./mvnw versions:set -DnewVersion=$versionJobs
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameJobs -DSIGNOMIX_IMAGE_TAG=$versionJobs -Dquarkus.container-image.build=true
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameJobs \
+    -Dquarkus.container-image.tag=$versionJobs \
+    -Dquarkus.container-image.build=true \
+    clean package
 else
-    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameJobs -DSIGNOMIX_IMAGE_TAG=$versionJobs -Dquarkus.container-image.push=true
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameJobs \
+    -Dquarkus.container-image.tag=$versionJobs \
+    -Dquarkus.container-image.push=true \
+    clean package
 fi
 
 ### signomix-core
 cd ../signomix-ta-core
 ./mvnw versions:set -DnewVersion=$versionCore
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameCore -DSIGNOMIX_IMAGE_TAG=$versionCore -Dquarkus.container-image.build=true
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameCore \
+    -Dquarkus.container-image.tag=$versionCore \
+    -Dquarkus.container-image.build=true \
+    clean package
 else
-    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameCore -DSIGNOMIX_IMAGE_TAG=$versionCore -Dquarkus.container-image.push=true
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameCore \
+    -Dquarkus.container-image.tag=$versionCore \
+    -Dquarkus.container-image.push=true \
+    clean package
 fi
 
 # signomix-main
 cd ../signomix
 ./mvnw versions:set -DnewVersion=$versionMain
 mvn package
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
     docker build -t $imageNameMain:$versionMain .
 else
-    docker build -t "$dockerRepository"/$imageNameMain:$versionMain .
-    docker push $dockerRepository/$imageNameMain:$versionMain
+    docker build -t $dockerRegistry/$dockerGroup/$imageNameMain:$versionMain .
+    docker push $dockerRegistry/$dockerGroup/$imageNameMain:$versionMain
 fi
 echo
 
@@ -182,72 +208,150 @@ echo
 cd ../signomix-ta-ps
 ./update-webapps.sh
 ./mvnw versions:set -DnewVersion=$versionPs
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNamePs -DSIGNOMIX_IMAGE_TAG=$versionPs -Dquarkus.container-image.build=true
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNamePs \
+    -Dquarkus.container-image.tag=$versionPs \
+    -Dquarkus.container-image.build=true \
+    clean package
 else
-    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNamePs -DSIGNOMIX_IMAGE_TAG=$versionPs -Dquarkus.container-image.push=true
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNamePs \
+    -Dquarkus.container-image.tag=$versionPs \
+    -Dquarkus.container-image.push=true \
+    clean package
 fi
 echo
 
 # signomix-ta-app
 cd ../signomix-ta-app
 ./mvnw versions:set -DnewVersion=$versionApp
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.build=true -Dorderform.url.pl=$orderformUrlPl -Dorderform.url.en=$orderformUrlEn
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameApp \
+    -Dquarkus.container-image.tag=$versionApp \
+    -Dquarkus.container-image.build=true \
+    clean package
 else
-    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameApp -DSIGNOMIX_IMAGE_TAG=$versionApp -Dquarkus.container-image.push=true -Dorderform.url.pl=$orderformUrlPl -Dorderform.url.en=$orderformUrlEn
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameApp \
+    -Dquarkus.container-image.tag=$versionApp \
+    -Dquarkus.container-image.push=true \
+    clean package
 fi
 echo
 
 # signomix-ta-ms
 cd ../signomix-ta-ms
 ./mvnw versions:set -DnewVersion=$versionMs
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameMs -DSIGNOMIX_IMAGE_TAG=$versionMs -Dquarkus.container-image.build=true
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameMs \
+    -Dquarkus.container-image.tag=$versionMs \
+    -Dquarkus.container-image.build=true \
+    clean package
 else
-    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameMs -DSIGNOMIX_IMAGE_TAG=$versionMs -Dquarkus.container-image.push=true
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameMs \
+    -Dquarkus.container-image.tag=$versionMs \
+    -Dquarkus.container-image.push=true \
+    clean package
 fi
 echo
 
 # signomix-ta-receiver
 cd ../signomix-ta-receiver
 ./mvnw versions:set -DnewVersion=$versionReceiver
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameReceiver -DSIGNOMIX_IMAGE_TAG=$versionReceiver -Dquarkus.container-image.build=true
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameReceiver \
+    -Dquarkus.container-image.tag=$versionReceiver \
+    -Dquarkus.container-image.build=true \
+    clean package
 else
-    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameReceiver -DSIGNOMIX_IMAGE_TAG=$versionReceiver -Dquarkus.container-image.push=true
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameReceiver \
+    -Dquarkus.container-image.tag=$versionReceiver \
+    -Dquarkus.container-image.push=true \
+    clean package
 fi
 echo
 
 # signomix-ta-provider
 cd ../signomix-ta-provider
 ./mvnw versions:set -DnewVersion=$versionProvider
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameProvider -DSIGNOMIX_IMAGE_TAG=$versionProvider -Dquarkus.container-image.build=true
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameProvider \
+    -Dquarkus.container-image.tag=$versionProvider \
+    -Dquarkus.container-image.build=true \
+    clean package
 else
-    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameProvider -DSIGNOMIX_IMAGE_TAG=$versionProvider -Dquarkus.container-image.push=true
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameProvider \
+    -Dquarkus.container-image.tag=$versionProvider \
+    -Dquarkus.container-image.push=true \
+    clean package
 fi
 echo
 
 # signomix-ta-account
 cd ../signomix-ta-account
 ./mvnw versions:set -DnewVersion=$versionAccount
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
-    ./mvnw clean package -DSIGNOMIX_IMAGE_NAME=$imageNameAccount -DSIGNOMIX_IMAGE_TAG=$versionAccount -Dquarkus.container-image.build=true
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameAccount \
+    -Dquarkus.container-image.tag=$versionAccount \
+    -Dquarkus.container-image.build=true \
+    clean package
 else
-    ./mvnw clean package -DQUARKUS_CONTAINER_IMAGE_REGISTRY=$dockerRepository -DSIGNOMIX_IMAGE_NAME=$imageNameAccount -DSIGNOMIX_IMAGE_TAG=$versionAccount -Dquarkus.container-image.push=true
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameAccount \
+    -Dquarkus.container-image.tag=$versionAccount \
+    -Dquarkus.container-image.push=true \
+    clean package
 fi
 echo
 
 # saving images
 cd ../signomix-ta
-if [ -z "$dockerRepository" ]
+if [ -z "$dockerRegistry" ]
 then
     if [ $exportImages != "true" ]
     then
