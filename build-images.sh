@@ -112,6 +112,12 @@ case $yn in
 		exit 1;;
 esac
 
+# signomix-webapp
+cd ../signomix-webapp
+npm run build
+rm -R ../signomix-proxy/webapp/*
+cp -R build/* ../signomix-proxy/webapp
+
 # signomix-proxy
 cd ../signomix-proxy
 if [ $withGraylog = "true" ]
