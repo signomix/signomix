@@ -40,7 +40,9 @@ dbpassword=signomixdbpwd
 
 # repository
 dockerRegistry=
+dockerHubType=true
 exportImages=true
+
 
 # the above variables can be overridden by local configuration
 cfg_location="$1"
@@ -88,6 +90,7 @@ echo "imageNameJobs=$imageNameJobs"
 echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
+echo "dockerHubType=$dockerHubType"
 echo "dockerRegistry=$dockerRegistry"
 echo "dockerGroup=$dockerGroup"
 echo "dockerUser=$dockerUser"
@@ -115,6 +118,10 @@ esac
 # signomix-webapp
 cd ../signomix-webapp
 npm run build
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 rm -R ../signomix-proxy/webapp/*
 cp -R build/* ../signomix-proxy/webapp
 
@@ -131,8 +138,18 @@ if [ -z "$dockerRegistry" ]
 then
     docker build --build-arg DOMAIN=$signomixDomain -t $imageNameProxy:$versionProxy .
 else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameProxy:$versionProxy .
+    docker push $dockerUser/$imageNameProxy:$versionProxy
+    else
     docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy .
     docker push $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 
 # signomix-database
@@ -141,8 +158,18 @@ if [ -z "$dockerRegistry" ]
 then
     docker build --build-arg dbpassword=$dbpassword -t $imageNameDb:$versionDb .
 else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build --build-arg dbpassword=$dbpassword -t $dockerUser/$imageNameDb:$versionDb .
+    docker push $dockerUser/$imageNameDb:$versionDb
+    else
     docker build --build-arg dbpassword=$dbpassword -t $dockerRegistry/$dockerGroup/$imageNameDb:$versionDb .
     docker push $dockerRegistry/$dockerGroup/$imageNameDb:$versionDb
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 echo
 
@@ -150,10 +177,18 @@ echo
 cd ../signomix-common
 mvn versions:set -DnewVersion=$versionCommon
 mvn clean install
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 
 ### signomix-jobs
 cd ../signomix-ta-jobs
 ./mvnw versions:set -DnewVersion=$versionJobs
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 if [ -z "$dockerRegistry" ]
 then
     echo
@@ -163,7 +198,16 @@ then
     -Dquarkus.container-image.build=true \
     clean package
 else
+    if [ $dockerHubType = "true" ]
+    then
     ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameJobs \
+    -Dquarkus.container-image.tag=$versionJobs \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
+        ./mvnw \
     -Dquarkus.container-image.registry=$dockerRegistry \
     -Dquarkus.container-image.group=$dockerGroup \
     -Dquarkus.container-image.username=$dockerUser \
@@ -172,11 +216,20 @@ else
     -Dquarkus.container-image.tag=$versionJobs \
     -Dquarkus.container-image.push=true \
     clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 
 ### signomix-core
 cd ../signomix-ta-core
 ./mvnw versions:set -DnewVersion=$versionCore
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 if [ -z "$dockerRegistry" ]
 then
     echo
@@ -186,6 +239,15 @@ then
     -Dquarkus.container-image.build=true \
     clean package
 else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameCore \
+    -Dquarkus.container-image.tag=$versionCore \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
     ./mvnw \
     -Dquarkus.container-image.registry=$dockerRegistry \
     -Dquarkus.container-image.group=$dockerGroup \
@@ -195,18 +257,37 @@ else
     -Dquarkus.container-image.tag=$versionCore \
     -Dquarkus.container-image.push=true \
     clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 
 # signomix-main
 cd ../signomix
 ./mvnw versions:set -DnewVersion=$versionMain
 mvn package
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 if [ -z "$dockerRegistry" ]
 then
     docker build -t $imageNameMain:$versionMain .
 else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build -t $dockerUser/$imageNameMain:$versionMain .
+    docker push $dockerUser/$imageNameMain:$versionMain
+    else
     docker build -t $dockerRegistry/$dockerGroup/$imageNameMain:$versionMain .
     docker push $dockerRegistry/$dockerGroup/$imageNameMain:$versionMain
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 echo
 
@@ -214,6 +295,10 @@ echo
 cd ../signomix-ta-ps
 ./update-webapps.sh
 ./mvnw versions:set -DnewVersion=$versionPs
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 if [ -z "$dockerRegistry" ]
 then
     echo
@@ -223,6 +308,15 @@ then
     -Dquarkus.container-image.build=true \
     clean package
 else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNamePs \
+    -Dquarkus.container-image.tag=$versionPs \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
     ./mvnw \
     -Dquarkus.container-image.registry=$dockerRegistry \
     -Dquarkus.container-image.group=$dockerGroup \
@@ -232,12 +326,21 @@ else
     -Dquarkus.container-image.tag=$versionPs \
     -Dquarkus.container-image.push=true \
     clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 echo
 
 # signomix-ta-app
 cd ../signomix-ta-app
 ./mvnw versions:set -DnewVersion=$versionApp
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 if [ -z "$dockerRegistry" ]
 then
     echo
@@ -247,6 +350,15 @@ then
     -Dquarkus.container-image.build=true \
     clean package
 else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameApp \
+    -Dquarkus.container-image.tag=$versionApp \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
     ./mvnw \
     -Dquarkus.container-image.registry=$dockerRegistry \
     -Dquarkus.container-image.group=$dockerGroup \
@@ -256,12 +368,21 @@ else
     -Dquarkus.container-image.tag=$versionApp \
     -Dquarkus.container-image.push=true \
     clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 echo
 
 # signomix-ta-ms
 cd ../signomix-ta-ms
 ./mvnw versions:set -DnewVersion=$versionMs
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 if [ -z "$dockerRegistry" ]
 then
     echo
@@ -271,6 +392,15 @@ then
     -Dquarkus.container-image.build=true \
     clean package
 else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameMs \
+    -Dquarkus.container-image.tag=$versionMs \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
     ./mvnw \
     -Dquarkus.container-image.registry=$dockerRegistry \
     -Dquarkus.container-image.group=$dockerGroup \
@@ -280,12 +410,21 @@ else
     -Dquarkus.container-image.tag=$versionMs \
     -Dquarkus.container-image.push=true \
     clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 echo
 
 # signomix-ta-receiver
 cd ../signomix-ta-receiver
 ./mvnw versions:set -DnewVersion=$versionReceiver
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 if [ -z "$dockerRegistry" ]
 then
     echo
@@ -295,6 +434,15 @@ then
     -Dquarkus.container-image.build=true \
     clean package
 else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameReceiver \
+    -Dquarkus.container-image.tag=$versionReceiver \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
     ./mvnw \
     -Dquarkus.container-image.registry=$dockerRegistry \
     -Dquarkus.container-image.group=$dockerGroup \
@@ -304,12 +452,21 @@ else
     -Dquarkus.container-image.tag=$versionReceiver \
     -Dquarkus.container-image.push=true \
     clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 echo
 
 # signomix-ta-provider
 cd ../signomix-ta-provider
 ./mvnw versions:set -DnewVersion=$versionProvider
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 if [ -z "$dockerRegistry" ]
 then
     echo
@@ -319,6 +476,15 @@ then
     -Dquarkus.container-image.build=true \
     clean package
 else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameProvider \
+    -Dquarkus.container-image.tag=$versionProvider \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
     ./mvnw \
     -Dquarkus.container-image.registry=$dockerRegistry \
     -Dquarkus.container-image.group=$dockerGroup \
@@ -328,12 +494,21 @@ else
     -Dquarkus.container-image.tag=$versionProvider \
     -Dquarkus.container-image.push=true \
     clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 echo
 
 # signomix-ta-account
 cd ../signomix-ta-account
 ./mvnw versions:set -DnewVersion=$versionAccount
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 if [ -z "$dockerRegistry" ]
 then
     echo
@@ -343,6 +518,15 @@ then
     -Dquarkus.container-image.build=true \
     clean package
 else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameAccount \
+    -Dquarkus.container-image.tag=$versionAccount \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
     ./mvnw \
     -Dquarkus.container-image.registry=$dockerRegistry \
     -Dquarkus.container-image.group=$dockerGroup \
@@ -352,6 +536,11 @@ else
     -Dquarkus.container-image.tag=$versionAccount \
     -Dquarkus.container-image.push=true \
     clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
 fi
 echo
 
