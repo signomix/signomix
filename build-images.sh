@@ -345,6 +345,8 @@ if [ -z "$dockerRegistry" ]
 then
     echo
     ./mvnw \
+    -DSIGNOMIX_IMAGE_NAME=$imageNameApp \
+    -DSIGNOMIX_IMAGE_TAG=$versionApp \
     -Dquarkus.container-image.name=$imageNameApp \
     -Dquarkus.container-image.tag=$versionApp \
     -Dquarkus.container-image.build=true \
@@ -353,6 +355,8 @@ else
     if [ $dockerHubType = "true" ]
     then
     ./mvnw \
+    -DSIGNOMIX_IMAGE_NAME=$imageNameApp \
+    -DSIGNOMIX_IMAGE_TAG=$versionApp \
     -Dquarkus.container-image.group=$dockerGroup \
     -Dquarkus.container-image.name=$imageNameApp \
     -Dquarkus.container-image.tag=$versionApp \
@@ -360,6 +364,8 @@ else
     clean package
     else
     ./mvnw \
+    -DSIGNOMIX_IMAGE_NAME=$imageNameApp \
+    -DSIGNOMIX_IMAGE_TAG=$versionApp \
     -Dquarkus.container-image.registry=$dockerRegistry \
     -Dquarkus.container-image.group=$dockerGroup \
     -Dquarkus.container-image.username=$dockerUser \
