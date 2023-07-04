@@ -101,6 +101,8 @@ echo "exportImages=$exportImages"
 echo "orderformUrlPl=$orderformUrlPl"
 echo "orderformUrlEn=$orderformUrlEn"
 echo "SIGNOMIX_TITLE=$SIGNOMIX_TITLE"
+echo
+echo "Image filter: $2"
 
 ##
 ## end CONFIGURATION
@@ -115,6 +117,7 @@ case $yn in
 		exit 1;;
 esac
 
+if [ -z "$2" ] || [ "$2" = "signomix-webapp" ]; then
 # signomix-webapp
 cd ../signomix-webapp
 npm run build
@@ -124,7 +127,9 @@ if [ $retVal -ne 0 ]; then
 fi
 rm -R ../signomix-proxy/webapp/*
 cp -R build/* ../signomix-proxy/webapp
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-proxy" || [ "$2" = "signomix-webapp" ]; then
 # signomix-proxy
 cd ../signomix-proxy
 if [ $withGraylog = "true" ]
@@ -151,7 +156,10 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-database" ]; then
 # signomix-database
 cd ../signomix-database
 if [ -z "$dockerRegistry" ]
@@ -172,6 +180,7 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 
 ### signomix-common
 cd ../signomix-common
@@ -182,6 +191,7 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-ta-jobs" ]; then
 ### signomix-jobs
 cd ../signomix-ta-jobs
 ./mvnw versions:set -DnewVersion=$versionJobs
@@ -222,7 +232,9 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-ta-core" ]; then
 ### signomix-core
 cd ../signomix-ta-core
 ./mvnw versions:set -DnewVersion=$versionCore
@@ -263,7 +275,9 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-main" ]; then
 # signomix-main
 cd ../signomix
 ./mvnw versions:set -DnewVersion=$versionMain
@@ -290,7 +304,9 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-ta-ps" ]; then
 # signomix-ta-ps
 cd ../signomix-ta-ps
 ./update-webapps.sh
@@ -333,7 +349,9 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-ta-app" ]; then
 # signomix-ta-app
 cd ../signomix-ta-app
 ./mvnw versions:set -DnewVersion=$versionApp
@@ -381,7 +399,9 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-ta-ms" ]; then
 # signomix-ta-ms
 cd ../signomix-ta-ms
 ./mvnw versions:set -DnewVersion=$versionMs
@@ -423,7 +443,9 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-ta-receiver" ]; then
 # signomix-ta-receiver
 cd ../signomix-ta-receiver
 ./mvnw versions:set -DnewVersion=$versionReceiver
@@ -465,7 +487,9 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-ta-provider" ]; then
 # signomix-ta-provider
 cd ../signomix-ta-provider
 ./mvnw versions:set -DnewVersion=$versionProvider
@@ -507,7 +531,9 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-ta-account" ]; then
 # signomix-ta-account
 cd ../signomix-ta-account
 ./mvnw versions:set -DnewVersion=$versionAccount
@@ -549,6 +575,7 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 
 # saving images
 cd ../signomix-ta
