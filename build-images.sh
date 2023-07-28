@@ -129,7 +129,7 @@ rm -R ../signomix-proxy/webapp/*
 cp -R build/* ../signomix-proxy/webapp
 fi
 
-if [ -z "$2" ] || [ "$2" = "signomix-proxy" || [ "$2" = "signomix-webapp" ]; then
+if [ -z "$2" ] || [ "$2" = "signomix-proxy" ] || [ "$2" = "signomix-webapp" ]; then
 # signomix-proxy
 cd ../signomix-proxy
 if [ $withGraylog = "true" ]
