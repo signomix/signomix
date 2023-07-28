@@ -590,6 +590,8 @@ if [ -z "$2" ] || [ "$2" = "signomix-docs-website" ]; then
 cd ../signomix-docs-website
 echo "PUBLIC_HCMS_URL = 'https://hcms.$signomixDomain/api/docs'" > .env
 echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
+
+echo
 fi
 
 # saving images
