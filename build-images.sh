@@ -577,6 +577,21 @@ fi
 echo
 fi
 
+# hcms
+if [ -z "$2" ] || [ "$2" = "hcms" ]; then
+
+cd ../cricket-hcms
+echo
+fi
+
+# signomix-docs-website
+if [ -z "$2" ] || [ "$2" = "signomix-docs-website" ]; then
+
+cd ../signomix-docs-website
+echo "PUBLIC_HCMS_URL = 'https://hcms.$signomixDomain/api/docs'" > .env
+echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
+fi
+
 # saving images
 cd ../signomix-ta
 if [ -z "$dockerRegistry" ]
