@@ -16,6 +16,8 @@ versionPs=1.0.2.10
 versionReceiver=1.0.0
 versionCore=1.0.0
 versionJobs=1.0.0
+versionDocsWebsite=1.0.0
+versionHcms=1.0.0
 orderformUrlPl=https://orderform.mydomain.com/pl
 orderformUrlEn=https://orderform.mydomain.com/en
 
@@ -31,6 +33,8 @@ imageNamePs=signomix-ta-ps
 imageNameReceiver=signomix-ta-receiver
 imageNameCore=signomix-ta-core
 imageNameJobs=signomix-ta-jobs
+imageNameDocsWebsite=signomix-docs-website
+imageNameHcms=cricket-hcms
 
 ## proxy config
 # domain [mydomain.com | localhost ]
@@ -75,6 +79,8 @@ echo "versionPs=$versionPs"
 echo "versionReceiver=$versionReceiver"
 echo "versionCore=$versionCore"
 echo "versionJobs=$versionJobs"
+echo "versionDocsWebsite=$versionDocsWebsite"
+echo "versionHcms=$versionHcms"
 echo
 echo "imageNameApp=$imageNameApp"
 echo "imageNameAccount=$imageNameAccount"
@@ -87,6 +93,8 @@ echo "imageNamePs=$imageNamePs"
 echo "imageNameReceiver=$imageNameReceiver"
 echo "imageNameCore=$imageNameCore"
 echo "imageNameJobs=$imageNameJobs"
+echo "imageNameDocsWebsite=$imageNameDocsWebsite"
+echo "imageNameHcms=$imageNameHcms"
 echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
@@ -578,9 +586,49 @@ echo
 fi
 
 # hcms
-if [ -z "$2" ] || [ "$2" = "hcms" ]; then
-
+if [ -z "$2" ] || [ "$2" = "cricket-hcms" ]; then
 cd ../cricket-hcms
+./mvnw versions:set -DnewVersion=$versionHcms
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+if [ -z "$dockerRegistry" ]
+then
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameHcms \
+    -Dquarkus.container-image.tag=$versionHcms \
+    -Dquarkus.container-image.additional-tags=latest \
+    -Dquarkus.container-image.build=true \
+    clean package
+else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameHcms \
+    -Dquarkus.container-image.tag=$versionHcms \
+    -Dquarkus.container-image.additional-tags=latest \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameHcms \
+    -Dquarkus.container-image.tag=$versionHcms \
+    -Dquarkus.container-image.additional-tags=latest \
+    -Dquarkus.container-image.push=true \
+    clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 echo
 fi
 
@@ -590,7 +638,23 @@ if [ -z "$2" ] || [ "$2" = "signomix-docs-website" ]; then
 cd ../signomix-docs-website
 echo "PUBLIC_HCMS_URL = 'https://hcms.$signomixDomain/api/docs'" > .env
 echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
-
+if [ -z "$dockerRegistry" ]
+then
+    docker build -t $imageNameDocsWebsite:$versionDocsWebsite .
+else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build  -t $dockerUser/$imageNameDocsWebsite:$versionDocsWebsite .
+    docker push $dockerUser/$imageNameDocsWebsite:$versionDocsWebsite
+    else
+    docker build -t $dockerRegistry/$dockerGroup/$imageNameDocsWebsite:$versionDocsWebsite .
+    docker push $dockerRegistry/$dockerGroup/$imageNameDocsWebsite:$versionDocsWebsite
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
 echo
 fi
 
