@@ -7,6 +7,7 @@
 # versions
 versionApp=1.0.4
 versionAccount=1.0.4
+versionAuth=1.0.0
 versionDb=1.0.5
 versionMain=1.2.225
 versionMs=1.0.3
@@ -24,6 +25,7 @@ orderformUrlEn=https://orderform.mydomain.com/en
 # names
 imageNameApp=signomix-ta-app
 imageNameAccount=signomix-ta-account
+imageNameAuth=signomix-auth
 imageNameDb=signomix-database
 imageNameMain=signomix
 imageNameMs=signomix-ta-ms
@@ -68,6 +70,7 @@ fi
 echo
 echo "versionApp=$versionApp"
 echo "versionAccount=$versionAccount"
+echo "versionAuth=$versionAuth"
 echo "versionCommon=$versionCommon"
 cat ../signomix-common/pom.xml|grep versionCommon
 echo "versionDb=$versionDb"
@@ -84,6 +87,7 @@ echo "versionHcms=$versionHcms"
 echo
 echo "imageNameApp=$imageNameApp"
 echo "imageNameAccount=$imageNameAccount"
+echo "imageNameAuth=$imageNameAuth"
 echo "imageNameDb=$imageNameDb"
 echo "imageNameMain=$imageNameMain"
 echo "imageNameMs=$imageNameMs"
@@ -275,6 +279,49 @@ else
     -Dquarkus.container-image.password=$dockerPassword \
     -Dquarkus.container-image.name=$imageNameCore \
     -Dquarkus.container-image.tag=$versionCore \
+    -Dquarkus.container-image.push=true \
+    clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+fi
+
+if [ -z "$2" ] || [ "$2" = "signomix-auth" ]; then
+### signomix-auth
+cd ../signomix-auth
+./mvnw versions:set -DnewVersion=$versionAuth
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+if [ -z "$dockerRegistry" ]
+then
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameAuth \
+    -Dquarkus.container-image.tag=$versionAuth \
+    -Dquarkus.container-image.build=true \
+    clean package
+else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameAuth \
+    -Dquarkus.container-image.tag=$versionAuth \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameAuth \
+    -Dquarkus.container-image.tag=$versionAuth \
     -Dquarkus.container-image.push=true \
     clean package
     fi
