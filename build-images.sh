@@ -49,6 +49,9 @@ dockerRegistry=
 dockerHubType=true
 exportImages=true
 
+# other
+defaultOrganizationId=0
+
 
 # the above variables can be overridden by local configuration
 cfg_location="$1"
@@ -113,6 +116,7 @@ echo "exportImages=$exportImages"
 echo "orderformUrlPl=$orderformUrlPl"
 echo "orderformUrlEn=$orderformUrlEn"
 echo "SIGNOMIX_TITLE=$SIGNOMIX_TITLE"
+echo "defaultOrganizationId=$defaultOrganizationId"
 echo
 echo "Image filter: $2"
 
