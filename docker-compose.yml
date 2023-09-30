@@ -1,17 +1,19 @@
 version: "3"
 
-volumes:
-  cms-assets:
+#volumes:
+#  cms-assets:
+
+x-services-volume:
+  &services-volume
+  type: bind
+  source: ${SGX_VOLUMES}/assets
+  target: /usr/signomix/dbdata/assets
   
 services:
 
-    # API Gateway
+  # API Gateway
   signomix-proxy:
-    build:
-      context: ../signomix-proxy
-      args:
-        DOMAIN: ${SGX_DOMAIN}
-      dockerfile: ../signomix-proxy/Dockerfile
+    image: ${SGX_PROXY_NAME}:${SGX_PROXY_VERSION}
     restart: always
     logging:
       driver: "json-file"
@@ -23,9 +25,11 @@ services:
     ports:
       - 80:80
       - 443:443
-    volumes:
-        - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
+    #TODO: for production use, mount volume with certificates
+    #volumes:
+    #  - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
 
+  # MQ
   signomix-mq:
     image: rabbitmq:3-management-alpine
     container_name: signomix-mq
@@ -50,12 +54,34 @@ services:
       interval: 5s
       timeout: 15s
       retries: 3
+  
+  signomix-auth:
+    image: ${SGX_AUTH_NAME}:${SGX_AUTH_VERSION}
+    container_name: signomix-auth
+    hostname: signomix-auth
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    networks:
+      - signomix-network
+    depends_on:
+      - dbserver
+    environment:
+      - SIGNOMIX_ORGANIZATION_DEFAULT=${SGX_ORGANIZATION_DEFAULT}
+      - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
+      - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
+      - SIGNOMIX_USER_DATABASE_URL=${SGX_USER_DATABASE_URL}
+      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
 
   # signomix
   signomix-main:
-    build:
-      context: ../signomix
-      dockerfile: ../signomix/Dockerfile
+    image: ${SGX_MAIN_NAME}:${SGX_MAIN_VERSION}
+    container_name: signomix-main
+    hostname: signomix-main
     logging:
       driver: "json-file"
       options:
@@ -88,16 +114,17 @@ services:
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
     volumes:
-      - cms-assets:/usr/signomix/dbdata/assets
-      - ~/signomix/volumes/volume-service/db:/usr/signomix/dbdata/db:rw
-      - ~/signomix/volumes/volume-service/logs:/usr/signomix/dbdata/logs:rw
-      - ~/signomix/volumes/volume-service/files:/usr/signomix/dbdata/files:rw
-      - ~/signomix/volumes/volume-service/backup:/usr/signomix/dbdata/backup:rw
+      #- cms-assets:/usr/signomix/dbdata/assets
+      - *services-volume
+      - ${SGX_VOLUMES}/volume-service/db:/usr/signomix/dbdata/db:rw
+      - ${SGX_VOLUMES}/volume-service/logs:/usr/signomix/dbdata/logs:rw
+      - ${SGX_VOLUMES}/volume-service/files:/usr/signomix/dbdata/files:rw
+      - ${SGX_VOLUMES}/volume-service/backup:/usr/signomix/dbdata/backup:rw
     
   signomix-ta-ms:
-    build:
-      context: ../signomix-ta-ms
-      dockerfile: ../signomix-ta-ms/src/main/docker/Dockerfile.jvm
+    image: ${SGX_MS_NAME}:${SGX_MS_VERSION}
+    container_name: signomix-ta-ms
+    hostname: signomix-ta-ms
     restart: always
     logging:
       driver: "json-file"
@@ -126,9 +153,10 @@ services:
       - SIGNOMIX_SENTRY_LEVEL=ERROR
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
-      - SIGNOMIX_AUTH_DATABASE_USER=${SGX_AUTH_DATABASE_USER}
-      - SIGNOMIX_AUTH_DATABASE_PASSWORD=${SGX_AUTH_DATABASE_PASSWORD}
+      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
+      - SIGNOMIX_ADMIN_EMAIL=${SGX_ADMIN_NOTIFICATION_EMAIL}
       - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
       - QUEUE_USER=user
@@ -136,12 +164,13 @@ services:
       - QUEUE_NOTIFICATIONS=notifications
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
+      - SIGNOMIX_DOC_WELCOME=/admin/welcomedoc
 
   # signomix publication service
   signomix-ta-ps:
-    build:
-      context: ../signomix-ta-ps
-      dockerfile: ../signomix-ta-ps/src/main/docker/Dockerfile.jvm
+    image: ${SGX_PS_NAME}:${SGX_PS_VERSION}
+    container_name: signomix-ta-ps
+    hostname: signomix-ta-ps
     logging:
       driver: "json-file"
       options:
@@ -152,14 +181,16 @@ services:
     environment:
       - SIGNOMIX_TITLE=${SGX_TITLE}
     volumes:
-      - cms-assets:/usr/signomix/www/assets
-      - ~/signomix/volumes/volume-ps:/usr/signomix/dbdata:rw
-      - ~/signomix/volumes/volume-ps/logs:/usr/signomix/dbdata/logs:rw
+      #- cms-assets:/usr/signomix/www/assets
+      - <<: *services-volume
+        target: /usr/signomix/www/assets
+      - ${SGX_VOLUMES}/volume-ps:/usr/signomix/dbdata:rw
+      - ${SGX_VOLUMES}/volume-ps/logs:/usr/signomix/dbdata/logs:rw
   
   signomix-ta-app:
-    build:
-      context: ../signomix-ta-app
-      dockerfile: ../signomix-ta-app/src/main/docker/Dockerfile.jvm
+    image: ${SGX_APP_NAME}:${SGX_APP_VERSION}
+    container_name: signomix-ta-app
+    hostname: signomix-ta-app
     restart: always
     logging:
       driver: "json-file"
@@ -170,15 +201,16 @@ services:
       - signomix-network
     depends_on:
       - signomix-mq
+      - signomix-ta-ms
     environment:
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
       
   signomix-ta-provider:
-    build:
-      context: ../signomix-ta-provider
-      dockerfile: ../signomix-ta-provider/src/main/docker/Dockerfile.jvm
+    image: ${SGX_PROVIDER_NAME}:${SGX_PROVIDER_VERSION}
+    container_name: signomix-ta-provider
+    hostname: signomix-ta-provider
     restart: always
     logging:
       driver: "json-file"
@@ -197,8 +229,6 @@ services:
       - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
       - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
       - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
-      - SIGNOMIX_AUTH_DATABASE_USER=${SGX_AUTH_DATABASE_USER}
-      - SIGNOMIX_AUTH_DATABASE_PASSWORD=${SGX_AUTH_DATABASE_PASSWORD}
       - SIGNOMIX_QUERY_LIMIT=${SGX_QUERY_LIMIT}
       - MQ_HOST=signomix-mq
       - MQ_PORT=5672
@@ -206,11 +236,12 @@ services:
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
       - SIGNOMIX_LOG_LEVEL=INFO
+      - QUARKUS_DATASOURCE_JDBC_MAX_SIZE=100
 
   signomix-ta-receiver:
-    build:
-      context: ../signomix-ta-receiver
-      dockerfile: ../signomix-ta-receiver/src/main/docker/Dockerfile.jvm
+    image: ${SGX_RECEIVER_NAME}:${SGX_RECEIVER_VERSION}
+    container_name: signomix-ta-receiver
+    hostname: signomix-ta-receiver
     restart: always
     logging:
       driver: "json-file"
@@ -234,11 +265,13 @@ services:
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
       - SIGNOMIX_LOG_LEVEL=INFO
+      - SIGNOMIX_EUI_HEADER_REQUIRED=${SGX_EUI_HEADER_REQUIRED}
+      - SIGNOMIX_AUTHORIZATION_HEADER_REQUIRED=${SGX_AUTHORIZATION_HEADER_REQUIRED}
+      - SIGNOMIX_STATUS_INTEGRATED=${SGX_STATUS_INTEGRATED}
+      - QUARKUS_DATASOURCE_JDBC_MAX_SIZE=100
 
   signomix-ta-account:
-    build:
-      context: ../signomix-ta-account
-      dockerfile: ../signomix-ta-account/src/main/docker/Dockerfile.jvm
+    image: ${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
     restart: always
     logging:
       driver: "json-file"
@@ -258,9 +291,9 @@ services:
       - MQ_EVENTS_QUEUE=events.account
 
   signomix-ta-core:
-    build:
-      context: ../signomix-ta-core
-      dockerfile: ../signomix-ta-core/src/main/docker/Dockerfile.jvm
+    image: ${SGX_CORE_NAME}:${SGX_CORE_VERSION}
+    container_name: signomix-ta-core
+    hostname: signomix-ta-core
     restart: always
     logging:
       driver: "json-file"
@@ -272,20 +305,28 @@ services:
     depends_on:
       - signomix-mq
     environment:
+      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
+      - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
+      - SIGNOMIX_CORE_HOST_URL=http://signomix-main:8080
       - MQ_HOST=signomix-mq
       - MQ_PORT=5672
       - MQ_USER=user
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
       - MQ_EVENTS_QUEUE=events.core
-      - SIGNOMIX_DATABASE_URL=${SGX_DATABASE_URL}
+      - SIGNOMIX_LOG_LEVEL=DEBUG
+      - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
+      - SIGNOMIX_USER_DATABASE_URL=${SGX_USER_DATABASE_URL}
+      - SIGNOMIX_CMS_DATABASE_URL=${SGX_CMS_DATABASE_URL}
+      - SIGNOMIX_IOT_DATABASE_URL=${SGX_IOT_DATABASE_URL}
+      - SIGNOMIX_SHORTENER_DATABASE_URL=${SGX_SHORTENER_DATABASE_URL}
       - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
       - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
 
   signomix-ta-jobs:
-    build:
-      context: ../signomix-ta-jobs
-      dockerfile: ../signomix-ta-jobs/src/main/docker/Dockerfile.jvm
+    image: ${SGX_JOBS_NAME}:${SGX_JOBS_VERSION}
+    container_name: signomix-ta-jobs
+    hostname: signomix-ta-jobs
     restart: always
     logging:
       driver: "json-file"
@@ -296,6 +337,7 @@ services:
       - signomix-network
     depends_on:
       - signomix-mq
+      - signomix-ta-ms
     environment:
       - MQ_HOST=signomix-mq
       - MQ_PORT=5672
@@ -303,14 +345,12 @@ services:
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
       - SIGNOMIX_LOG_LEVEL=INFO
+      - SIGNOMIX_DISK_FREE_MB=${SGX_DISK_FREE_MB}
 
   dbserver:
-    build:
-      context: ../signomix-database
-      dockerfile: ../signomix-database/Dockerfile
-      args:
-        dbpassword: ${SGX_DATABASE_PASSWORD}
+    image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
     restart: always
+    hostname: dbserver
     logging:
       driver: "json-file"
       options:
@@ -325,8 +365,28 @@ services:
     environment:
       - dbpassword=${SGX_DATABASE_PASSWORD}
     volumes:
-      - ~/signomix/volumes/volume-db:/h2data:rw
+      - ${SGX_VOLUMES}/volume-db:/h2data:rw
+      - ${SGX_VOLUMES}/volume-dbbackup:/h2/backup:rw
 
+  hcms:
+    image: ${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
+    expose:
+      - "8080"
+    networks:
+      - signomix-network
+    volumes:
+      - ~/signomix/documents:/home/jboss/documents
+  
+  signomix-docs-website:
+    image: ${SGX_DOCS_NAME}:${SGX_DOCS_VERSION}
+    depends_on:
+      - hcms
+    expose:
+      - "3000"    
+    networks:
+      - signomix-network
+    
+      
 networks:
   signomix-network:
     driver: bridge

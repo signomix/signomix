@@ -1,5 +1,9 @@
 #!/bin/sh
 
+##################################
+## not used anymore
+##################################
+
 ###  env variables
 export SIGNOMIX_GA_TRACKING_ID=NONE
 export SIGNOMIX_STATUSPAGE_URL=/

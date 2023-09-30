@@ -26,7 +26,9 @@
 git clone https://github.com/signomix/signomix-ta.git
 ```
 
-2. Clone the rest and initialize the infrastructure
+2. Clone and initialize required repositories
+
+> Review `init.sh` and:
 
 ```
 cd signomix-ta
@@ -35,21 +37,23 @@ sh init.sh
 
 3. Configure
 
-DO BE DESCRIBED
+> TO BE DESCRIBED
 
 4. Build 
 
 ```shell
-sh build.sh
+sh build-images.sh ./dev.cfg
 ```
 
 5. Start the service with docker-compose
 
 ```shell
-docker-compose up -d
+docker compose --env-file ./dev.env up -d
 ```
 
 ## Architecture
+
+> TO BE UPDATED
 
 The target platform architecture consist of the microservices listed below. 
 
