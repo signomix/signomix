@@ -254,6 +254,7 @@ services:
       - signomix-mq
       - signomix-ta-ms
     environment:
+      - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_CORE_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_DATABASE_URL=${SGX_DATABASE_URL}

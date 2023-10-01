@@ -1,10 +1,9 @@
 # Signomix IoT Platform (target architecture)
 
-## v. 1.3.0
 
 **IoT & data management platform**
 
->*Signomix is in the process of refactoring, including migration to the latest version of Cricket MSF and splitting it into a set of microservices. Stay tuned.*
+>*Signomix is in the process of refactoring. Stay tuned.*
 
 ## Installation
 
@@ -12,11 +11,10 @@
 
 #### Requirements
 - Git
-- Java 13 (17 recommended)
+- Java 17
 - Maven
 - npm
 - Docker
-- Docker Compose
 
 #### Steps
 
