@@ -270,6 +270,9 @@ services:
       - SIGNOMIX_AUTHORIZATION_HEADER_REQUIRED=${SGX_AUTHORIZATION_HEADER_REQUIRED}
       - SIGNOMIX_STATUS_INTEGRATED=${SGX_STATUS_INTEGRATED}
       - QUARKUS_DATASOURCE_JDBC_MAX_SIZE=100
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_URL=${POSTGRES_URL}
 
   signomix-ta-account:
     image: ${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
@@ -323,6 +326,10 @@ services:
       - SIGNOMIX_SHORTENER_DATABASE_URL=${SGX_SHORTENER_DATABASE_URL}
       - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
       - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
+      - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_URL=${POSTGRES_URL}
 
   signomix-ta-jobs:
     image: ${SGX_JOBS_NAME}:${SGX_JOBS_VERSION}
@@ -387,6 +394,24 @@ services:
     networks:
       - signomix-network
     
+  #database
+  # https://github.com/timescale/timescaledb-dockertimeseries
+  # https://hub.docker.com/_/postgres
+  tsserver:
+    image: timescale/timescaledb:latest-pg15
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - ${POSTGRES_PORT_PUBLISHED}:5432
+    expose:
+      - 5432
+    networks:
+      - signomix-network
+    volumes:
+      - ${SGX_VOLUMES}/${POSTGRES_VOLUME}:/var/lib/postgresql/data:rw
+
       
 networks:
   signomix-network:
