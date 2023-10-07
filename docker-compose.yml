@@ -55,28 +55,6 @@ services:
       timeout: 15s
       retries: 3
   
-  signomix-auth:
-    image: ${SGX_AUTH_NAME}:${SGX_AUTH_VERSION}
-    container_name: signomix-auth
-    hostname: signomix-auth
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    networks:
-      - signomix-network
-    depends_on:
-      - dbserver
-    environment:
-      - SIGNOMIX_ORGANIZATION_DEFAULT=${SGX_ORGANIZATION_DEFAULT}
-      - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
-      - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
-      - SIGNOMIX_USER_DATABASE_URL=${SGX_USER_DATABASE_URL}
-      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
-      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
-
   # signomix
   signomix-main:
     image: ${SGX_MAIN_NAME}:${SGX_MAIN_VERSION}
@@ -206,6 +184,29 @@ services:
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
+
+  signomix-auth:
+    image: ${SGX_AUTH_NAME}:${SGX_AUTH_VERSION}
+    container_name: signomix-auth
+    hostname: signomix-auth
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    networks:
+      - signomix-network
+    depends_on:
+      - dbserver
+    environment:
+      - SIGNOMIX_ORGANIZATION_DEFAULT=${SGX_ORGANIZATION_DEFAULT}
+      - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
+      - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
+      - SIGNOMIX_USER_DATABASE_URL=${SGX_USER_DATABASE_URL}
+      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
+
       
   signomix-ta-provider:
     image: ${SGX_PROVIDER_NAME}:${SGX_PROVIDER_VERSION}
