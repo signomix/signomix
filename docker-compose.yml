@@ -207,7 +207,6 @@ services:
       - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
       - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
 
-      
   signomix-ta-provider:
     image: ${SGX_PROVIDER_NAME}:${SGX_PROVIDER_VERSION}
     container_name: signomix-ta-provider
