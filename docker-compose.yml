@@ -184,6 +184,9 @@ services:
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
+      - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
+      - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
 
   signomix-auth:
     image: ${SGX_AUTH_NAME}:${SGX_AUTH_VERSION}
