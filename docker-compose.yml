@@ -8,7 +8,7 @@ x-services-volume:
   type: bind
   source: ${SGX_VOLUMES}/assets
   target: /usr/signomix/dbdata/assets
-  
+
 services:
 
   # API Gateway
@@ -54,7 +54,7 @@ services:
       interval: 5s
       timeout: 15s
       retries: 3
-  
+
   # signomix
   signomix-main:
     image: ${SGX_MAIN_NAME}:${SGX_MAIN_VERSION}
@@ -164,7 +164,7 @@ services:
         target: /usr/signomix/www/assets
       - ${SGX_VOLUMES}/volume-ps:/usr/signomix/dbdata:rw
       - ${SGX_VOLUMES}/volume-ps/logs:/usr/signomix/dbdata/logs:rw
-  
+
   signomix-ta-app:
     image: ${SGX_APP_NAME}:${SGX_APP_VERSION}
     container_name: signomix-ta-app
@@ -395,7 +395,7 @@ services:
     depends_on:
       - hcms
     expose:
-      - "3000"    
+      - "3000"
     networks:
       - signomix-network
     
