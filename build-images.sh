@@ -18,6 +18,7 @@ versionReceiver=1.0.0
 versionCore=1.0.0
 versionJobs=1.0.0
 versionDocsWebsite=1.0.0
+versionView=1.0.0
 versionHcms=1.0.0
 orderformUrlPl=https://orderform.mydomain.com/pl
 orderformUrlEn=https://orderform.mydomain.com/en
@@ -37,6 +38,7 @@ imageNameCore=signomix-ta-core
 imageNameJobs=signomix-ta-jobs
 imageNameDocsWebsite=signomix-docs-website
 imageNameHcms=cricket-hcms
+imageNameView=signomix-view
 
 ## proxy config
 # domain [mydomain.com | localhost ]
@@ -708,6 +710,31 @@ if [ $retVal -ne 0 ]; then
 fi
 echo
 fi
+
+# signomix-view
+if [ -z "$2" ] || [ "$2" = "signomix-view" ]; then
+
+cd ../signomix-view
+if [ -z "$dockerRegistry" ]
+then
+    docker build -t $imageNameView:$versionView .
+else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build  -t $dockerUser/$imageNameView:$versionView .
+    docker push $dockerUser/$imageNameView:$versionView
+    else
+    docker build -t $dockerRegistry/$dockerGroup/$imageNameView:$versionView .
+    docker push $dockerRegistry/$dockerGroup/$imageNameView:$versionView
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+echo
+fi
+
 
 # saving images
 cd ../signomix-ta

@@ -398,6 +398,13 @@ services:
       - "3000"
     networks:
       - signomix-network
+
+  signomix-view:
+    image: ${SGX_VIEW_NAME}:${SGX_VIEW_VERSION}
+    expose:
+      - "3000"
+    networks:
+      - signomix-network
     
   #database
   # https://github.com/timescale/timescaledb-dockertimeseries
