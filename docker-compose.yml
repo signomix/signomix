@@ -9,6 +9,10 @@ x-services-volume:
   source: ${SGX_VOLUMES}/assets
   target: /usr/signomix/dbdata/assets
 
+networks:
+  signomix-network:
+    driver: bridge
+
 services:
 
   # API Gateway
@@ -130,10 +134,13 @@ services:
       - SIGNOMIX_SENTRY_PACKAGES=com.signomix
       - SIGNOMIX_SENTRY_LEVEL=ERROR
       - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
-      - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
-      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
-      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
-      - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
+      #- SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
+      #- SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      #- SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
+      - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
+      - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+      #- SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
       - SIGNOMIX_ADMIN_EMAIL=${SGX_ADMIN_NOTIFICATION_EMAIL}
       - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
@@ -360,27 +367,6 @@ services:
       - SIGNOMIX_LOG_LEVEL=INFO
       - SIGNOMIX_DISK_FREE_MB=${SGX_DISK_FREE_MB}
 
-  dbserver:
-    image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
-    restart: always
-    hostname: dbserver
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    networks:
-      - signomix-network
-    expose:
-      - 9092
-    ports:
-      - 9092:9092
-    environment:
-      - dbpassword=${SGX_DATABASE_PASSWORD}
-    volumes:
-      - ${SGX_VOLUMES}/volume-db:/h2data:rw
-      - ${SGX_VOLUMES}/volume-dbbackup:/h2/backup:rw
-
   hcms:
     image: ${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
     expose:
@@ -405,7 +391,62 @@ services:
       - "3000"
     networks:
       - signomix-network
+
+  signomix-sentinel:
+    image: ${SGX_SENTINEL_NAME}:${SGX_SENTINEL_VERSION}
+    container_name: signomix-sentinel
+    hostname: signomix-sentinel
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    networks:
+      - signomix-network
+    depends_on:
+      - tsserver
+    environment:
+      - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
+      - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
+      - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+
+  signomix-broker:
+    image: eclipse-mosquitto:latest
+    container_name: signomix-broker
+    hostname: signomix-broker
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ${SGX_VOLUMES}/mosquitto/config:/mosquitto/config
+      - ${SGX_VOLUMES}/mosquitto/data:/mosquitto/data
+      - ${SGX_VOLUMES}/mosquitto/log:/mosquitto/log
+    networks:
+      - signomix-network
     
+  dbserver:
+    image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
+    restart: always
+    hostname: dbserver
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    networks:
+      - signomix-network
+    expose:
+      - 9092
+    ports:
+      - 9092:9092
+    environment:
+      - dbpassword=${SGX_DATABASE_PASSWORD}
+    volumes:
+      - ${SGX_VOLUMES}/volume-db:/h2data:rw
+      - ${SGX_VOLUMES}/volume-dbbackup:/h2/backup:rw
+
+
   #database
   # https://github.com/timescale/timescaledb-dockertimeseries
   # https://hub.docker.com/_/postgres
@@ -425,6 +466,3 @@ services:
       - ${SGX_VOLUMES}/${POSTGRES_VOLUME}:/var/lib/postgresql/data:rw
 
       
-networks:
-  signomix-network:
-    driver: bridge

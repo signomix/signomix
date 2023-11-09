@@ -19,6 +19,7 @@ versionCore=1.0.0
 versionJobs=1.0.0
 versionDocsWebsite=1.0.0
 versionView=1.0.0
+versionSentinel=1.0.0
 versionHcms=1.0.0
 orderformUrlPl=https://orderform.mydomain.com/pl
 orderformUrlEn=https://orderform.mydomain.com/en
@@ -39,6 +40,7 @@ imageNameJobs=signomix-ta-jobs
 imageNameDocsWebsite=signomix-docs-website
 imageNameHcms=cricket-hcms
 imageNameView=signomix-view
+imageNameSentinel=signomix-sentinel
 
 ## proxy config
 # domain [mydomain.com | localhost ]
@@ -734,6 +736,50 @@ if [ $retVal -ne 0 ]; then
 fi
 echo
 fi
+
+if [ -z "$2" ] || [ "$2" = "signomix-sentinel" ]; then
+### signomix-sentinel
+cd ../signomix-sentinel
+./mvnw versions:set -DnewVersion=$versionSentinel
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+if [ -z "$dockerRegistry" ]
+then
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameSentinel \
+    -Dquarkus.container-image.tag=$versionSentinel \
+    -Dquarkus.container-image.build=true \
+    clean package
+else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameSentinel \
+    -Dquarkus.container-image.tag=$versionSentinel \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameSentinel \
+    -Dquarkus.container-image.tag=$versionSentinel \
+    -Dquarkus.container-image.push=true \
+    clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+fi
+
 
 
 # saving images
