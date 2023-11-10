@@ -19,6 +19,7 @@ git clone https://github.com/signomix/signomix-ta-ps.git
 git clone https://github.com/signomix/signomix-ta-receiver.git
 git clone https://github.com/signomix/signomix-webapp.git
 git clone https://github.com/signomix/docs-website.git
+git clone https://github.com/signomix/signomix-sentinel.git
 git clone https://github.com/signomix/signomix-documentation.git
 
 # change volumes path from `~/signomix/volumes` to different location if needed
