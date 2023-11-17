@@ -407,9 +407,9 @@ services:
     depends_on:
       - tsserver
     environment:
-      - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
-      - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
-      - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_URL=${POSTGRES_URL}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   signomix-broker:
     image: eclipse-mosquitto:latest
