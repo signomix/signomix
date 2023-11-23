@@ -91,6 +91,9 @@ echo "versionCore=$versionCore"
 echo "versionJobs=$versionJobs"
 echo "versionDocsWebsite=$versionDocsWebsite"
 echo "versionHcms=$versionHcms"
+echo "versionView=$versionView"
+echo "versionSentinel=$versionSentinel"
+
 echo
 echo "imageNameApp=$imageNameApp"
 echo "imageNameAccount=$imageNameAccount"
@@ -106,6 +109,8 @@ echo "imageNameCore=$imageNameCore"
 echo "imageNameJobs=$imageNameJobs"
 echo "imageNameDocsWebsite=$imageNameDocsWebsite"
 echo "imageNameHcms=$imageNameHcms"
+echo "imageNameView=$imageNameView"
+echo "imageNameSentinel=$imageNameSentinel"
 echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
@@ -342,7 +347,7 @@ fi
 
 if [ -z "$2" ] || [ "$2" = "signomix-main" ]; then
 # signomix-main
-cd ../signomix
+cd ../signomix-main
 ./mvnw versions:set -DnewVersion=$versionMain
 mvn package
 retVal=$?
@@ -803,6 +808,10 @@ then
     docker save $imageNameProvider:$versionProvider | gzip > local-images/$imageNameProvider.tar.gz
     docker save $imageNameCore:$versionCore | gzip > local-images/$imageNameCore.tar.gz
     docker save $imageNameJobs:$versionJobs | gzip > local-images/$imageNameJobs.tar.gz
+    docker save $imageNameAuth:$versionAuth | gzip > local-images/$imageNameAuth.tar.gz
+    docker save $imageNameDocsWebsite:$versionDocsWebsite | gzip > local-images/$imageNameDocsWebsite.tar.gz
+    docker save $imageNameView:$versionView | gzip > local-images/$imageNameView.tar.gz
+    docker save $imageNameSentinel:$versionSentinel | gzip > local-images/$imageNameSentinel.tar.gz
     echo "saved"
     fi
 fi
