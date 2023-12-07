@@ -150,6 +150,9 @@ services:
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
       - SIGNOMIX_DOC_WELCOME=/admin/welcomedoc
+      - SIGNOMIX_LOG_LEVEL=DEBUG
+      - SIGNOMIX_SMSPLANET_KEY=${SGX_SMSPLANET_KEY}
+      - SIGNOMIX_SMSPLANET_PASSWORD=${SGX_SMSPLANET_PASSWORD}
 
   # signomix publication service
   signomix-ta-ps:
