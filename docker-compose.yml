@@ -119,6 +119,7 @@ services:
       - signomix-mq
     environment:
       - SIGNOMIX_TITLE=${SGX_TITLE}
+      - SIGNOMIX_URL=${SGX_URL}
       - SIGNOMIX_ENV_NAME=${SGX_ENV_NAME}
       - SIGNOMIX_PUSHOVER_TOKEN=${SGX_PUSHOVER_TOKEN}
       - SIGNOMIX_SMTP_FROM=${SGX_SMTP_FROM}
@@ -150,7 +151,7 @@ services:
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
       - SIGNOMIX_DOC_WELCOME=/admin/welcomedoc
-      - SIGNOMIX_LOG_LEVEL=DEBUG
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
       - SIGNOMIX_SMSPLANET_KEY=${SGX_SMSPLANET_KEY}
       - SIGNOMIX_SMSPLANET_PASSWORD=${SGX_SMSPLANET_PASSWORD}
 
@@ -292,6 +293,7 @@ services:
 
   signomix-ta-account:
     image: ${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
+    hostname: signomix-ta-account
     restart: always
     logging:
       driver: "json-file"
@@ -300,15 +302,11 @@ services:
         max-file: "10"
     networks:
       - signomix-network
-    depends_on:
-      - signomix-mq
     environment:
-      - MQ_HOST=signomix-mq
-      - MQ_PORT=5672
-      - MQ_USER=user
-      - MQ_PASSWORD=user
-      - MQ_EVENTS_EXCHANGE=events
-      - MQ_EVENTS_QUEUE=events.account
+      - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_URL=${POSTGRES_URL}
 
   signomix-ta-core:
     image: ${SGX_CORE_NAME}:${SGX_CORE_VERSION}
@@ -421,6 +419,7 @@ services:
     image: eclipse-mosquitto:latest
     container_name: signomix-broker
     hostname: signomix-broker
+    restart: always
     ports:
       - "1883:1883"
       - "9001:9001"
