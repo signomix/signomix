@@ -15,9 +15,27 @@ networks:
 
 services:
 
+#  # API Gateway
+#  signomix-proxy:
+#    image: ${SGX_PROXY_NAME}:${SGX_PROXY_VERSION}
+#    restart: always
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "200k"
+#        max-file: "10"
+#    networks:
+#      - signomix-network
+#    ports:
+#      - 80:80
+#      - 443:443
+#    #TODO: for production use, mount volume with certificates
+#    #volumes:
+#    #  - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
+
   # API Gateway
-  signomix-proxy:
-    image: ${SGX_PROXY_NAME}:${SGX_PROXY_VERSION}
+  signomix-gateway:
+    image: ${SGX_GATEWAY_NAME}:${SGX_GATEWAY_VERSION}
     restart: always
     logging:
       driver: "json-file"
@@ -28,10 +46,11 @@ services:
       - signomix-network
     ports:
       - 80:80
-      - 443:443
+    #  - 443:443
     #TODO: for production use, mount volume with certificates
     #volumes:
     #  - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
+
 
   # MQ
   signomix-mq:
@@ -390,6 +409,13 @@ services:
 
   signomix-view:
     image: ${SGX_VIEW_NAME}:${SGX_VIEW_VERSION}
+    expose:
+      - "3000"
+    networks:
+      - signomix-network
+
+  signomix-webapp:
+    image: ${SGX_WEBAPP_NAME}:${SGX_WEBAPP_VERSION}
     expose:
       - "3000"
     networks:

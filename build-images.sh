@@ -13,12 +13,15 @@ versionMain=1.2.225
 versionMs=1.0.3
 versionProvider=0.0.1
 versionProxy=1.1.3
+versionProxy2=1.0.0
+versionLb=1.0.0
 versionPs=1.0.2.10
 versionReceiver=1.0.0
 versionCore=1.0.0
 versionJobs=1.0.0
 versionDocsWebsite=1.0.0
 versionView=1.0.0
+versionWebapp=1.0.0
 versionSentinel=1.0.0
 versionHcms=1.0.0
 orderformUrlPl=https://orderform.mydomain.com/pl
@@ -33,6 +36,8 @@ imageNameMain=signomix
 imageNameMs=signomix-ta-ms
 imageNameProvider=signomix-ta-provider
 imageNameProxy=signomix-proxy
+imageNameProxy2=signomix-proxy2
+imageNameLb=signomix-lb
 imageNamePs=signomix-ta-ps
 imageNameReceiver=signomix-ta-receiver
 imageNameCore=signomix-ta-core
@@ -41,6 +46,7 @@ imageNameDocsWebsite=signomix-docs-website
 imageNameHcms=cricket-hcms
 imageNameView=signomix-view
 imageNameSentinel=signomix-sentinel
+imageNameWebapp=signomix-webapp
 
 ## proxy config
 # domain [mydomain.com | localhost ]
@@ -93,6 +99,7 @@ echo "versionDocsWebsite=$versionDocsWebsite"
 echo "versionHcms=$versionHcms"
 echo "versionView=$versionView"
 echo "versionSentinel=$versionSentinel"
+echo "versionWebapp=$versionWebapp"
 
 echo
 echo "imageNameApp=$imageNameApp"
@@ -111,6 +118,7 @@ echo "imageNameDocsWebsite=$imageNameDocsWebsite"
 echo "imageNameHcms=$imageNameHcms"
 echo "imageNameView=$imageNameView"
 echo "imageNameSentinel=$imageNameSentinel"
+echo "imageNameWebapp=$imageNameWebapp"
 echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
@@ -142,20 +150,21 @@ case $yn in
 		exit 1;;
 esac
 
-if [ -z "$2" ] || [ "$2" = "signomix-webapp" ]; then
-# signomix-webapp
-cd ../signomix-webapp
-npm run build
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-rm -R ../signomix-proxy/webapp/*
-cp -R build/* ../signomix-proxy/webapp
-fi
+#if [ -z "$2" ] || [ "$2" = "signomix-webapp" ]; then
+## signomix-webapp
+#cd ../signomix-webapp
+#npm run build
+#retVal=$?
+#if [ $retVal -ne 0 ]; then
+#    exit $retval
+#fi
+#rm -R ../signomix-proxy/webapp/*
+#cp -R build/* ../signomix-proxy/webapp
+#fi
 
-if [ -z "$2" ] || [ "$2" = "signomix-proxy" ] || [ "$2" = "signomix-webapp" ]; then
+#if [ -z "$2" ] || [ "$2" = "signomix-proxy" ] || [ "$2" = "signomix-webapp" ]; then
 # signomix-proxy
+if [ -z "$2" ] || [ "$2" = "signomix-proxy" ]; then
 cd ../signomix-proxy
 if [ $withGraylog = "true" ]
 then
@@ -183,6 +192,51 @@ if [ $retVal -ne 0 ]; then
 fi
 echo
 fi
+
+if [ -z "$2" ] || [ "$2" = "signomix-lb" ]; then
+# signomix-lb
+cd ../signomix-proxy2
+if [ -z "$dockerRegistry" ]
+then
+    docker build --build-arg DOMAIN=$signomixDomain -t $imageNameLb:$versionLb .
+else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameLb:$versionLb .
+    docker push $dockerUser/$imageNameLb:$versionLb
+    else
+    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameLb:$versionLb .
+    docker push $dockerRegistry/$dockerGroup/$imageNameLb:$versionLb
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+echo
+fi
+
+# signomix-apigateway
+cd ../signomix-apigateway
+if [ -z "$dockerRegistry" ]
+then
+    docker build --build-arg DOMAIN=$signomixDomain -t $imageNameGateway:$versionGateway .
+else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameGateway:$versionGateway .
+    docker push $dockerUser/$imageNameGateway:$versionGateway
+    else
+    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameGateway:$versionGateway .
+    docker push $dockerRegistry/$dockerGroup/$imageNameGateway:$versionGateway
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+echo
+
 
 if [ -z "$2" ] || [ "$2" = "signomix-database" ]; then
 # signomix-database
@@ -683,6 +737,30 @@ else
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+echo
+fi
+
+# signomix-docs-webapp
+if [ -z "$2" ] || [ "$2" = "signomix-webapp" ]; then
+
+cd ../signomix-webapp
+if [ -z "$dockerRegistry" ]
+then
+    docker build -t $imageNameWebapp:$versionWebapp .
+else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build  -t $dockerUser/$imageNameWebapp:$versionWebapp .
+    docker push $dockerUser/$imageNameWebapp:$versionWebapp
+    else
+    docker build -t $dockerRegistry/$dockerGroup/$imageNameWebapp:$versionWebapp .
+    docker push $dockerRegistry/$dockerGroup/$imageNameWebapp:$versionWebapp
     fi
 fi
 retVal=$?
