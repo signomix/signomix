@@ -216,6 +216,7 @@ fi
 echo
 fi
 
+if [ -z "$2" ] || [ "$2" = "signomix-apigateway" ]; then
 # signomix-apigateway
 cd ../signomix-apigateway
 if [ -z "$dockerRegistry" ]
@@ -236,6 +237,7 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 
 
 if [ -z "$2" ] || [ "$2" = "signomix-database" ]; then
