@@ -47,9 +47,9 @@ services:
     ports:
       - 80:80
     #  - 443:443
-    #TODO: for production use, mount volume with certificates
     #volumes:
-    #  - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
+    #  - ${SGX_VOLUME_PROXY}/ssl:/etc/ssl/certs:rw
+    #  - ${SGX_VOLUME_PROXY}/etc:/usr/local/etc/haproxy:rw
 
 
   # MQ
@@ -508,5 +508,3 @@ services:
       - COLLECTOR_OTLP_ENABLED=true
     networks:
       - signomix-network
-
-      
