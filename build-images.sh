@@ -24,6 +24,8 @@ versionView=1.0.0
 versionWebapp=1.0.0
 versionSentinel=1.0.0
 versionHcms=1.0.0
+versionWebsite=1.0.0
+versionWebsiteHcms=1.0.0
 orderformUrlPl=https://orderform.mydomain.com/pl
 orderformUrlEn=https://orderform.mydomain.com/en
 
@@ -47,6 +49,8 @@ imageNameHcms=cricket-hcms
 imageNameView=signomix-view
 imageNameSentinel=signomix-sentinel
 imageNameWebapp=signomix-webapp
+imageNameWebsite=signomix-website
+imageNameWebsiteHcms=signomix-website-hcms
 
 ## proxy config
 # domain [mydomain.com | localhost ]
@@ -100,6 +104,8 @@ echo "versionHcms=$versionHcms"
 echo "versionView=$versionView"
 echo "versionSentinel=$versionSentinel"
 echo "versionWebapp=$versionWebapp"
+echo "versionWebsite=$versionWebsite"
+echo "versionWebsiteHcms=$versionWebsiteHcms"
 
 echo
 echo "imageNameApp=$imageNameApp"
@@ -119,6 +125,8 @@ echo "imageNameHcms=$imageNameHcms"
 echo "imageNameView=$imageNameView"
 echo "imageNameSentinel=$imageNameSentinel"
 echo "imageNameWebapp=$imageNameWebapp"
+echo "imageNameWebsite=$imageNameWebsite"
+echo "imageNameWebsiteHcms=$imageNameWebsiteHcms"
 echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
@@ -162,36 +170,36 @@ esac
 #cp -R build/* ../signomix-proxy/webapp
 #fi
 
-#if [ -z "$2" ] || [ "$2" = "signomix-proxy" ] || [ "$2" = "signomix-webapp" ]; then
-# signomix-proxy
-if [ -z "$2" ] || [ "$2" = "signomix-proxy" ]; then
-cd ../signomix-proxy
-if [ $withGraylog = "true" ]
-then
-    cp nginx-with-graylog.conf nginx.conf
-else
-    cp nginx-no-graylog.conf nginx.conf
-fi
-
-if [ -z "$dockerRegistry" ]
-then
-    docker build --build-arg DOMAIN=$signomixDomain -t $imageNameProxy:$versionProxy .
-else
-    if [ $dockerHubType = "true" ]
-    then
-    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameProxy:$versionProxy .
-    docker push $dockerUser/$imageNameProxy:$versionProxy
-    else
-    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy .
-    docker push $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy
-    fi
-fi
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-echo
-fi
+##if [ -z "$2" ] || [ "$2" = "signomix-proxy" ] || [ "$2" = "signomix-webapp" ]; then
+## signomix-proxy
+#if [ -z "$2" ] || [ "$2" = "signomix-proxy" ]; then
+#cd ../signomix-proxy
+#if [ $withGraylog = "true" ]
+#then
+#    cp nginx-with-graylog.conf nginx.conf
+#else
+#    cp nginx-no-graylog.conf nginx.conf
+#fi
+#
+#if [ -z "$dockerRegistry" ]
+#then
+#    docker build --build-arg DOMAIN=$signomixDomain -t $imageNameProxy:$versionProxy .
+#else
+#    if [ $dockerHubType = "true" ]
+#    then
+#    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameProxy:$versionProxy .
+#    docker push $dockerUser/$imageNameProxy:$versionProxy
+#    else
+#    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy .
+#    docker push $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy
+#    fi
+#fi
+#retVal=$?
+#if [ $retVal -ne 0 ]; then
+#    exit $retval
+#fi
+#echo
+#fi
 
 if [ -z "$2" ] || [ "$2" = "signomix-lb" ]; then
 # signomix-lb
@@ -789,6 +797,32 @@ else
     else
     docker build -t $dockerRegistry/$dockerGroup/$imageNameDocsWebsite:$versionDocsWebsite .
     docker push $dockerRegistry/$dockerGroup/$imageNameDocsWebsite:$versionDocsWebsite
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+echo
+fi
+
+# signomix-website
+if [ -z "$2" ] || [ "$2" = "signomix-website" ]; then
+
+cd ../signomix-website
+echo "PUBLIC_HCMS_URL = 'https://hcms.$signomixDomain/api/docs'" > .env
+echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
+if [ -z "$dockerRegistry" ]
+then
+    docker build -t $imageNameWebsite:$versionWebsite .
+else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build  -t $dockerUser/$imageNameWebsite:$versionWebsite .
+    docker push $dockerUser/$imageNameWebsite:$versionWebsite
+    else
+    docker build -t $dockerRegistry/$dockerGroup/$imageNameWebsite:$versionWebsite .
+    docker push $dockerRegistry/$dockerGroup/$imageNameWebsite:$versionWebsite
     fi
 fi
 retVal=$?

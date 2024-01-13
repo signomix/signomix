@@ -398,11 +398,29 @@ services:
       - signomix-network
     volumes:
       - ~/signomix/documents:/home/jboss/documents
+
+  website-hcms:
+    image: ${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
+    expose:
+      - "8080"
+    networks:
+      - signomix-network
+    volumes:
+      - ~/signomix/website-documents:/home/jboss/documents
   
   signomix-docs-website:
     image: ${SGX_DOCS_NAME}:${SGX_DOCS_VERSION}
     depends_on:
       - hcms
+    expose:
+      - "3000"
+    networks:
+      - signomix-network
+
+  signomix-website:
+    image: ${SGX_WEBSITE_NAME}:${SGX_WEBSITE_VERSION}
+    depends_on:
+      - website-hcms
     expose:
       - "3000"
     networks:
