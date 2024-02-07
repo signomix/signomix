@@ -9,9 +9,9 @@ x-services-volume:
   source: ${SGX_VOLUMES}/assets
   target: /usr/signomix/dbdata/assets
 
-networks:
-  signomix-network:
-    driver: bridge
+#networks:
+#  signomix-network:
+#    driver: bridge
 
 services:
 
@@ -42,8 +42,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     ports:
       - 80:80
     #  - 443:443
@@ -65,8 +65,8 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=user
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     ports:
       # AMQP protocol port
       - '5672:5672'
@@ -88,8 +88,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     depends_on:
       - dbserver
       - signomix-mq
@@ -133,8 +133,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     depends_on:
       - signomix-mq
     environment:
@@ -185,8 +185,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     environment:
       - SIGNOMIX_TITLE=${SGX_TITLE}
     volumes:
@@ -206,8 +206,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     depends_on:
       - signomix-mq
       - signomix-ta-ms
@@ -229,8 +229,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     depends_on:
       - dbserver
     environment:
@@ -253,8 +253,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     depends_on:
       - signomix-mq
       - signomix-ta-ms
@@ -285,8 +285,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     depends_on:
       - signomix-mq
       - signomix-ta-ms
@@ -320,8 +320,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     environment:
       - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -338,8 +338,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     depends_on:
       - signomix-mq
     environment:
@@ -376,8 +376,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     depends_on:
       - signomix-mq
       - signomix-ta-ms
@@ -394,8 +394,8 @@ services:
     image: ${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
     expose:
       - "8080"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     volumes:
       - ~/signomix/documents:/home/jboss/documents
 
@@ -403,8 +403,8 @@ services:
     image: ${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
     expose:
       - "8080"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     volumes:
       - ~/signomix/website-documents:/home/jboss/documents
   
@@ -414,8 +414,8 @@ services:
       - hcms
     expose:
       - "3000"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
 
   signomix-website:
     image: ${SGX_WEBSITE_NAME}:${SGX_WEBSITE_VERSION}
@@ -423,22 +423,22 @@ services:
       - website-hcms
     expose:
       - "3000"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
 
   signomix-view:
     image: ${SGX_VIEW_NAME}:${SGX_VIEW_VERSION}
     expose:
       - "3000"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
 
   signomix-webapp:
     image: ${SGX_WEBAPP_NAME}:${SGX_WEBAPP_VERSION}
     expose:
       - "3000"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
 
   signomix-sentinel:
     image: ${SGX_SENTINEL_NAME}:${SGX_SENTINEL_VERSION}
@@ -450,8 +450,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     depends_on:
       - tsserver
     environment:
@@ -472,8 +472,8 @@ services:
       - ${SGX_VOLUMES}/mosquitto/config:/mosquitto/config
       - ${SGX_VOLUMES}/mosquitto/data:/mosquitto/data
       - ${SGX_VOLUMES}/mosquitto/log:/mosquitto/log
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     
   dbserver:
     image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
@@ -484,8 +484,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     expose:
       - 9092
     ports:
@@ -510,8 +510,8 @@ services:
       - ${POSTGRES_PORT_PUBLISHED}:5432
     expose:
       - 5432
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
     volumes:
       - ${SGX_VOLUMES}/${POSTGRES_VOLUME}:/var/lib/postgresql/data:rw
 
@@ -525,5 +525,19 @@ services:
       #- "14250:14250" # Receive from external otel-collector, optional
     environment:
       - COLLECTOR_OTLP_ENABLED=true
-    networks:
-      - signomix-network
+#    networks:
+#      - signomix-network
+
+  quest:
+    image: questdb/questdb:7.3.9
+    container_name: quest
+    hostname: quest
+    ports:
+      - 9000:9000
+      - 9009:9009
+      - 8812:8812
+      - 9003:9003
+    volumes:
+      - ${SGX_VOLUMES}/volume-questdb:/var/lib/questdb
+#    networks:
+#      - signomix-network
