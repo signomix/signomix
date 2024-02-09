@@ -756,7 +756,7 @@ fi
 echo
 fi
 
-# signomix-docs-webapp
+# signomix-webapp
 if [ -z "$2" ] || [ "$2" = "signomix-webapp" ]; then
 
 cd ../signomix-webapp
@@ -784,7 +784,9 @@ fi
 if [ -z "$2" ] || [ "$2" = "signomix-docs-website" ]; then
 
 cd ../signomix-docs-website
-echo "PUBLIC_HCMS_URL = 'https://hcms.$signomixDomain/api/docs'" > .env
+#echo "PUBLIC_HCMS_URL = 'https://hcms.$signomixDomain/api/docs'" > .env
+#echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
+echo "PUBLIC_HCMS_URL = 'http://hcms:8080/api/docs'" > .env
 echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
 if [ -z "$dockerRegistry" ]
 then
@@ -810,8 +812,8 @@ fi
 if [ -z "$2" ] || [ "$2" = "signomix-website" ]; then
 
 cd ../signomix-website
-echo "PUBLIC_HCMS_URL = 'https://hcms.$signomixDomain/api/docs'" > .env
-echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
+echo "PUBLIC_HCMS_URL = 'http://website-hcms:8080/api/docs'" > .env
+echo "PUBLIC_HCMS_INDEX = 'index.html'" >> .env
 if [ -z "$dockerRegistry" ]
 then
     docker build -t $imageNameWebsite:$versionWebsite .

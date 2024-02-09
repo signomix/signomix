@@ -411,7 +411,7 @@ services:
   signomix-docs-website:
     image: ${SGX_DOCS_NAME}:${SGX_DOCS_VERSION}
     depends_on:
-      - hcms
+      - website-hcms
     expose:
       - "3000"
 #    networks:
