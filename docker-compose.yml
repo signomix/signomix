@@ -91,7 +91,7 @@ services:
 #    networks:
 #      - signomix-network
     depends_on:
-      - dbserver
+      #- dbserver
       - signomix-mq
       - signomix-ta-ms
     environment:
@@ -175,26 +175,26 @@ services:
       - SIGNOMIX_SMSPLANET_KEY=${SGX_SMSPLANET_KEY}
       - SIGNOMIX_SMSPLANET_PASSWORD=${SGX_SMSPLANET_PASSWORD}
 
-  # signomix publication service
-  signomix-ta-ps:
-    image: ${SGX_PS_NAME}:${SGX_PS_VERSION}
-    container_name: signomix-ta-ps
-    hostname: signomix-ta-ps
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-#    networks:
-#      - signomix-network
-    environment:
-      - SIGNOMIX_TITLE=${SGX_TITLE}
-    volumes:
-      #- cms-assets:/usr/signomix/www/assets
-      - <<: *services-volume
-        target: /usr/signomix/www/assets
-      - ${SGX_VOLUMES}/volume-ps:/usr/signomix/dbdata:rw
-      - ${SGX_VOLUMES}/volume-ps/logs:/usr/signomix/dbdata/logs:rw
+#  # signomix publication service
+#  signomix-ta-ps:
+#    image: ${SGX_PS_NAME}:${SGX_PS_VERSION}
+#    container_name: signomix-ta-ps
+#    hostname: signomix-ta-ps
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "200k"
+#        max-file: "10"
+##    networks:
+##      - signomix-network
+#    environment:
+#      - SIGNOMIX_TITLE=${SGX_TITLE}
+#    volumes:
+#      #- cms-assets:/usr/signomix/www/assets
+#      - <<: *services-volume
+#        target: /usr/signomix/www/assets
+#      - ${SGX_VOLUMES}/volume-ps:/usr/signomix/dbdata:rw
+#      - ${SGX_VOLUMES}/volume-ps/logs:/usr/signomix/dbdata/logs:rw
 
   signomix-ta-app:
     image: ${SGX_APP_NAME}:${SGX_APP_VERSION}
@@ -231,8 +231,8 @@ services:
         max-file: "10"
 #    networks:
 #      - signomix-network
-    depends_on:
-      - dbserver
+#    depends_on:
+      #- dbserver
     environment:
       - SIGNOMIX_ORGANIZATION_DEFAULT=${SGX_ORGANIZATION_DEFAULT}
       - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
@@ -475,26 +475,26 @@ services:
 #    networks:
 #      - signomix-network
     
-  dbserver:
-    image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
-    restart: always
-    hostname: dbserver
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-#    networks:
-#      - signomix-network
-    expose:
-      - 9092
-    ports:
-      - 9092:9092
-    environment:
-      - dbpassword=${SGX_DATABASE_PASSWORD}
-    volumes:
-      - ${SGX_VOLUMES}/volume-db:/h2data:rw
-      - ${SGX_VOLUMES}/volume-dbbackup:/h2/backup:rw
+#  dbserver:
+#    image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
+#    restart: always
+#    hostname: dbserver
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "200k"
+#        max-file: "10"
+##    networks:
+##      - signomix-network
+#    expose:
+#      - 9092
+#    ports:
+#      - 9092:9092
+#    environment:
+#      - dbpassword=${SGX_DATABASE_PASSWORD}
+#    volumes:
+#      - ${SGX_VOLUMES}/volume-db:/h2data:rw
+#      - ${SGX_VOLUMES}/volume-dbbackup:/h2/backup:rw
 
 
   #database
