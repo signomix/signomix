@@ -29,7 +29,7 @@ git clone https://github.com/signomix/signomix-ta.git
 > Review `init.sh` and:
 
 ```
-cd signomix-ta
+cd signomix
 sh init.sh
 ```
 
@@ -57,57 +57,85 @@ The target platform architecture consist of the microservices listed below.
 
 |Component|Version|Description|
 |---|---|---|
+|signomix-apigateway|||
 |[signomix-ta-account](https://github.com/signomix/signomix-ta-account)|||
-|[signomix-ta-app](https://github.com/signomix/signomix-ta-app)|1.0.3|Web GUI|
+|[signomix-auth](https://github.com/signomix/signomix-auth)|||
+|[signomix-ta-app](https://github.com/signomix/signomix-ta-app)|1.0.3|Web GUI version 1.x - deprecated|
+|signomix-comon|||
+|signomix-ta-core|||
+|signomix-ta-jobs|||
 |[signomix-ta-receiver](https://github.com/signomix/signomix-ta-receiver)||IoT data receiver service|
 |[signomix-ta-provider](https://github.com/signomix/signomix-ta-provider)||IoT data provider service|
+|signomix-sentinel|||
 |signomix-mq|1.0.0|Message broker|
 |[signomix-ta-ms](https://github.com/signomix/signomix-ta-ms)|1.0.0|Messaging service|
-|[signomix-ta-ps](https://github.com/signomix/signomix-ta-ps)|1.2.0.10|Public service (home page, blog)|
-|[signomix-proxy](https://github.com/signomix/signomix-proxy)|1.1.2|Reverse Proxy & API Gateway service|
 |[signomix-database](https://github.com/signomix/signomix-database)|1.0.5|Database|
 |[signomix-ta-adm](https://github.com/signomix/signomix-ta-adm)||Administration: the service management|
-|[signomix](https://github.com/signomix/signomix)|1.3.0|Previous version containing the following components functionalities: signomix-ta-provider, signomix-ta-receiver, signomix-ta-adm.|
+|signomix-webapp|||
+|signomix-docs-website|||
+|signomix-documentation|||
+|signomix-view|||
+|[signomix-main](https://github.com/signomix/signomix-main)|1.3.0|Previous version. Deprecated, will be removed soon|
 
 ```mermaid
 flowchart LR
   info1[the diagram will be updated]
-  signomix-proxy
-  signomix{{signomix}}
-  ta-ps{{signomix-ta-ps}}
-  ta-account{{signomix-ta-account}}
-  ta-app{{signomix-ta-app}}
-  ta-adm{{signomix-ta-adm}}
-  ta-receiver{{signomix-ta-receiver}}
-  ta-provider{{signomix-ta-provider}}
-  ta-mq{{signomix-mq}}
-  ta-ms{{signomix-ta-ms}}
-  ta-database[(signomix-database)]
-  LoRaWAN-device<-->signomix-proxy
-  Internet-device<-->signomix-proxy
-  WebApplication<-->signomix-proxy
-  signomix-proxy-->signomix
-  signomix-proxy-->ta-ps
-  signomix-proxy-->ta-account
-  signomix-proxy-->ta-app
-  signomix-proxy-->ta-adm
-  signomix-proxy-->ta-receiver
-  signomix-proxy-->ta-provider
-  signomix-->ta-mq
+  signomix-apigateway[API Gateway]
+  signomix-view[Dashbord Viewer Webapp]
+  signomix-webapp[Web Application]
+  signomix-docs-website[Documentation Webapp]
+  ta-account[signomix-ta-account]
+  ta-app[signomix-ta-app]
+  ta-adm[signomix-ta-adm]
+  ta-receiver[signomix-ta-receiver]
+  ta-provider[signomix-ta-provider]
+  ta-reports[signomix-reports]
+  ta-mq((MQ))
+  ta-broker((Broker\nMQTT))
+  ta-ms[signomix-ta-ms]
+  ta-auth[signomix-auth]
+  ta-core[signomix-ta-core]
+  ta-jobs[signomix-ta-jobs]
+  sentinel[signomix-sentinel]
+  tsserver[(TimescaleDB)]
+  questdb[(QuestDB)]
+  jaeger[Jaeger]
+  LoRaWAN-device<-->signomix-apigateway
+  Internet-device<-->signomix-apigateway
+  webbrowser[Web Browser]<-->signomix-apigateway
+  signomix-apigateway-->sentinel
+  signomix-apigateway-->ta-account
+  signomix-apigateway-->ta-auth
+  signomix-apigateway-->ta-adm
+  signomix-apigateway-->ta-core
+  signomix-apigateway-->ta-receiver
+  signomix-apigateway-->ta-provider
+  signomix-apigateway-->signomix-view
+  signomix-apigateway-->signomix-webapp
+  signomix-apigateway-->signomix-docs-website
+  signomix-apigateway-->ta-app
+  signomix-apigateway-->jaeger
   ta-adm-->ta-mq
   ta-provider-->ta-mq
   ta-receiver-->ta-mq
+  ta-jobs-->ta-mq
+  ta-provider-->ta-broker
+  ta-receiver-->ta-broker
+  ta-jobs-->ta-broker
   ta-mq-->ta-ms
   ta-mq-->ta-adm
-  ta-provider-->ta-database
-  ta-receiver-->ta-database
-  signomix-->ta-database
-  ta-adm-->ta-database
-  ta-ms-->SMTP
-  ta-ms-->Discord
-  ta-ms-->Slack
-  ta-ms-->Pushover
-  ta-ms-->Telegram
+  ta-broker-->ta-ms
+  ta-provider-->tsserver
+  ta-provider-->ta-reports
+  ta-receiver-->questdb
+  ta-receiver-->tsserver
+  ta-reports-->tsserver
+  ta-reports-->questdb
+  ta-adm-->tsserver
+  ta-auth-->tsserver
+  ta-account-->tsserver
+  ta-ms-->SMTP[SMTP server]
+  ta-ms-->sms[SMS service]
   ta-ms-->Webhook
 
 ```
