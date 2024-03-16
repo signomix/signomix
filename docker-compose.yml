@@ -460,6 +460,26 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
 
+  signomix-reports:
+    image: ${SGX_REPORTS_NAME}:${SGX_REPORTS_VERSION}
+    container_name: signomix-reports
+    hostname: signomix-reports
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+#    networks:
+#      - signomix-network
+    depends_on:
+      - tsserver
+    environment:
+      - POSTGRES_URL=${POSTGRES_URL}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
+
   signomix-broker:
     image: eclipse-mosquitto:latest
     container_name: signomix-broker

@@ -26,6 +26,7 @@ versionSentinel=1.0.0
 versionHcms=1.0.0
 versionWebsite=1.0.0
 versionWebsiteHcms=1.0.0
+versionReports=1.0.0
 orderformUrlPl=https://orderform.mydomain.com/pl
 orderformUrlEn=https://orderform.mydomain.com/en
 
@@ -51,6 +52,7 @@ imageNameSentinel=signomix-sentinel
 imageNameWebapp=signomix-webapp
 imageNameWebsite=signomix-website
 imageNameWebsiteHcms=signomix-website-hcms
+imageNameReports=signomix-reports
 
 ## proxy config
 # domain [mydomain.com | localhost ]
@@ -106,6 +108,7 @@ echo "versionSentinel=$versionSentinel"
 echo "versionWebapp=$versionWebapp"
 echo "versionWebsite=$versionWebsite"
 echo "versionWebsiteHcms=$versionWebsiteHcms"
+echo "versionReports=$versionReports"
 
 echo
 echo "imageNameApp=$imageNameApp"
@@ -127,6 +130,7 @@ echo "imageNameSentinel=$imageNameSentinel"
 echo "imageNameWebapp=$imageNameWebapp"
 echo "imageNameWebsite=$imageNameWebsite"
 echo "imageNameWebsiteHcms=$imageNameWebsiteHcms"
+echo "imageNameReports=$imageNameReports"
 echo
 echo "signomixDomain=$signomixDomain"
 echo "statusPage=$statusPage"
@@ -902,6 +906,50 @@ fi
 fi
 
 
+if [ -z "$2" ] || [ "$2" = "signomix-reports" ]; then
+### signomix-reports
+cd ../signomix-reports
+./mvnw versions:set -DnewVersion=$versionReports
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+if [ -z "$dockerRegistry" ]
+then
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$imageNameReports \
+    -Dquarkus.container-image.tag=$versionReports \
+    -Dquarkus.container-image.build=true \
+    clean package
+else
+    if [ $dockerHubType = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.name=$imageNameReports \
+    -Dquarkus.container-image.tag=$versionReports \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
+    ./mvnw \
+    -Dquarkus.container-image.registry=$dockerRegistry \
+    -Dquarkus.container-image.group=$dockerGroup \
+    -Dquarkus.container-image.username=$dockerUser \
+    -Dquarkus.container-image.password=$dockerPassword \
+    -Dquarkus.container-image.name=$imageNameReports \
+    -Dquarkus.container-image.tag=$versionReports \
+    -Dquarkus.container-image.push=true \
+    clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+fi
+
+
 
 # saving images
 cd ../signomix-ta
@@ -928,6 +976,7 @@ then
     docker save $imageNameDocsWebsite:$versionDocsWebsite | gzip > local-images/$imageNameDocsWebsite.tar.gz
     docker save $imageNameView:$versionView | gzip > local-images/$imageNameView.tar.gz
     docker save $imageNameSentinel:$versionSentinel | gzip > local-images/$imageNameSentinel.tar.gz
+    docker save $imageNameReports:$versionReports | gzip > local-images/$imageNameReports.tar.gz
     echo "saved"
     fi
 fi
