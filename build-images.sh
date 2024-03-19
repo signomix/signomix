@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Script to build Signomix images
+
 ################################
 ## CONFIGURATION
 ##
@@ -8,14 +10,10 @@
 versionApp=1.0.4
 versionAccount=1.0.4
 versionAuth=1.0.0
-versionDb=1.0.5
-versionMain=1.2.225
 versionMs=1.0.3
 versionProvider=0.0.1
-versionProxy=1.1.3
-versionProxy2=1.0.0
 versionLb=1.0.0
-versionPs=1.0.2.10
+versionGateway=1.0.0
 versionReceiver=1.0.0
 versionCore=1.0.0
 versionJobs=1.0.0
@@ -34,14 +32,10 @@ orderformUrlEn=https://orderform.mydomain.com/en
 imageNameApp=signomix-ta-app
 imageNameAccount=signomix-ta-account
 imageNameAuth=signomix-auth
-imageNameDb=signomix-database
-imageNameMain=signomix
 imageNameMs=signomix-ta-ms
 imageNameProvider=signomix-ta-provider
-imageNameProxy=signomix-proxy
-imageNameProxy2=signomix-proxy2
+imageNameGateway=signomix-gateway
 imageNameLb=signomix-lb
-imageNamePs=signomix-ta-ps
 imageNameReceiver=signomix-ta-receiver
 imageNameCore=signomix-ta-core
 imageNameJobs=signomix-ta-jobs
@@ -92,12 +86,8 @@ echo "versionAccount=$versionAccount"
 echo "versionAuth=$versionAuth"
 echo "versionCommon=$versionCommon"
 cat ../signomix-common/pom.xml|grep versionCommon
-echo "versionDb=$versionDb"
-echo "versionMain=$versionMain"
 echo "versionMs=$versionMs"
 echo "versionProvider=$versionProvider"
-echo "versionProxy=$versionProxy"
-echo "versionPs=$versionPs"
 echo "versionReceiver=$versionReceiver"
 echo "versionCore=$versionCore"
 echo "versionJobs=$versionJobs"
@@ -114,12 +104,9 @@ echo
 echo "imageNameApp=$imageNameApp"
 echo "imageNameAccount=$imageNameAccount"
 echo "imageNameAuth=$imageNameAuth"
-echo "imageNameDb=$imageNameDb"
-echo "imageNameMain=$imageNameMain"
 echo "imageNameMs=$imageNameMs"
 echo "imageNameProvider=$imageNameProvider"
-echo "imageNameProxy=$imageNameProxy"
-echo "imageNamePs=$imageNamePs"
+echo "imageNameProxy2=$imageNameProxy2"
 echo "imageNameReceiver=$imageNameReceiver"
 echo "imageNameCore=$imageNameCore"
 echo "imageNameJobs=$imageNameJobs"
@@ -139,7 +126,6 @@ echo "dockerRegistry=$dockerRegistry"
 echo "dockerGroup=$dockerGroup"
 echo "dockerUser=$dockerUser"
 echo "dockerPassword=$dockerPassword"
-echo "dbpassword=$dbpassword"
 echo "withGraylog=$withGraylog"
 echo "exportImages=$exportImages"
 echo "orderformUrlPl=$orderformUrlPl"
@@ -162,74 +148,8 @@ case $yn in
 		exit 1;;
 esac
 
-#if [ -z "$2" ] || [ "$2" = "signomix-webapp" ]; then
-## signomix-webapp
-#cd ../signomix-webapp
-#npm run build
-#retVal=$?
-#if [ $retVal -ne 0 ]; then
-#    exit $retval
-#fi
-#rm -R ../signomix-proxy/webapp/*
-#cp -R build/* ../signomix-proxy/webapp
-#fi
-
-##if [ -z "$2" ] || [ "$2" = "signomix-proxy" ] || [ "$2" = "signomix-webapp" ]; then
-## signomix-proxy
-#if [ -z "$2" ] || [ "$2" = "signomix-proxy" ]; then
-#cd ../signomix-proxy
-#if [ $withGraylog = "true" ]
-#then
-#    cp nginx-with-graylog.conf nginx.conf
-#else
-#    cp nginx-no-graylog.conf nginx.conf
-#fi
-#
-#if [ -z "$dockerRegistry" ]
-#then
-#    docker build --build-arg DOMAIN=$signomixDomain -t $imageNameProxy:$versionProxy .
-#else
-#    if [ $dockerHubType = "true" ]
-#    then
-#    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameProxy:$versionProxy .
-#    docker push $dockerUser/$imageNameProxy:$versionProxy
-#    else
-#    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy .
-#    docker push $dockerRegistry/$dockerGroup/$imageNameProxy:$versionProxy
-#    fi
-#fi
-#retVal=$?
-#if [ $retVal -ne 0 ]; then
-#    exit $retval
-#fi
-#echo
-#fi
-
-if [ -z "$2" ] || [ "$2" = "signomix-lb" ]; then
-# signomix-lb
-cd ../signomix-proxy2
-if [ -z "$dockerRegistry" ]
-then
-    docker build --build-arg DOMAIN=$signomixDomain -t $imageNameLb:$versionLb .
-else
-    if [ $dockerHubType = "true" ]
-    then
-    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameLb:$versionLb .
-    docker push $dockerUser/$imageNameLb:$versionLb
-    else
-    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameLb:$versionLb .
-    docker push $dockerRegistry/$dockerGroup/$imageNameLb:$versionLb
-    fi
-fi
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-echo
-fi
-
+### signomix-apigateway
 if [ -z "$2" ] || [ "$2" = "signomix-apigateway" ]; then
-# signomix-apigateway
 cd ../signomix-apigateway
 if [ -z "$dockerRegistry" ]
 then
@@ -251,30 +171,6 @@ fi
 echo
 fi
 
-
-if [ -z "$2" ] || [ "$2" = "signomix-database" ]; then
-# signomix-database
-cd ../signomix-database
-if [ -z "$dockerRegistry" ]
-then
-    docker build --build-arg dbpassword=$dbpassword -t $imageNameDb:$versionDb .
-else
-    if [ $dockerHubType = "true" ]
-    then
-    docker build --build-arg dbpassword=$dbpassword -t $dockerUser/$imageNameDb:$versionDb .
-    docker push $dockerUser/$imageNameDb:$versionDb
-    else
-    docker build --build-arg dbpassword=$dbpassword -t $dockerRegistry/$dockerGroup/$imageNameDb:$versionDb .
-    docker push $dockerRegistry/$dockerGroup/$imageNameDb:$versionDb
-    fi
-fi
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-echo
-fi
-
 ### signomix-common
 cd ../signomix-common
 mvn versions:set -DnewVersion=$versionCommon
@@ -284,8 +180,8 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 
-if [ -z "$2" ] || [ "$2" = "signomix-ta-jobs" ]; then
 ### signomix-jobs
+if [ -z "$2" ] || [ "$2" = "signomix-ta-jobs" ]; then
 cd ../signomix-ta-jobs
 ./mvnw versions:set -DnewVersion=$versionJobs
 retVal=$?
@@ -327,8 +223,8 @@ if [ $retVal -ne 0 ]; then
 fi
 fi
 
-if [ -z "$2" ] || [ "$2" = "signomix-ta-core" ]; then
 ### signomix-core
+if [ -z "$2" ] || [ "$2" = "signomix-ta-core" ]; then
 cd ../signomix-ta-core
 ./mvnw versions:set -DnewVersion=$versionCore
 retVal=$?
@@ -370,8 +266,8 @@ if [ $retVal -ne 0 ]; then
 fi
 fi
 
-if [ -z "$2" ] || [ "$2" = "signomix-auth" ]; then
 ### signomix-auth
+if [ -z "$2" ] || [ "$2" = "signomix-auth" ]; then
 cd ../signomix-auth
 ./mvnw versions:set -DnewVersion=$versionAuth
 retVal=$?
@@ -413,82 +309,8 @@ if [ $retVal -ne 0 ]; then
 fi
 fi
 
-if [ -z "$2" ] || [ "$2" = "signomix-main" ]; then
-# signomix-main
-cd ../signomix-main
-./mvnw versions:set -DnewVersion=$versionMain
-mvn package
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-if [ -z "$dockerRegistry" ]
-then
-    docker build -t $imageNameMain:$versionMain .
-else
-    if [ $dockerHubType = "true" ]
-    then
-    docker build -t $dockerUser/$imageNameMain:$versionMain .
-    docker push $dockerUser/$imageNameMain:$versionMain
-    else
-    docker build -t $dockerRegistry/$dockerGroup/$imageNameMain:$versionMain .
-    docker push $dockerRegistry/$dockerGroup/$imageNameMain:$versionMain
-    fi
-fi
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-echo
-fi
-
-if [ -z "$2" ] || [ "$2" = "signomix-ta-ps" ]; then
-# signomix-ta-ps
-cd ../signomix-ta-ps
-./update-webapps.sh
-./mvnw versions:set -DnewVersion=$versionPs
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-if [ -z "$dockerRegistry" ]
-then
-    echo
-    ./mvnw \
-    -Dquarkus.container-image.name=$imageNamePs \
-    -Dquarkus.container-image.tag=$versionPs \
-    -Dquarkus.container-image.build=true \
-    clean package
-else
-    if [ $dockerHubType = "true" ]
-    then
-    ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNamePs \
-    -Dquarkus.container-image.tag=$versionPs \
-    -Dquarkus.container-image.push=true \
-    clean package
-    else
-    ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNamePs \
-    -Dquarkus.container-image.tag=$versionPs \
-    -Dquarkus.container-image.push=true \
-    clean package
-    fi
-fi
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-echo
-fi
-
+### signomix-ta-app
 if [ -z "$2" ] || [ "$2" = "signomix-ta-app" ]; then
-# signomix-ta-app
 cd ../signomix-ta-app
 ./mvnw versions:set -DnewVersion=$versionApp
 retVal=$?
@@ -537,8 +359,8 @@ fi
 echo
 fi
 
+### signomix-ta-ms
 if [ -z "$2" ] || [ "$2" = "signomix-ta-ms" ]; then
-# signomix-ta-ms
 cd ../signomix-ta-ms
 ./mvnw versions:set -DnewVersion=$versionMs
 retVal=$?
@@ -581,8 +403,8 @@ fi
 echo
 fi
 
+### signomix-ta-receiver
 if [ -z "$2" ] || [ "$2" = "signomix-ta-receiver" ]; then
-# signomix-ta-receiver
 cd ../signomix-ta-receiver
 ./mvnw versions:set -DnewVersion=$versionReceiver
 retVal=$?
@@ -625,8 +447,8 @@ fi
 echo
 fi
 
+### signomix-ta-provider
 if [ -z "$2" ] || [ "$2" = "signomix-ta-provider" ]; then
-# signomix-ta-provider
 cd ../signomix-ta-provider
 ./mvnw versions:set -DnewVersion=$versionProvider
 retVal=$?
@@ -669,8 +491,8 @@ fi
 echo
 fi
 
+### signomix-ta-account
 if [ -z "$2" ] || [ "$2" = "signomix-ta-account" ]; then
-# signomix-ta-account
 cd ../signomix-ta-account
 ./mvnw versions:set -DnewVersion=$versionAccount
 retVal=$?
@@ -713,7 +535,7 @@ fi
 echo
 fi
 
-# hcms
+### hcms
 if [ -z "$2" ] || [ "$2" = "cricket-hcms" ]; then
 cd ../cricket-hcms
 ./mvnw versions:set -DnewVersion=$versionHcms
@@ -760,9 +582,8 @@ fi
 echo
 fi
 
-# signomix-webapp
+### signomix-webapp
 if [ -z "$2" ] || [ "$2" = "signomix-webapp" ]; then
-
 cd ../signomix-webapp
 if [ -z "$dockerRegistry" ]
 then
@@ -784,12 +605,9 @@ fi
 echo
 fi
 
-# signomix-docs-website
+### signomix-docs-website
 if [ -z "$2" ] || [ "$2" = "signomix-docs-website" ]; then
-
 cd ../signomix-docs-website
-#echo "PUBLIC_HCMS_URL = 'https://hcms.$signomixDomain/api/docs'" > .env
-#echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
 echo "PUBLIC_HCMS_URL = 'http://hcms:8080/api/docs'" > .env
 echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
 if [ -z "$dockerRegistry" ]
@@ -812,35 +630,8 @@ fi
 echo
 fi
 
-# signomix-website
-if [ -z "$2" ] || [ "$2" = "signomix-website" ]; then
-
-cd ../signomix-website
-echo "PUBLIC_HCMS_URL = 'http://website-hcms:8080/api/docs'" > .env
-echo "PUBLIC_HCMS_INDEX = 'pl/index.html'" >> .env
-if [ -z "$dockerRegistry" ]
-then
-    docker build -t $imageNameWebsite:$versionWebsite .
-else
-    if [ $dockerHubType = "true" ]
-    then
-    docker build  -t $dockerUser/$imageNameWebsite:$versionWebsite .
-    docker push $dockerUser/$imageNameWebsite:$versionWebsite
-    else
-    docker build -t $dockerRegistry/$dockerGroup/$imageNameWebsite:$versionWebsite .
-    docker push $dockerRegistry/$dockerGroup/$imageNameWebsite:$versionWebsite
-    fi
-fi
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-echo
-fi
-
-# signomix-view
+### signomix-view
 if [ -z "$2" ] || [ "$2" = "signomix-view" ]; then
-
 cd ../signomix-view
 if [ -z "$dockerRegistry" ]
 then
@@ -862,8 +653,8 @@ fi
 echo
 fi
 
-if [ -z "$2" ] || [ "$2" = "signomix-sentinel" ]; then
 ### signomix-sentinel
+if [ -z "$2" ] || [ "$2" = "signomix-sentinel" ]; then
 cd ../signomix-sentinel
 ./mvnw versions:set -DnewVersion=$versionSentinel
 retVal=$?
@@ -905,9 +696,8 @@ if [ $retVal -ne 0 ]; then
 fi
 fi
 
-
-if [ -z "$2" ] || [ "$2" = "signomix-reports" ]; then
 ### signomix-reports
+if [ -z "$2" ] || [ "$2" = "signomix-reports" ]; then
 cd ../signomix-reports
 ./mvnw versions:set -DnewVersion=$versionReports
 retVal=$?
@@ -947,12 +737,63 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo
 fi
 
+### signomix-lb but only if signomix-proxy2 exists
+if [ -z "$2" ] || [ "$2" = "signomix-lb" ]; then
+if [ -d "../signomix-proxy2" ]; then
+cd ../signomix-proxy2
+if [ -z "$dockerRegistry" ]
+then
+    docker build --build-arg DOMAIN=$signomixDomain -t $imageNameLb:$versionLb .
+else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameLb:$versionLb .
+    docker push $dockerUser/$imageNameLb:$versionLb
+    else
+    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameLb:$versionLb .
+    docker push $dockerRegistry/$dockerGroup/$imageNameLb:$versionLb
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+echo
+fi
+fi
 
+### signomix-website but only if signomix-website exists
+if [ -z "$2" ] || [ "$2" = "signomix-website" ]; then
+if [ -d "../signomix-website" ]; then
+cd ../signomix-website
+echo "PUBLIC_HCMS_URL = 'http://website-hcms:8080/api/docs'" > .env
+echo "PUBLIC_HCMS_INDEX = 'pl/index.html'" >> .env
+if [ -z "$dockerRegistry" ]
+then
+    docker build -t $imageNameWebsite:$versionWebsite .
+else
+    if [ $dockerHubType = "true" ]
+    then
+    docker build  -t $dockerUser/$imageNameWebsite:$versionWebsite .
+    docker push $dockerUser/$imageNameWebsite:$versionWebsite
+    else
+    docker build -t $dockerRegistry/$dockerGroup/$imageNameWebsite:$versionWebsite .
+    docker push $dockerRegistry/$dockerGroup/$imageNameWebsite:$versionWebsite
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+echo
+fi
+fi
 
-# saving images
-cd ../signomix-ta
+### saving images
+cd ../signomix
 if [ -z "$dockerRegistry" ]
 then
     if [ $exportImages != "true" ]
@@ -963,11 +804,9 @@ then
     rm local-images/*
     docker save $imageNameAccount:$versionAccount | gzip > local-images/$imageNameAccount.tar.gz
     docker save $imageNameApp:$versionApp | gzip > local-images/$imageNameApp.tar.gz
-    docker save $imageNameDb:$versionDb | gzip > local-images/$imageNameDb.tar.gz
-    docker save $imageNameMain:$versionMain | gzip > local-images/$imageNameMain.tar.gz
     docker save $imageNameMs:$versionMs | gzip > local-images/$imageNameMs.tar.gz
-    docker save $imageNameProxy:$versionProxy | gzip > local-images/$imageNameProxy.tar.gz
-    docker save $imageNamePs:$versionPs | gzip > local-images/$imageNamePs.tar.gz
+    docker save $imageNameLb:$versionLb | gzip > local-images/$imageNameLb.tar.gz
+    docker save $imageNameGateway:$versionGateway | gzip > local-images/$imageNameGateway.tar.gz
     docker save $imageNameReceiver:$versionReceiver | gzip > local-images/$imageNameReceiver.tar.gz
     docker save $imageNameProvider:$versionProvider | gzip > local-images/$imageNameProvider.tar.gz
     docker save $imageNameCore:$versionCore | gzip > local-images/$imageNameCore.tar.gz

@@ -3,35 +3,17 @@ version: "3"
 #volumes:
 #  cms-assets:
 
-x-services-volume:
-  &services-volume
-  type: bind
-  source: ${SGX_VOLUMES}/assets
-  target: /usr/signomix/dbdata/assets
+#x-services-volume:
+#  &services-volume
+#  type: bind
+#  source: ${SGX_VOLUMES}/assets
+#  target: /usr/signomix/dbdata/assets
 
 #networks:
 #  signomix-network:
 #    driver: bridge
 
 services:
-
-#  # API Gateway
-#  signomix-proxy:
-#    image: ${SGX_PROXY_NAME}:${SGX_PROXY_VERSION}
-#    restart: always
-#    logging:
-#      driver: "json-file"
-#      options:
-#        max-size: "200k"
-#        max-file: "10"
-#    networks:
-#      - signomix-network
-#    ports:
-#      - 80:80
-#      - 443:443
-#    #TODO: for production use, mount volume with certificates
-#    #volumes:
-#    #  - ${SGX_VOLUME_PROXY}:/etc/nginx/keys:rw
 
   # API Gateway
   signomix-gateway:
@@ -50,7 +32,6 @@ services:
     #volumes:
     #  - ${SGX_VOLUME_PROXY}/ssl:/etc/ssl/certs:rw
     #  - ${SGX_VOLUME_PROXY}/etc:/usr/local/etc/haproxy:rw
-
 
   # MQ
   signomix-mq:
@@ -78,51 +59,6 @@ services:
       timeout: 15s
       retries: 3
 
-  # signomix
-  signomix-main:
-    image: ${SGX_MAIN_NAME}:${SGX_MAIN_VERSION}
-    container_name: signomix-main
-    hostname: signomix-main
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-#    networks:
-#      - signomix-network
-    depends_on:
-      #- dbserver
-      - signomix-mq
-      - signomix-ta-ms
-    environment:
-      - SIGNOMIX_INITIAL_ADMIN_EMAIL=${SGX_INITIAL_ADMIN_EMAIL}
-      - SIGNOMIX_INITIAL_ADMIN_SECRET=${SGX_INITIAL_ADMIN_SECRET}
-      - SIGNOMIX_ADMIN_NOTIFICATION_EMAIL=${SGX_ADMIN_NOTIFICATION_EMAIL}
-      - SIGNOMIX_URL=${SGX_URL}
-      - SIGNOMIX_API_URL=${SGX_API_URL}
-      - SIGNOMIX_TITLE=${SGX_TITLE}
-      - SIGNOMIX_DB_SERVER=${SGX_DBSERVER}
-      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
-      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
-      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
-      - SIGNOMIX_COMMAND_ID_SIZE=8
-      - SIGNOMIX_USER_ROLE_DEFAULT=
-      - SIGNOMIX_USER_TYPE_DEFAULT=FREE
-      - QUEUE_HOST=signomix-mq
-      - QUEUE_PORT=5672
-      - QUEUE_USER=user
-      - QUEUE_PASSWORD=user
-      - QUEUE_NOTIFICATIONS=notifications
-      - QUEUE_MAILING=mailing
-      - QUEUE_ADMIN_EMAIL=admin_email
-    volumes:
-      #- cms-assets:/usr/signomix/dbdata/assets
-      - *services-volume
-      - ${SGX_VOLUMES}/volume-service/db:/usr/signomix/dbdata/db:rw
-      - ${SGX_VOLUMES}/volume-service/logs:/usr/signomix/dbdata/logs:rw
-      - ${SGX_VOLUMES}/volume-service/files:/usr/signomix/dbdata/files:rw
-      - ${SGX_VOLUMES}/volume-service/backup:/usr/signomix/dbdata/backup:rw
-    
   signomix-ta-ms:
     image: ${SGX_MS_NAME}:${SGX_MS_VERSION}
     container_name: signomix-ta-ms
@@ -154,7 +90,7 @@ services:
       - SIGNOMIX_SMTP_AUTH_METHODS=${SGX_SMTP_AUTH_METHODS}
       - SIGNOMIX_SENTRY_PACKAGES=com.signomix
       - SIGNOMIX_SENTRY_LEVEL=ERROR
-      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
+      #- SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       #- SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
       #- SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
       #- SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
@@ -175,27 +111,6 @@ services:
       - SIGNOMIX_SMSPLANET_KEY=${SGX_SMSPLANET_KEY}
       - SIGNOMIX_SMSPLANET_PASSWORD=${SGX_SMSPLANET_PASSWORD}
 
-#  # signomix publication service
-#  signomix-ta-ps:
-#    image: ${SGX_PS_NAME}:${SGX_PS_VERSION}
-#    container_name: signomix-ta-ps
-#    hostname: signomix-ta-ps
-#    logging:
-#      driver: "json-file"
-#      options:
-#        max-size: "200k"
-#        max-file: "10"
-##    networks:
-##      - signomix-network
-#    environment:
-#      - SIGNOMIX_TITLE=${SGX_TITLE}
-#    volumes:
-#      #- cms-assets:/usr/signomix/www/assets
-#      - <<: *services-volume
-#        target: /usr/signomix/www/assets
-#      - ${SGX_VOLUMES}/volume-ps:/usr/signomix/dbdata:rw
-#      - ${SGX_VOLUMES}/volume-ps/logs:/usr/signomix/dbdata/logs:rw
-
   signomix-ta-app:
     image: ${SGX_APP_NAME}:${SGX_APP_VERSION}
     container_name: signomix-ta-app
@@ -212,8 +127,7 @@ services:
       - signomix-mq
       - signomix-ta-ms
     environment:
-      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
-      - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
+      #- SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
       - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
       - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
@@ -231,8 +145,6 @@ services:
         max-file: "10"
 #    networks:
 #      - signomix-network
-#    depends_on:
-      #- dbserver
     environment:
       - SIGNOMIX_ORGANIZATION_DEFAULT=${SGX_ORGANIZATION_DEFAULT}
       - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
@@ -259,8 +171,7 @@ services:
       - signomix-mq
       - signomix-ta-ms
     environment:
-      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
-      - SIGNOMIX_CORE_HOST_URL=http://signomix-main:8080
+      #- SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
       - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
       - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
@@ -292,11 +203,10 @@ services:
       - signomix-ta-ms
     environment:
       - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
-      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
-      - SIGNOMIX_CORE_HOST_URL=http://signomix-main:8080
-      - SIGNOMIX_DATABASE_URL=${SGX_DATABASE_URL}
-      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
-      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
+      #- SIGNOMIX_APP_KEY=${SGX_APP_KEY}
+      #- SIGNOMIX_DATABASE_URL=${SGX_DATABASE_URL}
+      #- SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      #- SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
       - MQ_HOST=signomix-mq
       - MQ_PORT=5672
       - MQ_USER=user
@@ -343,9 +253,7 @@ services:
     depends_on:
       - signomix-mq
     environment:
-      - SIGNOMIX_APP_KEY=${SGX_APP_KEY}
-      - SIGNOMIX_AUTH_HOST_URL=http://signomix-main:8080
-      - SIGNOMIX_CORE_HOST_URL=http://signomix-main:8080
+      #- SIGNOMIX_APP_KEY=${SGX_APP_KEY}
       - MQ_HOST=signomix-mq
       - MQ_PORT=5672
       - MQ_USER=user
@@ -358,8 +266,8 @@ services:
       - SIGNOMIX_CMS_DATABASE_URL=${SGX_CMS_DATABASE_URL}
       - SIGNOMIX_IOT_DATABASE_URL=${SGX_IOT_DATABASE_URL}
       - SIGNOMIX_SHORTENER_DATABASE_URL=${SGX_SHORTENER_DATABASE_URL}
-      - SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
-      - SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
+      #- SIGNOMIX_DATABASE_USER=${SGX_DATABASE_USER}
+      #- SIGNOMIX_DATABASE_PASSWORD=${SGX_DATABASE_PASSWORD}
       - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -397,7 +305,7 @@ services:
 #    networks:
 #      - signomix-network
     volumes:
-      - ~/signomix/signomix-documentation:/home/jboss/documents
+      - ${SGX_VOLUMES}/signomix-documentation:/home/jboss/documents
 
   website-hcms:
     image: ${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
@@ -406,7 +314,7 @@ services:
 #    networks:
 #      - signomix-network
     volumes:
-      - ~/signomix/signomix-website-content:/home/jboss/documents
+      - ${SGX_VOLUMES}/signomix-website-content:/home/jboss/documents
   
   signomix-docs-website:
     image: ${SGX_DOCS_NAME}:${SGX_DOCS_VERSION}
@@ -495,29 +403,8 @@ services:
 #    networks:
 #      - signomix-network
     
-#  dbserver:
-#    image: ${SGX_DATABASE_NAME}:${SGX_DATABASE_VERSION}
-#    restart: always
-#    hostname: dbserver
-#    logging:
-#      driver: "json-file"
-#      options:
-#        max-size: "200k"
-#        max-file: "10"
-##    networks:
-##      - signomix-network
-#    expose:
-#      - 9092
-#    ports:
-#      - 9092:9092
-#    environment:
-#      - dbpassword=${SGX_DATABASE_PASSWORD}
-#    volumes:
-#      - ${SGX_VOLUMES}/volume-db:/h2data:rw
-#      - ${SGX_VOLUMES}/volume-dbbackup:/h2/backup:rw
 
-
-  #database
+  # TimescaleDB database
   # https://github.com/timescale/timescaledb-dockertimeseries
   # https://hub.docker.com/_/postgres
   tsserver:
@@ -533,7 +420,7 @@ services:
 #    networks:
 #      - signomix-network
     volumes:
-      - ${SGX_VOLUMES}/${POSTGRES_VOLUME}:/var/lib/postgresql/data:rw
+      - ${SGX_VOLUMES}/volume-postgres:/var/lib/postgresql/data:rw
 
   jaeger-all-in-one:
     image: jaegertracing/all-in-one:latest
@@ -545,11 +432,12 @@ services:
       #- "14250:14250" # Receive from external otel-collector, optional
     environment:
       - COLLECTOR_OTLP_ENABLED=true
+      - SPAN_STORAGE_TYPE=badger
 #    networks:
 #      - signomix-network
 
   quest:
-    image: questdb/questdb:7.3.9
+    image: questdb/questdb:7.3.10
     container_name: quest
     hostname: quest
     ports:

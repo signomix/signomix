@@ -1,49 +1,55 @@
 # Signomix IoT Platform (target architecture)
 
-
 **IoT & data management platform**
 
->*Signomix is in the process of refactoring. Stay tuned.*
+## Requirements
 
-## Installation
-
-### Installing from source
-
-#### Requirements
+For Signomix development you need:
 - Git
 - Java 17
 - Maven
 - npm
-- Docker
+- Docker (with compose plugin)
 
-#### Steps
+To initialize environment and run from Docker images locally you need:
+- Git
+- Docker (with compose plugin)
 
-1. Clone the main project from GitHub
+## Cloning tne main repository
 
 ```shell
-git clone https://github.com/signomix/signomix-ta.git
-```
-
-2. Clone and initialize required repositories
-
-> Review `init.sh` and:
-
-```
+git clone https://github.com/signomix/signomix.git
 cd signomix
-sh init.sh
 ```
 
-3. Configure
+## Running Docker images
 
-> TO BE DESCRIBED
+Before running you need to create folder structure required for data storage. To do this tun the script:
 
-4. Build 
+```shell
+sh init-runtime-environment.sh
+```
+Run services with Docker Compose:
+
+```shell
+docker compose --env-file ./dev.env up -d
+```
+
+## Building and running from source
+
+Clone and initialize required repositories:
+
+```shell
+sh init-dev-environment.sh
+```
+
+Build images:
 
 ```shell
 sh build-images.sh ./dev.cfg
 ```
 
-5. Start the service with docker-compose
+Start the service with docker compose:
 
 ```shell
 docker compose --env-file ./dev.env up -d
