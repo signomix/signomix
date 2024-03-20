@@ -282,7 +282,8 @@ services:
 #    networks:
 #      - signomix-network
     environment:
-      - FOLDERS_ROOT=documents
+      - FOLDERS_ROOT=documents/signomix;documents/templates
+      - FILE_TO_WATCH=version.txt;version.txt
     volumes:
       - ${SGX_VOLUMES}/documents/templates:/home/jboss/documents/templates
       - ${SGX_VOLUMES}/documents/signomix:/home/jboss/documents/signomix
