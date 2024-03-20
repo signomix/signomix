@@ -15,7 +15,7 @@ To initialize environment and run from Docker images locally you need:
 - Git
 - Docker (with compose plugin)
 
-## Cloning tne main repository
+## Cloning the main repository
 
 ```shell
 git clone https://github.com/signomix/signomix.git
@@ -32,7 +32,7 @@ sh init-runtime-environment.sh
 Run services with Docker Compose:
 
 ```shell
-docker compose --env-file ./dev.env up -d
+docker compose --env-file ./public.env up -d
 ```
 
 ## Building and running from source
