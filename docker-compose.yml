@@ -282,8 +282,9 @@ services:
 #    networks:
 #      - signomix-network
     environment:
-      - FOLDERS_ROOT=documents/signomix;documents/templates
-      - FILE_TO_WATCH=version.txt;version.txt
+      - FILE_TO_WATCH=documents/signomix/version.txt;documents/templates/version.txt
+      - FOLDERS_ROOT=documents
+      - FOLDERS_EXCLUDED=signomix/.git;signomix/attic;templates/.git;templates/attic
     volumes:
       - ${SGX_VOLUMES}/documents/templates:/home/jboss/documents/templates
       - ${SGX_VOLUMES}/documents/signomix:/home/jboss/documents/signomix
