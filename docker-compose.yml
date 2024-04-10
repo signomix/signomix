@@ -140,6 +140,7 @@ services:
       - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
       - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
       - QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
+      - SIGNOMIX_QUESTDB_CONFIG=${SGX_QUESTDB_CONFIG}
 
   signomix-ta-provider:
     image: ${SGX_DOCKER_GROUP}${SGX_PROVIDER_NAME}:${SGX_PROVIDER_VERSION}
@@ -419,14 +420,14 @@ services:
 #      - signomix-network
 
   quest:
-    image: questdb/questdb:7.3.10
+    image: questdb/questdb:7.4.0
     container_name: quest
     hostname: quest
     ports:
       - 9000:9000
-      - 9009:9009
-      - 8812:8812
-      - 9003:9003
+#      - 9009:9009
+#      - 8812:8812
+#      - 9003:9003
     volumes:
       - ${SGX_VOLUMES}/volume-questdb:/var/lib/questdb
 #    networks:

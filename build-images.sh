@@ -7,71 +7,71 @@
 ##
 
 # versions
-versionApp=1.0.4
-versionAccount=1.0.4
-versionAuth=1.0.0
-versionCommon=1.0.0
-versionMs=1.0.3
-versionProvider=0.0.1
-versionLb=1.0.0
-versionGateway=1.0.0
-versionReceiver=1.0.0
-versionCore=1.0.0
-versionJobs=1.0.0
-versionDocsWebsite=1.0.0
-versionView=1.0.0
-versionWebapp=1.0.0
-versionSentinel=1.0.0
-versionHcms=1.0.0
-versionWebsite=1.0.0
-versionWebsiteHcms=1.0.0
-versionReports=1.0.0
-orderformUrlPl=https://orderform.mydomain.com/pl
-orderformUrlEn=https://orderform.mydomain.com/en
+SGX_APP_VERSION=1.0.4
+SGX_ACCOUNT_VERSION=1.0.4
+SGX_AUTH_VERSION=1.0.0
+SGX_COMMON_VERSION=1.0.0
+SGX_MS_VERSION=1.0.3
+SGX_PROVIDER_VERSION=0.0.1
+SGX_LB_VERSION=1.0.0
+SGX_GATEWAY_VERSION=1.0.0
+SGX_RECEIVER_VERSION=1.0.0
+SGX_CORE_VERSION=1.0.0
+SGX_JOBS_VERSION=1.0.0
+SGX_DOCS_VERSION=1.0.0
+SGX_VIEW_VERSION=1.0.0
+SGX_WEBAPP_VERSION=1.0.0
+SGX_SENTINEL_VERSION=1.0.0
+SGX_HCMS_VERSION=1.0.0
+SGX_WEBSITE_VERSION=1.0.0
+SGX_REPORTS_VERSION=1.0.0
+#orderformUrlPl=https://orderform.mydomain.com/pl
+#orderformUrlEn=https://orderform.mydomain.com/en
 
 # names
-imageNameApp=signomix-ta-app
-imageNameAccount=signomix-ta-account
-imageNameAuth=signomix-auth
-imageNameMs=signomix-ta-ms
-imageNameProvider=signomix-ta-provider
-imageNameGateway=signomix-gateway
-imageNameLb=signomix-lb
-imageNameReceiver=signomix-ta-receiver
-imageNameCore=signomix-ta-core
-imageNameJobs=signomix-ta-jobs
-imageNameDocsWebsite=signomix-docs-website
-imageNameHcms=cricket-hcms
-imageNameView=signomix-view
-imageNameSentinel=signomix-sentinel
-imageNameWebapp=signomix-webapp
-imageNameWebsite=signomix-website
-imageNameWebsiteHcms=signomix-website-hcms
-imageNameReports=signomix-reports
+SGX_APP_NAME=signomix-ta-app
+SGX_ACCOUNT_NAME=signomix-ta-account
+SGX_AUTH_NAME=signomix-auth
+SGX_MS_NAME=signomix-ta-ms
+SGX_PROVIDER_NAME=signomix-ta-provider
+SGX_GATEWAY_NAME=signomix-gateway
+SGX_LB_NAME=signomix-lb
+SGX_RECEIVER_NAME=signomix-ta-receiver
+SGX_CORE_NAME=signomix-ta-core
+SGX_JOBS_NAME=signomix-ta-jobs
+SGX_DOCS_NAME=signomix-docs-website
+SGX_HCMS_NAME=cricket-hcms
+SGX_VIEW_NAME=signomix-view
+SGX_SENTINEL_NAME=signomix-sentinel
+SGX_WEBAPP_NAME=signomix-webapp
+SGX_WEBSITE_NAME=signomix-website
+SGX_REPORTS_NAME=signomix-reports
 
-java_services='signomix-ta-app signomix-ta-account signomix-auth signomix-ta-ms signomix-ta-provider signomix-ta-receiver signomix-ta-core signomix-ta-jobs signomix-sentinel signomix-reports'
+# decide if common lib should be built
 build_common_lib=no
-
-for item in $java_services
+java_services="$SGX_ACCOUNT_NAME $SGX_APP_NAME $SGX_AUTH_NAME $SGX_CORE_NAME $SGX_MS_NAME $SGX_JOBS_NAME"
+java_services="$java_services $SGX_PROVIDER_NAME $SGX_RECEIVER_NAME $SGX_REPORTS_NAME $SGX_SENTINEL_NAME"
+for i in $java_services
 do
-    if [ "$2" = "$item" ]; then
+    echo "$i"
+    if [ "$2" = "$i" ]; then
         build_common_lib=yes
     fi
-done
+done 
 
 ## proxy config
 # domain [mydomain.com | localhost ]
-signomixDomain=mydomain.com
-statusPage=https://status.mydomain.com
-dbpassword=signomixdbpwd
+SGX_DOMAIN=mydomain.com
+SGX_STATUS_PAGE=https://status.mydomain.com
+#dbpassword=signomixdbpwd
 
 # repository
-dockerRegistry=
-dockerHubType=true
-exportImages=true
+SGX_DOCKER_REGISTRY=
+SGX_DOCKERHUB_TYPE=true
+SGX_EXPORT_IMAGES=true
 
 # other
-defaultOrganizationId=0
+SGX_DEFAULT_ORGANIZATION_ID=0
 
 
 # the above variables can be overridden by local configuration
@@ -92,57 +92,56 @@ fi
 
 # print config
 echo
-echo "versionApp=$versionApp"
-echo "versionAccount=$versionAccount"
-echo "versionAuth=$versionAuth"
-echo "versionCommon=$versionCommon"
+echo "SGX_APP_VERSION=$SGX_APP_VERSION"
+echo "SGX_ACCOUNT_VERSION=$SGX_ACCOUNT_VERSION"
+echo "SGX_AUTH_VERSION=$SGX_AUTH_VERSION"
+echo "SGX_COMMON_VERSION=$SGX_COMMON_VERSION"
 cat ../signomix-common/pom.xml|grep versionCommon
-echo "versionMs=$versionMs"
-echo "versionProvider=$versionProvider"
-echo "versionReceiver=$versionReceiver"
-echo "versionCore=$versionCore"
-echo "versionJobs=$versionJobs"
-echo "versionDocsWebsite=$versionDocsWebsite"
-echo "versionHcms=$versionHcms"
-echo "versionView=$versionView"
-echo "versionSentinel=$versionSentinel"
-echo "versionWebapp=$versionWebapp"
-echo "versionWebsite=$versionWebsite"
-echo "versionWebsiteHcms=$versionWebsiteHcms"
-echo "versionReports=$versionReports"
+echo "SGX_MS_VERSION=$SGX_MS_VERSION"
+echo "SGX_PROVIDER_VERSION=$SGX_PROVIDER_VERSION"
+echo "SGX_RECEIVER_VERSION=$SGX_RECEIVER_VERSION"
+echo "SGX_CORE_VERSION=$SGX_CORE_VERSION"
+echo "SGX_JOBS_VERSION=$SGX_JOBS_VERSION"
+echo "SGX_DOCS_VERSION=$SGX_DOCS_VERSION"
+echo "SGX_HCMS_VERSION=$SGX_HCMS_VERSION"
+echo "SGX_VIEW_VERSION=$SGX_VIEW_VERSION"
+echo "SGX_SENTINEL_VERSION=$SGX_SENTINEL_VERSION"
+echo "SGX_WEBAPP_VERSION=$SGX_WEBAPP_VERSION"
+echo "SGX_WEBSITE_VERSION=$SGX_WEBSITE_VERSION"
+echo "SGX_REPORTS_VERSION=$SGX_REPORTS_VERSION"
 
 echo
-echo "imageNameApp=$imageNameApp"
-echo "imageNameAccount=$imageNameAccount"
-echo "imageNameAuth=$imageNameAuth"
-echo "imageNameMs=$imageNameMs"
-echo "imageNameProvider=$imageNameProvider"
+echo "SGX_APP_NAME=$SGX_APP_NAME"
+echo "SGX_ACCOUNT_NAME=$SGX_ACCOUNT_NAME"
+echo "SGX_AUTH_NAME=$SGX_AUTH_NAME"
+echo "SGX_MS_NAME=$SGX_MS_NAME"
+echo "SGX_PROVIDER_NAME=$SGX_PROVIDER_NAME"
 echo "imageNameProxy2=$imageNameProxy2"
-echo "imageNameReceiver=$imageNameReceiver"
-echo "imageNameCore=$imageNameCore"
-echo "imageNameJobs=$imageNameJobs"
-echo "imageNameDocsWebsite=$imageNameDocsWebsite"
-echo "imageNameHcms=$imageNameHcms"
-echo "imageNameView=$imageNameView"
-echo "imageNameSentinel=$imageNameSentinel"
-echo "imageNameWebapp=$imageNameWebapp"
-echo "imageNameWebsite=$imageNameWebsite"
-echo "imageNameWebsiteHcms=$imageNameWebsiteHcms"
-echo "imageNameReports=$imageNameReports"
+echo "SGX_RECEIVER_NAME=$SGX_RECEIVER_NAME"
+echo "SGX_CORE_NAME=$SGX_CORE_NAME"
+echo "SGX_JOBS_NAME=$SGX_JOBS_NAME"
+echo "SGX_DOCS_NAME=$SGX_DOCS_NAME"
+echo "SGX_HCMS_NAME=$SGX_HCMS_NAME"
+echo "SGX_VIEW_NAME=$SGX_VIEW_NAME"
+echo "SGX_SENTINEL_NAME=$SGX_SENTINEL_NAME"
+echo "SGX_WEBAPP_NAME=$SGX_WEBAPP_NAME"
+echo "SGX_WEBSITE_NAME=$SGX_WEBSITE_NAME"
+echo "SGX_WEBSITE_NAMEHcms=$SGX_WEBSITE_NAMEHcms"
+echo "SGX_REPORTS_NAME=$SGX_REPORTS_NAME"
 echo
-echo "signomixDomain=$signomixDomain"
-echo "statusPage=$statusPage"
-echo "dockerHubType=$dockerHubType"
-echo "dockerRegistry=$dockerRegistry"
-echo "dockerGroup=$dockerGroup"
-echo "dockerUser=$dockerUser"
-echo "dockerPassword=$dockerPassword"
-echo "withGraylog=$withGraylog"
-echo "exportImages=$exportImages"
-echo "orderformUrlPl=$orderformUrlPl"
-echo "orderformUrlEn=$orderformUrlEn"
+echo "SGX_DOMAIN=$SGX_DOMAIN"
+echo "SGX_STATUS_PAGE=$SGX_STATUS_PAGE"
+echo "SGX_DOCKERHUB_TYPE=$SGX_DOCKERHUB_TYPE"
+echo "SGX_DOCKER_REGISTRY=$SGX_DOCKER_REGISTRY"
+echo "SGX_DOCKER_GROUP=$SGX_DOCKER_GROUP"
+echo "SGX_DOCKER_USER=$SGX_DOCKER_USER"
+echo "SGX_DOCKER_PASSWORD=$SGX_DOCKER_PASSWORD"
+#echo "withGraylog=$withGraylog"
+echo "SGX_EXPORT_IMAGES=$SGX_EXPORT_IMAGES"
+#echo "orderformUrlPl=$orderformUrlPl"
+#echo "orderformUrlEn=$orderformUrlEn"
 echo "SIGNOMIX_TITLE=$SIGNOMIX_TITLE"
-echo "defaultOrganizationId=$defaultOrganizationId"
+echo "SGX_DEFAULT_ORGANIZATION_ID=$SGX_DEFAULT_ORGANIZATION_ID"
 echo
 echo "Image filter: $2"
 
@@ -162,19 +161,19 @@ esac
 ### signomix-apigateway
 if [ -z "$2" ] || [ "$2" = "signomix-gateway" ] || [ "$2" = "signomix-apigateway" ]; then
 cd ../signomix-apigateway
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
-    docker build --build-arg DOMAIN=$signomixDomain -t $imageNameGateway:$versionGateway -t $imageNameGateway:latest .
+    docker build --build-arg DOMAIN=$SGX_DOMAIN -t $SGX_GATEWAY_NAME:$SGX_GATEWAY_VERSION -t $SGX_GATEWAY_NAME:latest .
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
-    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameGateway:$versionGateway -t $dockerUser/$imageNameGateway:latest .
-    docker push $dockerUser/$imageNameGateway:$versionGateway
-    docker push $dockerUser/$imageNameGateway:latest
+    docker build --build-arg DOMAIN=$SGX_DOMAIN -t $SGX_DOCKER_USER/$SGX_GATEWAY_NAME:$SGX_GATEWAY_VERSION -t $SGX_DOCKER_USER/$SGX_GATEWAY_NAME:latest .
+    docker push $SGX_DOCKER_USER/$SGX_GATEWAY_NAME:$SGX_GATEWAY_VERSION
+    docker push $SGX_DOCKER_USER/$SGX_GATEWAY_NAME:latest
     else
-    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameGateway:$versionGateway -t $dockerRegistry/$dockerGroup/$imageNameGateway:latest .
-    docker push $dockerRegistry/$dockerGroup/$imageNameGateway:$versionGateway
-    docker push $dockerRegistry/$dockerGroup/$imageNameGateway:latest
+    docker build --build-arg DOMAIN=$SGX_DOMAIN -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_GATEWAY_NAME:$SGX_GATEWAY_VERSION -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_GATEWAY_NAME:latest .
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_GATEWAY_NAME:$SGX_GATEWAY_VERSION
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_GATEWAY_NAME:latest
     fi
 fi
 retVal=$?
@@ -188,7 +187,7 @@ fi
 if [ -z "$2" ] || [ "$build_common_lib" = "yes" ]; 
 then
 cd ../signomix-common
-mvn versions:set -DnewVersion=$versionCommon
+mvn versions:set -DnewVersion=$SGX_COMMON_VERSION
 mvn clean install
 retVal=$?
 if [ $retVal -ne 0 ]; then
@@ -199,38 +198,38 @@ fi
 ### signomix-jobs
 if [ -z "$2" ] || [ "$2" = "signomix-ta-jobs" ]; then
 cd ../signomix-ta-jobs
-./mvnw versions:set -DnewVersion=$versionJobs
+./mvnw versions:set -DnewVersion=$SGX_JOBS_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -Dquarkus.container-image.name=$imageNameJobs \
-    -Dquarkus.container-image.tag=$versionJobs \
+    -Dquarkus.container-image.name=$SGX_JOBS_NAME \
+    -Dquarkus.container-image.tag=$SGX_JOBS_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameJobs \
-    -Dquarkus.container-image.tag=$versionJobs \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_JOBS_NAME \
+    -Dquarkus.container-image.tag=$SGX_JOBS_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
         ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameJobs \
-    -Dquarkus.container-image.tag=$versionJobs \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_JOBS_NAME \
+    -Dquarkus.container-image.tag=$SGX_JOBS_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -245,38 +244,38 @@ fi
 ### signomix-core
 if [ -z "$2" ] || [ "$2" = "signomix-ta-core" ]; then
 cd ../signomix-ta-core
-./mvnw versions:set -DnewVersion=$versionCore
+./mvnw versions:set -DnewVersion=$SGX_CORE_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -Dquarkus.container-image.name=$imageNameCore \
-    -Dquarkus.container-image.tag=$versionCore \
+    -Dquarkus.container-image.name=$SGX_CORE_NAME \
+    -Dquarkus.container-image.tag=$SGX_CORE_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameCore \
-    -Dquarkus.container-image.tag=$versionCore \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_CORE_NAME \
+    -Dquarkus.container-image.tag=$SGX_CORE_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
     ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameCore \
-    -Dquarkus.container-image.tag=$versionCore \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_CORE_NAME \
+    -Dquarkus.container-image.tag=$SGX_CORE_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -291,38 +290,38 @@ fi
 ### signomix-auth
 if [ -z "$2" ] || [ "$2" = "signomix-auth" ]; then
 cd ../signomix-auth
-./mvnw versions:set -DnewVersion=$versionAuth
+./mvnw versions:set -DnewVersion=$SGX_AUTH_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -Dquarkus.container-image.name=$imageNameAuth \
-    -Dquarkus.container-image.tag=$versionAuth \
+    -Dquarkus.container-image.name=$SGX_AUTH_NAME \
+    -Dquarkus.container-image.tag=$SGX_AUTH_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameAuth \
-    -Dquarkus.container-image.tag=$versionAuth \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_AUTH_NAME \
+    -Dquarkus.container-image.tag=$SGX_AUTH_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
     ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameAuth \
-    -Dquarkus.container-image.tag=$versionAuth \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_AUTH_NAME \
+    -Dquarkus.container-image.tag=$SGX_AUTH_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -337,44 +336,44 @@ fi
 ### signomix-ta-app
 if [ -z "$2" ] || [ "$2" = "signomix-ta-app" ]; then
 cd ../signomix-ta-app
-./mvnw versions:set -DnewVersion=$versionApp
+./mvnw versions:set -DnewVersion=$SGX_APP_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -DSIGNOMIX_IMAGE_NAME=$imageNameApp \
-    -DSIGNOMIX_IMAGE_TAG=$versionApp \
-    -Dquarkus.container-image.name=$imageNameApp \
-    -Dquarkus.container-image.tag=$versionApp \
+    -DSIGNOMIX_IMAGE_NAME=$SGX_APP_NAME \
+    -DSIGNOMIX_IMAGE_TAG=$SGX_APP_VERSION \
+    -Dquarkus.container-image.name=$SGX_APP_NAME \
+    -Dquarkus.container-image.tag=$SGX_APP_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -DSIGNOMIX_IMAGE_NAME=$imageNameApp \
-    -DSIGNOMIX_IMAGE_TAG=$versionApp \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameApp \
-    -Dquarkus.container-image.tag=$versionApp \
+    -DSIGNOMIX_IMAGE_NAME=$SGX_APP_NAME \
+    -DSIGNOMIX_IMAGE_TAG=$SGX_APP_VERSION \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_APP_NAME \
+    -Dquarkus.container-image.tag=$SGX_APP_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
     ./mvnw \
-    -DSIGNOMIX_IMAGE_NAME=$imageNameApp \
-    -DSIGNOMIX_IMAGE_TAG=$versionApp \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameApp \
-    -Dquarkus.container-image.tag=$versionApp \
+    -DSIGNOMIX_IMAGE_NAME=$SGX_APP_NAME \
+    -DSIGNOMIX_IMAGE_TAG=$SGX_APP_VERSION \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_APP_NAME \
+    -Dquarkus.container-image.tag=$SGX_APP_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -390,38 +389,38 @@ fi
 ### signomix-ta-ms
 if [ -z "$2" ] || [ "$2" = "signomix-ta-ms" ]; then
 cd ../signomix-ta-ms
-./mvnw versions:set -DnewVersion=$versionMs
+./mvnw versions:set -DnewVersion=$SGX_MS_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -Dquarkus.container-image.name=$imageNameMs \
-    -Dquarkus.container-image.tag=$versionMs \
+    -Dquarkus.container-image.name=$SGX_MS_NAME \
+    -Dquarkus.container-image.tag=$SGX_MS_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameMs \
-    -Dquarkus.container-image.tag=$versionMs \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_MS_NAME \
+    -Dquarkus.container-image.tag=$SGX_MS_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
     ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameMs \
-    -Dquarkus.container-image.tag=$versionMs \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_MS_NAME \
+    -Dquarkus.container-image.tag=$SGX_MS_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -437,38 +436,38 @@ fi
 ### signomix-ta-receiver
 if [ -z "$2" ] || [ "$2" = "signomix-ta-receiver" ]; then
 cd ../signomix-ta-receiver
-./mvnw versions:set -DnewVersion=$versionReceiver
+./mvnw versions:set -DnewVersion=$SGX_RECEIVER_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -Dquarkus.container-image.name=$imageNameReceiver \
-    -Dquarkus.container-image.tag=$versionReceiver \
+    -Dquarkus.container-image.name=$SGX_RECEIVER_NAME \
+    -Dquarkus.container-image.tag=$SGX_RECEIVER_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameReceiver \
-    -Dquarkus.container-image.tag=$versionReceiver \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_RECEIVER_NAME \
+    -Dquarkus.container-image.tag=$SGX_RECEIVER_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
     ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameReceiver \
-    -Dquarkus.container-image.tag=$versionReceiver \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_RECEIVER_NAME \
+    -Dquarkus.container-image.tag=$SGX_RECEIVER_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -484,38 +483,38 @@ fi
 ### signomix-ta-provider
 if [ -z "$2" ] || [ "$2" = "signomix-ta-provider" ]; then
 cd ../signomix-ta-provider
-./mvnw versions:set -DnewVersion=$versionProvider
+./mvnw versions:set -DnewVersion=$SGX_PROVIDER_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -Dquarkus.container-image.name=$imageNameProvider \
-    -Dquarkus.container-image.tag=$versionProvider \
+    -Dquarkus.container-image.name=$SGX_PROVIDER_NAME \
+    -Dquarkus.container-image.tag=$SGX_PROVIDER_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameProvider \
-    -Dquarkus.container-image.tag=$versionProvider \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_PROVIDER_NAME \
+    -Dquarkus.container-image.tag=$SGX_PROVIDER_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
     ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameProvider \
-    -Dquarkus.container-image.tag=$versionProvider \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_PROVIDER_NAME \
+    -Dquarkus.container-image.tag=$SGX_PROVIDER_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -531,38 +530,38 @@ fi
 ### signomix-ta-account
 if [ -z "$2" ] || [ "$2" = "signomix-ta-account" ]; then
 cd ../signomix-ta-account
-./mvnw versions:set -DnewVersion=$versionAccount
+./mvnw versions:set -DnewVersion=$SGX_ACCOUNT_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -Dquarkus.container-image.name=$imageNameAccount \
-    -Dquarkus.container-image.tag=$versionAccount \
+    -Dquarkus.container-image.name=$SGX_ACCOUNT_NAME \
+    -Dquarkus.container-image.tag=$SGX_ACCOUNT_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameAccount \
-    -Dquarkus.container-image.tag=$versionAccount \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_ACCOUNT_NAME \
+    -Dquarkus.container-image.tag=$SGX_ACCOUNT_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
     ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameAccount \
-    -Dquarkus.container-image.tag=$versionAccount \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_ACCOUNT_NAME \
+    -Dquarkus.container-image.tag=$SGX_ACCOUNT_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -579,38 +578,38 @@ fi
 #### Cricket HCMS should be build in its own project
 #if [ -z "$2" ] || [ "$2" = "cricket-hcms" ]; then
 #cd ../cricket-hcms
-#./mvnw versions:set -DnewVersion=$versionHcms
+#./mvnw versions:set -DnewVersion=$SGX_HCMS_VERSION
 #retVal=$?
 #if [ $retVal -ne 0 ]; then
 #    exit $retval
 #fi
-#if [ -z "$dockerRegistry" ]
+#if [ -z "$SGX_DOCKER_REGISTRY" ]
 #then
 #    echo
 #    ./mvnw \
-#    -Dquarkus.container-image.name=$imageNameHcms \
-#    -Dquarkus.container-image.tag=$versionHcms \
+#    -Dquarkus.container-image.name=$SGX_HCMS_NAME \
+#    -Dquarkus.container-image.tag=$SGX_HCMS_VERSION \
 #    -Dquarkus.container-image.additional-tags=latest \
 #    -Dquarkus.container-image.build=true \
 #    clean package
 #else
-#    if [ $dockerHubType = "true" ]
+#    if [ $SGX_DOCKERHUB_TYPE = "true" ]
 #    then
 #    ./mvnw \
-#    -Dquarkus.container-image.group=$dockerGroup \
-#    -Dquarkus.container-image.name=$imageNameHcms \
-#    -Dquarkus.container-image.tag=$versionHcms \
+#    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+#    -Dquarkus.container-image.name=$SGX_HCMS_NAME \
+#    -Dquarkus.container-image.tag=$SGX_HCMS_VERSION \
 #    -Dquarkus.container-image.additional-tags=latest \
 #    -Dquarkus.container-image.push=true \
 #    clean package
 #    else
 #    ./mvnw \
-#    -Dquarkus.container-image.registry=$dockerRegistry \
-#    -Dquarkus.container-image.group=$dockerGroup \
-#    -Dquarkus.container-image.username=$dockerUser \
-#    -Dquarkus.container-image.password=$dockerPassword \
-#    -Dquarkus.container-image.name=$imageNameHcms \
-#    -Dquarkus.container-image.tag=$versionHcms \
+#    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+#    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+#    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+#    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+#    -Dquarkus.container-image.name=$SGX_HCMS_NAME \
+#    -Dquarkus.container-image.tag=$SGX_HCMS_VERSION \
 #    -Dquarkus.container-image.additional-tags=latest \
 #    -Dquarkus.container-image.push=true \
 #    clean package
@@ -626,19 +625,19 @@ fi
 ### signomix-webapp
 if [ -z "$2" ] || [ "$2" = "signomix-webapp" ]; then
 cd ../signomix-webapp
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
-    docker build -t $imageNameWebapp:$versionWebapp -t $imageNameWebapp:latest .
+    docker build -t $SGX_WEBAPP_NAME:$SGX_WEBAPP_VERSION -t $SGX_WEBAPP_NAME:latest .
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
-    docker build -t $dockerUser/$imageNameWebapp:$versionWebapp -t $dockerUser/$imageNameWebapp:latest .
-    docker push $dockerUser/$imageNameWebapp:$versionWebapp
-    docker push $dockerUser/$imageNameWebapp:latest
+    docker build -t $SGX_DOCKER_USER/$SGX_WEBAPP_NAME:$SGX_WEBAPP_VERSION -t $SGX_DOCKER_USER/$SGX_WEBAPP_NAME:latest .
+    docker push $SGX_DOCKER_USER/$SGX_WEBAPP_NAME:$SGX_WEBAPP_VERSION
+    docker push $SGX_DOCKER_USER/$SGX_WEBAPP_NAME:latest
     else
-    docker build -t $dockerRegistry/$dockerGroup/$imageNameWebapp:$versionWebapp -t $dockerRegistry/$dockerGroup/$imageNameWebapp:latest .
-    docker push $dockerRegistry/$dockerGroup/$imageNameWebapp:$versionWebapp
-    docker push $dockerRegistry/$dockerGroup/$imageNameWebapp:latest
+    docker build -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_WEBAPP_NAME:$SGX_WEBAPP_VERSION -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_WEBAPP_NAME:latest .
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_WEBAPP_NAME:$SGX_WEBAPP_VERSION
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_WEBAPP_NAME:latest
     fi
 fi
 retVal=$?
@@ -654,19 +653,19 @@ cd ../signomix-docs-website
 echo "PUBLIC_HCMS_URL = 'http://hcms:8080/api/docs'" > .env
 echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
 echo "PUBLIC_HCMS_ROOT = 'signomix'" >> .env
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
-    docker build -t $imageNameDocsWebsite:$versionDocsWebsite -t $imageNameDocsWebsite:latest .
+    docker build -t $SGX_DOCS_NAME:$SGX_DOCS_VERSION -t $SGX_DOCS_NAME:latest .
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
-    docker build -t $dockerUser/$imageNameDocsWebsite:$versionDocsWebsite -t $dockerUser/$imageNameDocsWebsite:latest .
-    docker push $dockerUser/$imageNameDocsWebsite:$versionDocsWebsite
-    docker push $dockerUser/$imageNameDocsWebsite:latest
+    docker build -t $SGX_DOCKER_USER/$SGX_DOCS_NAME:$SGX_DOCS_VERSION -t $SGX_DOCKER_USER/$SGX_DOCS_NAME:latest .
+    docker push $SGX_DOCKER_USER/$SGX_DOCS_NAME:$SGX_DOCS_VERSION
+    docker push $SGX_DOCKER_USER/$SGX_DOCS_NAME:latest
     else
-    docker build -t $dockerRegistry/$dockerGroup/$imageNameDocsWebsite:$versionDocsWebsite -t $dockerRegistry/$dockerGroup/$imageNameDocsWebsite:latest .
-    docker push $dockerRegistry/$dockerGroup/$imageNameDocsWebsite:$versionDocsWebsite
-    docker push $dockerRegistry/$dockerGroup/$imageNameDocsWebsite:latest
+    docker build -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_DOCS_NAME:$SGX_DOCS_VERSION -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_DOCS_NAME:latest .
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_DOCS_NAME:$SGX_DOCS_VERSION
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_DOCS_NAME:latest
     fi
 fi
 retVal=$?
@@ -679,19 +678,19 @@ fi
 ### signomix-view
 if [ -z "$2" ] || [ "$2" = "signomix-view" ]; then
 cd ../signomix-view
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
-    docker build -t $imageNameView:$versionView -t $imageNameView:latest .
+    docker build -t $SGX_VIEW_NAME:$SGX_VIEW_VERSION -t $SGX_VIEW_NAME:latest .
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
-    docker build -t $dockerUser/$imageNameView:$versionView -t $dockerUser/$imageNameView:latest .
-    docker push $dockerUser/$imageNameView:$versionView
-    docker push $dockerUser/$imageNameView:latest
+    docker build -t $SGX_DOCKER_USER/$SGX_VIEW_NAME:$SGX_VIEW_VERSION -t $SGX_DOCKER_USER/$SGX_VIEW_NAME:latest .
+    docker push $SGX_DOCKER_USER/$SGX_VIEW_NAME:$SGX_VIEW_VERSION
+    docker push $SGX_DOCKER_USER/$SGX_VIEW_NAME:latest
     else
-    docker build -t $dockerRegistry/$dockerGroup/$imageNameView:$versionView -t $dockerRegistry/$dockerGroup/$imageNameView:latest .
-    docker push $dockerRegistry/$dockerGroup/$imageNameView:$versionView
-    docker push $dockerRegistry/$dockerGroup/$imageNameView:latest
+    docker build -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_VIEW_NAME:$SGX_VIEW_VERSION -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_VIEW_NAME:latest .
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_VIEW_NAME:$SGX_VIEW_VERSION
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_VIEW_NAME:latest
     fi
 fi
 retVal=$?
@@ -704,38 +703,38 @@ fi
 ### signomix-sentinel
 if [ -z "$2" ] || [ "$2" = "signomix-sentinel" ]; then
 cd ../signomix-sentinel
-./mvnw versions:set -DnewVersion=$versionSentinel
+./mvnw versions:set -DnewVersion=$SGX_SENTINEL_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -Dquarkus.container-image.name=$imageNameSentinel \
-    -Dquarkus.container-image.tag=$versionSentinel \
+    -Dquarkus.container-image.name=$SGX_SENTINEL_NAME \
+    -Dquarkus.container-image.tag=$SGX_SENTINEL_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameSentinel \
-    -Dquarkus.container-image.tag=$versionSentinel \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_SENTINEL_NAME \
+    -Dquarkus.container-image.tag=$SGX_SENTINEL_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
     ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameSentinel \
-    -Dquarkus.container-image.tag=$versionSentinel \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_SENTINEL_NAME \
+    -Dquarkus.container-image.tag=$SGX_SENTINEL_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -750,38 +749,38 @@ fi
 ### signomix-reports
 if [ -z "$2" ] || [ "$2" = "signomix-reports" ]; then
 cd ../signomix-reports
-./mvnw versions:set -DnewVersion=$versionReports
+./mvnw versions:set -DnewVersion=$SGX_REPORTS_VERSION
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     echo
     ./mvnw \
-    -Dquarkus.container-image.name=$imageNameReports \
-    -Dquarkus.container-image.tag=$versionReports \
+    -Dquarkus.container-image.name=$SGX_REPORTS_NAME \
+    -Dquarkus.container-image.tag=$SGX_REPORTS_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.build=true \
     clean package
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
     ./mvnw \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.name=$imageNameReports \
-    -Dquarkus.container-image.tag=$versionReports \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_REPORTS_NAME \
+    -Dquarkus.container-image.tag=$SGX_REPORTS_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
     else
     ./mvnw \
-    -Dquarkus.container-image.registry=$dockerRegistry \
-    -Dquarkus.container-image.group=$dockerGroup \
-    -Dquarkus.container-image.username=$dockerUser \
-    -Dquarkus.container-image.password=$dockerPassword \
-    -Dquarkus.container-image.name=$imageNameReports \
-    -Dquarkus.container-image.tag=$versionReports \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_REPORTS_NAME \
+    -Dquarkus.container-image.tag=$SGX_REPORTS_VERSION \
     -Dquarkus.container-image.additional-tags=latest \
     -Dquarkus.container-image.push=true \
     clean package
@@ -798,19 +797,19 @@ fi
 if [ -z "$2" ] || [ "$2" = "signomix-lb" ]; then
 if [ -d "../signomix-proxy2" ]; then
 cd ../signomix-proxy2
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
-    docker build --build-arg DOMAIN=$signomixDomain -t $imageNameLb:$versionLb -t $imageNameLb:latest .
+    docker build --build-arg DOMAIN=$SGX_DOMAIN -t $SGX_LB_NAME:$SGX_LB_VERSION -t $SGX_LB_NAME:latest .
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
-    docker build --build-arg DOMAIN=$signomixDomain -t $dockerUser/$imageNameLb:$versionLb -t $dockerUser/$imageNameLb:latest .
-    docker push $dockerUser/$imageNameLb:$versionLb
-    docker push $dockerUser/$imageNameLb:latest
+    docker build --build-arg DOMAIN=$SGX_DOMAIN -t $SGX_DOCKER_USER/$SGX_LB_NAME:$SGX_LB_VERSION -t $SGX_DOCKER_USER/$SGX_LB_NAME:latest .
+    docker push $SGX_DOCKER_USER/$SGX_LB_NAME:$SGX_LB_VERSION
+    docker push $SGX_DOCKER_USER/$SGX_LB_NAME:latest
     else
-    docker build --build-arg DOMAIN=$signomixDomain -t $dockerRegistry/$dockerGroup/$imageNameLb:$versionLb -t $dockerRegistry/$dockerGroup/$imageNameLb:latest .
-    docker push $dockerRegistry/$dockerGroup/$imageNameLb:$versionLb
-    docker push $dockerRegistry/$dockerGroup/$imageNameLb:latest
+    docker build --build-arg DOMAIN=$SGX_DOMAIN -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_LB_NAME:$SGX_LB_VERSION -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_LB_NAME:latest .
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_LB_NAME:$SGX_LB_VERSION
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_LB_NAME:latest
     fi
 fi
 retVal=$?
@@ -828,19 +827,19 @@ cd ../signomix-website
 echo "PUBLIC_HCMS_URL = 'http://website-hcms:8080/api/docs'" > .env
 echo "PUBLIC_HCMS_INDEX = 'pl/index.html'" >> .env
 echo "PUBLIC_HCMS_ROOT = 'home'" >> .env
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
-    docker build -t $imageNameWebsite:$versionWebsite -t $imageNameWebsite:latest .
+    docker build -t $SGX_WEBSITE_NAME:$SGX_WEBSITE_VERSION -t $SGX_WEBSITE_NAME:latest .
 else
-    if [ $dockerHubType = "true" ]
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
     then
-    docker build -t $dockerUser/$imageNameWebsite:$versionWebsite -t $dockerUser/$imageNameWebsite:latest .
-    docker push $dockerUser/$imageNameWebsite:$versionWebsite
-    docker push $dockerUser/$imageNameWebsite:latest
+    docker build -t $SGX_DOCKER_USER/$SGX_WEBSITE_NAME:$SGX_WEBSITE_VERSION -t $SGX_DOCKER_USER/$SGX_WEBSITE_NAME:latest .
+    docker push $SGX_DOCKER_USER/$SGX_WEBSITE_NAME:$SGX_WEBSITE_VERSION
+    docker push $SGX_DOCKER_USER/$SGX_WEBSITE_NAME:latest
     else
-    docker build -t $dockerRegistry/$dockerGroup/$imageNameWebsite:$versionWebsite -t $dockerRegistry/$dockerGroup/$imageNameWebsite:latest .
-    docker push $dockerRegistry/$dockerGroup/$imageNameWebsite:$versionWebsite
-    docker push $dockerRegistry/$dockerGroup/$imageNameWebsite:latest
+    docker build -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_WEBSITE_NAME:$SGX_WEBSITE_VERSION -t $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_WEBSITE_NAME:latest .
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_WEBSITE_NAME:$SGX_WEBSITE_VERSION
+    docker push $SGX_DOCKER_REGISTRY/$SGX_DOCKER_GROUP/$SGX_WEBSITE_NAME:latest
     fi
 fi
 retVal=$?
@@ -853,28 +852,28 @@ fi
 
 ### saving images
 cd ../signomix
-if [ -z "$dockerRegistry" ]
+if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
-    if [ $exportImages != "true" ]
+    if [ $SGX_EXPORT_IMAGES != "true" ]
     then
     echo "image export skipped"
     else
     mkdir local-images
     rm local-images/*
-    docker save $imageNameAccount:$versionAccount | gzip > local-images/$imageNameAccount.tar.gz
-    docker save $imageNameApp:$versionApp | gzip > local-images/$imageNameApp.tar.gz
-    docker save $imageNameMs:$versionMs | gzip > local-images/$imageNameMs.tar.gz
-    docker save $imageNameLb:$versionLb | gzip > local-images/$imageNameLb.tar.gz
-    docker save $imageNameGateway:$versionGateway | gzip > local-images/$imageNameGateway.tar.gz
-    docker save $imageNameReceiver:$versionReceiver | gzip > local-images/$imageNameReceiver.tar.gz
-    docker save $imageNameProvider:$versionProvider | gzip > local-images/$imageNameProvider.tar.gz
-    docker save $imageNameCore:$versionCore | gzip > local-images/$imageNameCore.tar.gz
-    docker save $imageNameJobs:$versionJobs | gzip > local-images/$imageNameJobs.tar.gz
-    docker save $imageNameAuth:$versionAuth | gzip > local-images/$imageNameAuth.tar.gz
-    docker save $imageNameDocsWebsite:$versionDocsWebsite | gzip > local-images/$imageNameDocsWebsite.tar.gz
-    docker save $imageNameView:$versionView | gzip > local-images/$imageNameView.tar.gz
-    docker save $imageNameSentinel:$versionSentinel | gzip > local-images/$imageNameSentinel.tar.gz
-    docker save $imageNameReports:$versionReports | gzip > local-images/$imageNameReports.tar.gz
+    docker save $SGX_ACCOUNT_NAME:$SGX_ACCOUNT_VERSION | gzip > local-images/$SGX_ACCOUNT_NAME.tar.gz
+    docker save $SGX_APP_NAME:$SGX_APP_VERSION | gzip > local-images/$SGX_APP_NAME.tar.gz
+    docker save $SGX_MS_NAME:$SGX_MS_VERSION | gzip > local-images/$SGX_MS_NAME.tar.gz
+    docker save $SGX_LB_NAME:$SGX_LB_VERSION | gzip > local-images/$SGX_LB_NAME.tar.gz
+    docker save $SGX_GATEWAY_NAME:$SGX_GATEWAY_VERSION | gzip > local-images/$SGX_GATEWAY_NAME.tar.gz
+    docker save $SGX_RECEIVER_NAME:$SGX_RECEIVER_VERSION | gzip > local-images/$SGX_RECEIVER_NAME.tar.gz
+    docker save $SGX_PROVIDER_NAME:$SGX_PROVIDER_VERSION | gzip > local-images/$SGX_PROVIDER_NAME.tar.gz
+    docker save $SGX_CORE_NAME:$SGX_CORE_VERSION | gzip > local-images/$SGX_CORE_NAME.tar.gz
+    docker save $SGX_JOBS_NAME:$SGX_JOBS_VERSION | gzip > local-images/$SGX_JOBS_NAME.tar.gz
+    docker save $SGX_AUTH_NAME:$SGX_AUTH_VERSION | gzip > local-images/$SGX_AUTH_NAME.tar.gz
+    docker save $SGX_DOCS_NAME:$SGX_DOCS_VERSION | gzip > local-images/$SGX_DOCS_NAME.tar.gz
+    docker save $SGX_VIEW_NAME:$SGX_VIEW_VERSION | gzip > local-images/$SGX_VIEW_NAME.tar.gz
+    docker save $SGX_SENTINEL_NAME:$SGX_SENTINEL_VERSION | gzip > local-images/$SGX_SENTINEL_NAME.tar.gz
+    docker save $SGX_REPORTS_NAME:$SGX_REPORTS_VERSION | gzip > local-images/$SGX_REPORTS_NAME.tar.gz
     echo "saved"
     fi
 fi
