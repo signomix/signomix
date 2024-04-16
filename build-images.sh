@@ -80,7 +80,7 @@ echo "cfg_location=$1"
 if [ -z "$cfg_location" ]
 then
     # default configuration
-    cfg_location=local/build-images.cfg
+    cfg_location=dev.env
 fi
 if [ -f "$cfg_location" ]
 then
