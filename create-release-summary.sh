@@ -101,8 +101,8 @@ for dir in $java_services; do
     dir_exists=false
     # Change to the directory
     if [ "$dir" = "signomix-lb" ]; then
-        if [ -d "../signomix-proxy2" ]; then
-            cd "../signomix-proxy2" 2>/dev/null
+        if [ -d "../signomix-lb" ]; then
+            cd "../signomix-lb" 2>/dev/null
             dir_exists=true
         else
             dir_exists=false

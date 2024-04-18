@@ -46,6 +46,7 @@ SGX_SENTINEL_NAME=signomix-sentinel
 SGX_WEBAPP_NAME=signomix-webapp
 SGX_WEBSITE_NAME=signomix-website
 SGX_REPORTS_NAME=signomix-reports
+SGX_COMMON_NAME=signomix-common
 
 # decide if common lib should be built
 build_common_lib=no
@@ -158,6 +159,10 @@ case $yn in
 		exit 1;;
 esac
 
+# Clear the build-report.txt file
+> ../signomix/build-report.txt
+echo "#$(date --iso-8601=minutes -u)" >> ../signomix/build-report.txt
+
 ### signomix-apigateway
 if [ -z "$2" ] || [ "$2" = "signomix-gateway" ] || [ "$2" = "signomix-apigateway" ]; then
 cd ../signomix-apigateway
@@ -180,6 +185,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_GATEWAY_NAME:$SGX_GATEWAY_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
@@ -193,6 +199,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_COMMON_NAME:$SGX_COMMON_VERSION >> ../signomix/build-report.txt
 fi
 
 ### signomix-jobs
@@ -239,6 +246,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_JOBS_NAME:$SGX_JOBS_VERSION >> ../signomix/build-report.txt
 fi
 
 ### signomix-core
@@ -285,6 +293,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_CORE_NAME:$SGX_CORE_VERSION >> ../signomix/build-report.txt
 fi
 
 ### signomix-auth
@@ -331,6 +340,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_AUTH_NAME:$SGX_AUTH_VERSION >> ../signomix/build-report.txt
 fi
 
 ### signomix-ta-app
@@ -383,6 +393,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_APP_NAME:$SGX_APP_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
@@ -430,6 +441,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_MS_NAME:$SGX_MS_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
@@ -477,6 +489,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_RECEIVER_NAME:$SGX_RECEIVER_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
@@ -524,6 +537,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_PROVIDER_NAME:$SGX_PROVIDER_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
@@ -571,6 +585,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_ACCOUNT_NAME:$SGX_ACCOUNT_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
@@ -644,6 +659,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_WEBAPP_NAME:$SGX_WEBAPP_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
@@ -672,6 +688,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_DOCS_NAME:$SGX_DOCS_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
@@ -697,6 +714,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_VIEW_NAME:$SGX_VIEW_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
@@ -744,6 +762,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_SENTINEL_NAME:$SGX_SENTINEL_VERSION >> ../signomix/build-report.txt
 fi
 
 ### signomix-reports
@@ -790,13 +809,14 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_REPORTS_NAME:$SGX_REPORTS_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
 ### signomix-lb but only if signomix-proxy2 exists
 if [ -z "$2" ] || [ "$2" = "signomix-lb" ]; then
-if [ -d "../signomix-proxy2" ]; then
-cd ../signomix-proxy2
+if [ -d "../signomix-lb" ]; then
+cd ../signomix-lb
 if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     docker build --build-arg DOMAIN=$SGX_DOMAIN -t $SGX_LB_NAME:$SGX_LB_VERSION -t $SGX_LB_NAME:latest .
@@ -816,6 +836,7 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_LB_NAME:$SGX_LB_VERSION >> ../signomix/build-report.txt
 echo
 fi
 fi
@@ -846,13 +867,14 @@ retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retval
 fi
+echo $SGX_WEBSITE_NAME:$SGX_WEBSITE_VERSION >> ../signomix/build-report.txt
 echo
 fi
 fi
 
 ### saving images
 cd ../signomix
-call ./create-release-summary.sh $cfg_location
+./create-release-summary.sh $cfg_location
 
 if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
