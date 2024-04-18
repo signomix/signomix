@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# This script is used to create a release summary file that contains the short git commit hash for each service and its version.
+### This script is used to create a release summary file that contains the short git commit hash for each service and its version.
 
+### Variables
+# repository from which the release number is taken
 SGX_RELEASE_REPO_NAME=signomix
 SGX_RELEASE_VERSION=1.0.0
 
@@ -49,16 +51,19 @@ cfg_location="$1"
 echo "cfg_location=$1"
 if [ -z "$cfg_location" ]
 then
-    # default configuration
-    cfg_location=dev.env
+    echo "No config file specified. Exiting."
+    exit 1
 fi
 if [ -f "$cfg_location" ]
 then
-    echo "Building Signomix using configuration from "$cfg_location":"
+    echo "Generating Signomix release summary using config from  " $cfg_location
     . "$cfg_location"
 else
-    echo "Building Signomix using default config:"
+    echo "Config file not found. Exiting."
+    exit 1
 fi
+
+### Creating the release summary file
 
 # Define an array of directories
 java_services="$SGX_ACCOUNT_NAME $SGX_APP_NAME $SGX_AUTH_NAME $SGX_COMMON_NAME $SGX_CORE_NAME $SGX_DOCS_NAME $SGX_GATEWAY_NAME"
@@ -72,13 +77,13 @@ services_versions="$services_versions $SGX_RECEIVER_VERSION $SGX_REPORTS_VERSION
 # Clear the release-summary.txt file
 > ../signomix/release-summary.txt
 # Insert date and time of generation as UTC date
-echo "#$(date --iso-8601=minutes -u)" >> ../signomix/release-summary.txt
+echo "#$(date --iso-8601=minutes -u)" >> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
 # Echo the first line of the config file
 head_line=$(head -n 1 $cfg_location)
 head_line="${head_line:1}"
-echo "#$head_line" >> ../signomix/release-summary.txt
+echo "#$head_line" >> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
 # CSV header
-echo "#service;commit hash;version" >> ../signomix/release-summary.txt
+echo "#service;commit hash;version" >> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
 
 # Convert services_versions into an array
 read -a services_versions_array <<< "$services_versions"
@@ -87,7 +92,7 @@ cd ../$SGX_RELEASE_REPO_NAME
 # Get the short git commit hash
 hash=$(git rev-parse --short HEAD)
 # Echo the directory and hash to the release-summary.txt file
-echo "signomix;$hash;$SGX_RELEASE_VERSION" >> ../signomix/release-summary.txt
+echo "signomix;$hash;$SGX_RELEASE_VERSION" >> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
 
 # Loop over the directories
 counter=0
@@ -122,3 +127,4 @@ for dir in $java_services; do
     fi
     ((counter++))
 done
+echo "Release sumary file: ../"$SGX_RELEASE_REPO_NAME"/release-summary.txt"

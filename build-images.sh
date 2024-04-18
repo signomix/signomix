@@ -852,6 +852,8 @@ fi
 
 ### saving images
 cd ../signomix
+call ./create-release-summary.sh $cfg_location
+
 if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     if [ $SGX_EXPORT_IMAGES != "true" ]
