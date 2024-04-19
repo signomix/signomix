@@ -23,7 +23,6 @@ git clone https://github.com/signomix/signomix-reports.git
 git clone https://github.com/signomix/signomix-sentinel.git
 git clone https://github.com/signomix/signomix-webapp.git
 git clone https://github.com/signomix/signomix-view.git
-git clone https://github.com/gskorupa/cricket-hcms.git
 
 # Create required folders for Docker volumes
 mkdir -p ~/signomix/volumes/mosquitto/config
