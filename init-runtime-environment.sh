@@ -4,6 +4,7 @@
 
 # Create required folders for Docker volumes
 mkdir -p ~/signomix/volumes/mosquitto/config
+cp ./mosquitto/cfg/mosquitto.conf ~/signomix/volumes/mosquitto/config
 mkdir -p ~/signomix/volumes/mosquitto/data
 mkdir -p ~/signomix/volumes/mosquitto/log
 mkdir -p ~/signomix/volumes/volume-postgres
