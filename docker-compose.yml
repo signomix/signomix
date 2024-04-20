@@ -12,6 +12,9 @@ services:
     restart: always
     container_name: signomix-gateway
     hostname: signomix-gateway
+    depends_on:
+      - signomix-webapp
+      - signomix-ta-core
     logging:
       driver: "json-file"
       options:
