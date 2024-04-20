@@ -1,8 +1,8 @@
 #version: "3"
 
-#networks:
-#  signomix-network:
-#    driver: bridge
+networks:
+  signomix-network:
+    driver: bridge
 
 services:
 
@@ -20,8 +20,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     ports:
       - 80:80
     #  - 443:443
@@ -42,8 +42,8 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=user
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     expose:
       # AMQP protocol port
       - "5672"
@@ -65,8 +65,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     depends_on:
       - signomix-mq
     environment:
@@ -112,8 +112,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     depends_on:
       - signomix-mq
       - signomix-ta-ms
@@ -134,8 +134,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     environment:
       - SIGNOMIX_ORGANIZATION_DEFAULT=${SGX_ORGANIZATION_DEFAULT}
       - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
@@ -157,8 +157,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     depends_on:
       - signomix-mq
       - signomix-ta-ms
@@ -186,8 +186,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     depends_on:
       - signomix-mq
       - signomix-ta-ms
@@ -217,8 +217,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     environment:
       - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -235,8 +235,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     depends_on:
       - signomix-mq
     environment:
@@ -268,8 +268,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     depends_on:
       - signomix-mq
       - signomix-ta-ms
@@ -288,8 +288,8 @@ services:
     hostname: hcms
     expose:
       - "8080"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     environment:
       - FILE_TO_WATCH=documents/signomix/version.txt;documents/templates/version.txt
       - FOLDERS_ROOT=documents
@@ -304,8 +304,8 @@ services:
     hostname: website-hcms
     expose:
       - "8080"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     volumes:
       - ${SGX_VOLUMES}/signomix-website-content:/home/jboss/documents
   
@@ -317,8 +317,8 @@ services:
       - hcms
     expose:
       - "3000"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
 
 #  signomix-website:
 #    image: ${SGX_DOCKER_GROUP}${SGX_WEBSITE_NAME}:${SGX_WEBSITE_VERSION}
@@ -337,8 +337,8 @@ services:
     hostname: signomix-view
     expose:
       - "3000"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
 
   signomix-webapp:
     image: ${SGX_DOCKER_GROUP}${SGX_WEBAPP_NAME}:${SGX_WEBAPP_VERSION}
@@ -348,8 +348,8 @@ services:
       - "3000:3000"
     expose:
       - "3000"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
 
   signomix-sentinel:
     image: ${SGX_DOCKER_GROUP}${SGX_SENTINEL_NAME}:${SGX_SENTINEL_VERSION}
@@ -361,8 +361,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     depends_on:
       - tsserver
     environment:
@@ -381,8 +381,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     depends_on:
       - tsserver
     environment:
@@ -403,8 +403,8 @@ services:
       - ${SGX_VOLUMES}/mosquitto/config:/mosquitto/config
       - ${SGX_VOLUMES}/mosquitto/data:/mosquitto/data
       - ${SGX_VOLUMES}/mosquitto/log:/mosquitto/log
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     
 
   # TimescaleDB database
@@ -422,8 +422,8 @@ services:
       - ${POSTGRES_PORT_PUBLISHED}:5432
     expose:
       - 5432
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
     volumes:
       - ${SGX_VOLUMES}/volume-postgres:/var/lib/postgresql/data:rw
 
@@ -440,8 +440,8 @@ services:
     environment:
       - COLLECTOR_OTLP_ENABLED=true
       - SPAN_STORAGE_TYPE=badger
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
 
   quest:
     image: questdb/questdb:7.4.0
@@ -454,5 +454,5 @@ services:
 #      - 9003:9003
     volumes:
       - ${SGX_VOLUMES}/volume-questdb:/var/lib/questdb
-#    networks:
-#      - signomix-network
+    networks:
+      - signomix-network
