@@ -308,12 +308,12 @@ services:
 #    networks:
 #      - signomix-network
 
-  signomix-website:
-    image: ${SGX_DOCKER_GROUP}${SGX_WEBSITE_NAME}:${SGX_WEBSITE_VERSION}
-    depends_on:
-      - website-hcms
-    expose:
-      - "3000"
+#  signomix-website:
+#    image: ${SGX_DOCKER_GROUP}${SGX_WEBSITE_NAME}:${SGX_WEBSITE_VERSION}
+#    depends_on:
+#      - website-hcms
+#    expose:
+#      - "3000"
 #    networks:
 #      - signomix-network
 
