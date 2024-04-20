@@ -10,6 +10,8 @@ services:
   signomix-gateway:
     image: ${SGX_DOCKER_GROUP}${SGX_GATEWAY_NAME}:${SGX_GATEWAY_VERSION}
     restart: always
+    container_name: signomix-gateway
+    hostname: signomix-gateway
     logging:
       driver: "json-file"
       options:
@@ -204,6 +206,7 @@ services:
 
   signomix-ta-account:
     image: ${SGX_DOCKER_GROUP}${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
+    container_name: signomix-ta-account
     hostname: signomix-ta-account
     restart: always
     logging:
@@ -278,6 +281,8 @@ services:
 
   hcms:
     image: gskorupa/cricket-hcms:latest
+    container_name: hcms
+    hostname: hcms
     expose:
       - "8080"
 #    networks:
@@ -292,6 +297,8 @@ services:
 
   website-hcms:
     image: gskorupa/cricket-hcms:latest
+    container_name: website-hcms
+    hostname: website-hcms
     expose:
       - "8080"
 #    networks:
@@ -301,6 +308,8 @@ services:
   
   signomix-docs-website:
     image: ${SGX_DOCKER_GROUP}${SGX_DOCS_NAME}:${SGX_DOCS_VERSION}
+    container_name: signomix-docs-website
+    hostname: signomix-docs-website
     depends_on:
       - hcms
     expose:
@@ -310,6 +319,8 @@ services:
 
 #  signomix-website:
 #    image: ${SGX_DOCKER_GROUP}${SGX_WEBSITE_NAME}:${SGX_WEBSITE_VERSION}
+#    container_name: signomix-website
+#    hostname: signomix-website
 #    depends_on:
 #      - website-hcms
 #    expose:
@@ -319,6 +330,8 @@ services:
 
   signomix-view:
     image: ${SGX_DOCKER_GROUP}${SGX_VIEW_NAME}:${SGX_VIEW_VERSION}
+    container_name: signomix-view
+    hostname: signomix-view
     expose:
       - "3000"
 #    networks:
@@ -326,6 +339,8 @@ services:
 
   signomix-webapp:
     image: ${SGX_DOCKER_GROUP}${SGX_WEBAPP_NAME}:${SGX_WEBAPP_VERSION}
+    container_name: signomix-webapp
+    hostname: signomix-webapp
     expose:
       - "3000"
 #    networks:
@@ -393,6 +408,8 @@ services:
   tsserver:
     image: timescale/timescaledb:latest-pg15
     restart: always
+    container_name: tsserver
+    hostname: tsserver
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -407,6 +424,8 @@ services:
 
   jaeger-all-in-one:
     image: jaegertracing/all-in-one:latest
+    container_name: jaeger-all-in-one
+    hostname: jaeger-all-in-one
     ports:
       - 16686:16686 # Jaeger UI
       #- "14268:14268" # Receive legacy OpenTracing traces, optional
