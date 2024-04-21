@@ -75,13 +75,14 @@ services_versions="$services_versions $SGX_HCMS_VERSION $SGX_JOBS_VERSION $SGX_L
 services_versions="$services_versions $SGX_RECEIVER_VERSION $SGX_REPORTS_VERSION $SGX_SENTINEL_VERSION $SGX_VIEW_VERSION $SGX_WEBAPP_VERSION $SGX_WEBSITE_VERSION"
 
 # Clear the release-summary.txt file
-> ../signomix/release-summary.txt
+> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
 # Insert date and time of generation as UTC date
 echo "#$(date --iso-8601=minutes -u)" >> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
 # Echo the first line of the config file
 head_line=$(head -n 1 $cfg_location)
 head_line="${head_line:1}"
 echo "#$head_line" >> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
+echo "#$SGX_RELEASE_REPO_NAME" >> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
 # CSV header
 echo "#service;commit hash;version" >> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
 
@@ -122,7 +123,7 @@ for dir in $java_services; do
         # Get the short git commit hash
         hash=$(git rev-parse --short HEAD)
         # Echo the directory and hash to the release-summary.txt file
-        echo "$dir;$hash;${services_versions_array[counter]}" >> ../signomix/release-summary.txt
+        echo "$dir;$hash;${services_versions_array[counter]}" >> ../$SGX_RELEASE_REPO_NAME/release-summary.txt
         # Increment the counter
     fi
     ((counter++))
