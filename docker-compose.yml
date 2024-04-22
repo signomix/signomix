@@ -29,7 +29,6 @@ services:
       - signomix-docs-website
       - signomix-view
       - signomix-webapp
-      - signomix-ta-core
     logging:
       driver: "json-file"
       options:
