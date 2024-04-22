@@ -13,6 +13,21 @@ services:
     container_name: signomix-gateway
     hostname: signomix-gateway
     depends_on:
+      - tsserver
+      - quest
+      - signomix-auth
+      - signomix-ta-provider
+      - signomix-ta-receiver
+      - signomix-ta-account
+      - signomix-ta-jobs
+      - signomix-ta-core
+      - signomix-ta-app
+      - signomix-ta-ms
+      - signomix-sentinel
+      - signomix-reports
+      - signomix-broker
+      - signomix-docs-website
+      - signomix-view
       - signomix-webapp
       - signomix-ta-core
     logging:
