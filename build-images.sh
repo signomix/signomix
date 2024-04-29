@@ -78,6 +78,7 @@ SGX_DEFAULT_ORGANIZATION_ID=0
 # the above variables can be overridden by local configuration
 cfg_location="$1"
 echo "cfg_location=$1"
+
 if [ -z "$cfg_location" ]
 then
     # default configuration
