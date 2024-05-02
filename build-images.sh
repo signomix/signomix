@@ -591,53 +591,54 @@ echo $SGX_ACCOUNT_NAME:$SGX_ACCOUNT_VERSION >> ../signomix/build-report.txt
 echo
 fi
 
-#### hcms
-#### Cricket HCMS should be build in its own project
-#if [ -z "$2" ] || [ "$2" = "cricket-hcms" ]; then
-#cd ../cricket-hcms
-#./mvnw versions:set -DnewVersion=$SGX_HCMS_VERSION
-#retVal=$?
-#if [ $retVal -ne 0 ]; then
-#    exit $retval
-#fi
-#if [ -z "$SGX_DOCKER_REGISTRY" ]
-#then
-#    echo
-#    ./mvnw \
-#    -Dquarkus.container-image.name=$SGX_HCMS_NAME \
-#    -Dquarkus.container-image.tag=$SGX_HCMS_VERSION \
-#    -Dquarkus.container-image.additional-tags=latest \
-#    -Dquarkus.container-image.build=true \
-#    clean package
-#else
-#    if [ $SGX_DOCKERHUB_TYPE = "true" ]
-#    then
-#    ./mvnw \
-#    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
-#    -Dquarkus.container-image.name=$SGX_HCMS_NAME \
-#    -Dquarkus.container-image.tag=$SGX_HCMS_VERSION \
-#    -Dquarkus.container-image.additional-tags=latest \
-#    -Dquarkus.container-image.push=true \
-#    clean package
-#    else
-#    ./mvnw \
-#    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
-#    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
-#    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
-#    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
-#    -Dquarkus.container-image.name=$SGX_HCMS_NAME \
-#    -Dquarkus.container-image.tag=$SGX_HCMS_VERSION \
-#    -Dquarkus.container-image.additional-tags=latest \
-#    -Dquarkus.container-image.push=true \
-#    clean package
-#    fi
-#fi
-#retVal=$?
-#if [ $retVal -ne 0 ]; then
-#    exit $retval
-#fi
-#echo
-#fi
+### hcms
+### Cricket HCMS is a separate project, not part of Signomix.
+### It is included here for convenience if you want to build it together with Signomix.
+if [ -z "$2" ] || [ "$2" = "cricket-hcms" ] || [ "$2" = "hcms" ]; then
+cd ../cricket-hcms
+./mvnw versions:set -DnewVersion=$SGX_HCMS_VERSION
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+if [ -z "$SGX_DOCKER_REGISTRY" ]
+then
+    echo
+    ./mvnw \
+    -Dquarkus.container-image.name=$SGX_HCMS_NAME \
+    -Dquarkus.container-image.tag=$SGX_HCMS_VERSION \
+    -Dquarkus.container-image.additional-tags=latest \
+    -Dquarkus.container-image.build=true \
+    clean package
+else
+    if [ $SGX_DOCKERHUB_TYPE = "true" ]
+    then
+    ./mvnw \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.name=$SGX_HCMS_NAME \
+    -Dquarkus.container-image.tag=$SGX_HCMS_VERSION \
+    -Dquarkus.container-image.additional-tags=latest \
+    -Dquarkus.container-image.push=true \
+    clean package
+    else
+    ./mvnw \
+    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+    -Dquarkus.container-image.name=$SGX_HCMS_NAME \
+    -Dquarkus.container-image.tag=$SGX_HCMS_VERSION \
+    -Dquarkus.container-image.additional-tags=latest \
+    -Dquarkus.container-image.push=true \
+    clean package
+    fi
+fi
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+echo
+fi
 
 ### signomix-webapp
 if [ -z "$2" ] || [ "$2" = "signomix-webapp" ]; then
@@ -670,7 +671,7 @@ if [ -z "$2" ] || [ "$2" = "signomix-docs-website" ]; then
 cd ../signomix-docs-website
 echo "PUBLIC_HCMS_URL = 'http://hcms:8080/api/docs'" > .env
 echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
-echo "PUBLIC_HCMS_ROOT = 'signomix'" >> .env
+echo "PUBLIC_HCMS_ROOT = 'signomix-documentation'" >> .env
 if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     docker build -t $SGX_DOCS_NAME:$SGX_DOCS_VERSION -t $SGX_DOCS_NAME:latest .

@@ -297,7 +297,7 @@ services:
       - SIGNOMIX_DISK_FREE_MB=${SGX_DISK_FREE_MB}
 
   hcms:
-    image: gskorupa/cricket-hcms:latest
+    image: ${SGX_DOCKER_GROUP}${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
     container_name: hcms
     hostname: hcms
     expose:
@@ -305,15 +305,14 @@ services:
     networks:
       - signomix-network
     environment:
-      - FILE_TO_WATCH=documents/signomix/version.txt;documents/templates/version.txt
-      - FOLDERS_ROOT=documents
+      - FILE_TO_WATCH=signomix/version.txt;templates/version.txt
       - FOLDERS_EXCLUDED=signomix/.git;signomix/attic;templates/.git;templates/attic
     volumes:
       - ${SGX_VOLUMES}/documents/templates:/home/jboss/documents/templates
-      - ${SGX_VOLUMES}/documents/signomix:/home/jboss/documents/signomix
+      - ${SGX_VOLUMES}/documents/signomix-documentation:/home/jboss/documents/signomix
 
   website-hcms:
-    image: gskorupa/cricket-hcms:latest
+    image: ${SGX_DOCKER_GROUP}${SGX_HCMS_NAME}:${SGX_WEBSITE_HCMS_VERSION}
     container_name: website-hcms
     hostname: website-hcms
     expose:
