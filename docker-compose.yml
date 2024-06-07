@@ -305,11 +305,11 @@ services:
     networks:
       - signomix-network
     environment:
-      - FILE_TO_WATCH=signomix/version.txt;templates/version.txt
-      - FOLDERS_EXCLUDED=signomix/.git;signomix/attic;templates/.git;templates/attic
+      - FILE_TO_WATCH=signomix-documentation/version.txt;templates/version.txt
+      - FOLDERS_EXCLUDED=signomix-documentation/.git;signomix-documentation/attic;templates/.git;templates/attic
     volumes:
-      - ${SGX_VOLUMES}/documents/templates:/home/jboss/documents/templates
-      - ${SGX_VOLUMES}/documents/signomix-documentation:/home/jboss/documents/signomix
+      - ${SGX_VOLUMES}/doc-templates:/home/jboss/documents/templates
+      - ${SGX_VOLUMES}/signomix-documentation:/home/jboss/documents/signomix-documentation
 
   website-hcms:
     image: ${SGX_DOCKER_GROUP}${SGX_HCMS_NAME}:${SGX_WEBSITE_HCMS_VERSION}
