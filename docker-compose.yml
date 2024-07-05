@@ -1,9 +1,3 @@
-#version: "3"
-
-networks:
-  signomix-network:
-    driver: bridge
-
 services:
 
   # API Gateway
@@ -21,7 +15,6 @@ services:
       - signomix-ta-account
       - signomix-ta-jobs
       - signomix-ta-core
-      - signomix-ta-app
       - signomix-ta-ms
       - signomix-sentinel
       - signomix-reports
@@ -112,31 +105,12 @@ services:
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
       - SIGNOMIX_DOC_WELCOME=/admin/welcomedoc
-      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
       - SIGNOMIX_SMSPLANET_KEY=${SGX_SMSPLANET_KEY}
       - SIGNOMIX_SMSPLANET_PASSWORD=${SGX_SMSPLANET_PASSWORD}
-
-  signomix-ta-app:
-    image: ${SGX_DOCKER_GROUP}${SGX_APP_NAME}:${SGX_APP_VERSION}
-    container_name: signomix-ta-app
-    hostname: signomix-ta-app
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    networks:
-      - signomix-network
-    depends_on:
-      - signomix-mq
-      - signomix-ta-ms
-    environment:
-      #- SIGNOMIX_APP_KEY=${SGX_APP_KEY}
-      - SIGNOMIX_STATUSPAGE_UR=https://status.myhost
-      - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
-      - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
-      - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
+      - GELF_ENABLED=${SGX_GELF_ENABLED}
+    env_file:
+      - ${SGX_SECRET_VARIABLES_FILE}
 
   signomix-auth:
     image: ${SGX_DOCKER_GROUP}${SGX_AUTH_NAME}:${SGX_AUTH_VERSION}
@@ -158,8 +132,12 @@ services:
       - SIGNOMIX_USER_DATABASE_URL=${POSTGRES_URL}
       - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
       - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
-      - QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
+      #- QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
       - SIGNOMIX_QUESTDB_CONFIG=${SGX_QUESTDB_CONFIG}
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
+      - GELF_ENABLED=${SGX_GELF_ENABLED}
+    env_file:
+      - ${SGX_SECRET_VARIABLES_FILE}
 
   signomix-ta-provider:
     image: ${SGX_DOCKER_GROUP}${SGX_PROVIDER_NAME}:${SGX_PROVIDER_VERSION}
@@ -186,9 +164,12 @@ services:
       - MQ_USER=user
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
-      - SIGNOMIX_LOG_LEVEL=INFO
-      - QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
+      #- QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
       - QUARKUS_DATASOURCE_JDBC_MAX_SIZE=100
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
+      - GELF_ENABLED=${SGX_GELF_ENABLED}
+    env_file:
+      - ${SGX_SECRET_VARIABLES_FILE}
 
   signomix-ta-receiver:
     image: ${SGX_DOCKER_GROUP}${SGX_RECEIVER_NAME}:${SGX_RECEIVER_VERSION}
@@ -212,7 +193,6 @@ services:
       - MQ_USER=user
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
-      - SIGNOMIX_LOG_LEVEL=INFO
       - SIGNOMIX_EUI_HEADER_REQUIRED=${SGX_EUI_HEADER_REQUIRED}
       - SIGNOMIX_AUTHORIZATION_HEADER_REQUIRED=${SGX_AUTHORIZATION_HEADER_REQUIRED}
       - SIGNOMIX_STATUS_INTEGRATED=${SGX_STATUS_INTEGRATED}
@@ -220,6 +200,10 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_URL=${POSTGRES_URL}
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
+      - GELF_ENABLED=${SGX_GELF_ENABLED}
+    env_file:
+      - ${SGX_SECRET_VARIABLES_FILE}
 
   signomix-ta-account:
     image: ${SGX_DOCKER_GROUP}${SGX_ACCOUNT_NAME}:${SGX_ACCOUNT_VERSION}
@@ -239,6 +223,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_URL=${POSTGRES_URL}
       - SIGNOMIX_QUESTDB_CONFIG=${SGX_QUESTDB_CONFIG}
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
+      - GELF_ENABLED=${SGX_GELF_ENABLED}
+    env_file:
+      - ${SGX_SECRET_VARIABLES_FILE}
 
   signomix-ta-core:
     image: ${SGX_DOCKER_GROUP}${SGX_CORE_NAME}:${SGX_CORE_VERSION}
@@ -261,7 +249,6 @@ services:
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
       - MQ_EVENTS_QUEUE=events.core
-      - SIGNOMIX_LOG_LEVEL=DEBUG
       - SIGNOMIX_AUTH_DATABASE_URL=${SGX_AUTH_DATABASE_URL}
       - SIGNOMIX_USER_DATABASE_URL=${SGX_USER_DATABASE_URL}
       - SIGNOMIX_CMS_DATABASE_URL=${SGX_CMS_DATABASE_URL}
@@ -272,6 +259,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_URL=${POSTGRES_URL}
       - SIGNOMIX_DATABASE_MIGRATION=${SGX_DATABASE_MIGRATION}
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
+      - GELF_ENABLED=${SGX_GELF_ENABLED}
+    env_file:
+      - ${SGX_SECRET_VARIABLES_FILE}
 
   signomix-ta-jobs:
     image: ${SGX_DOCKER_GROUP}${SGX_JOBS_NAME}:${SGX_JOBS_VERSION}
@@ -294,8 +285,11 @@ services:
       - MQ_USER=user
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
-      - SIGNOMIX_LOG_LEVEL=INFO
       - SIGNOMIX_DISK_FREE_MB=${SGX_DISK_FREE_MB}
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
+      - GELF_ENABLED=${SGX_GELF_ENABLED}
+    env_file:
+      - ${SGX_SECRET_VARIABLES_FILE}
 
   hcms:
     image: ${SGX_DOCKER_GROUP}${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
@@ -334,16 +328,16 @@ services:
     networks:
       - signomix-network
 
-#  signomix-website:
-#    image: ${SGX_DOCKER_GROUP}${SGX_WEBSITE_NAME}:${SGX_WEBSITE_VERSION}
-#    container_name: signomix-website
-#    hostname: signomix-website
-#    depends_on:
-#      - website-hcms
-#    expose:
-#      - "3000"
-#    networks:
-#      - signomix-network
+  signomix-website:
+    image: ${SGX_DOCKER_GROUP}${SGX_WEBSITE_NAME}:${SGX_WEBSITE_VERSION}
+    container_name: signomix-website
+    hostname: signomix-website
+    depends_on:
+      - website-hcms
+    expose:
+      - "3000"
+    networks:
+      - signomix-network
 
   signomix-view:
     image: ${SGX_DOCKER_GROUP}${SGX_VIEW_NAME}:${SGX_VIEW_VERSION}
@@ -383,7 +377,11 @@ services:
       - POSTGRES_URL=${POSTGRES_URL}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
+      #- QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
+      - GELF_ENABLED=${SGX_GELF_ENABLED}
+    env_file:
+      - ${SGX_SECRET_VARIABLES_FILE}
 
   signomix-reports:
     image: ${SGX_DOCKER_GROUP}${SGX_REPORTS_NAME}:${SGX_REPORTS_VERSION}
@@ -395,15 +393,18 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    networks:
-      - signomix-network
-    depends_on:
-      - tsserver
     environment:
       - POSTGRES_URL=${POSTGRES_URL}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
+      - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
+      - GELF_ENABLED=${SGX_GELF_ENABLED}
+    env_file:
+      - ${SGX_SECRET_VARIABLES_FILE}
+    networks:
+      - signomix-network
+    depends_on:
+      - tsserver
 
   signomix-broker:
     image: eclipse-mosquitto:latest
@@ -413,6 +414,9 @@ services:
     expose:
       - "1883"
       - "9001"
+    ports:
+      - "1883:1883"
+      - "9001:9001"
     volumes:
       - ${SGX_VOLUMES}/mosquitto/config:/mosquitto/config
       - ${SGX_VOLUMES}/mosquitto/data:/mosquitto/data
@@ -441,22 +445,6 @@ services:
     volumes:
       - ${SGX_VOLUMES}/volume-postgres:/var/lib/postgresql/data:rw
 
-  jaeger-all-in-one:
-    image: jaegertracing/all-in-one:latest
-    container_name: jaeger-all-in-one
-    hostname: jaeger-all-in-one
-    ports:
-      - 16686:16686 # Jaeger UI
-      #- "14268:14268" # Receive legacy OpenTracing traces, optional
-      - 4317:4317   # OTLP gRPC receiver
-      #- "4318:4318"   # OTLP HTTP receiver, not yet used by Quarkus, optional
-      #- "14250:14250" # Receive from external otel-collector, optional
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
-      - SPAN_STORAGE_TYPE=badger
-    networks:
-      - signomix-network
-
   quest:
     image: questdb/questdb:7.4.0
     container_name: quest
@@ -470,3 +458,7 @@ services:
       - ${SGX_VOLUMES}/volume-questdb:/var/lib/questdb
     networks:
       - signomix-network
+
+networks:
+  signomix-network:
+    driver: bridge

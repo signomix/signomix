@@ -22,19 +22,6 @@ git clone https://github.com/signomix/signomix.git
 cd signomix
 ```
 
-## Running Docker images
-
-Before running you need to create folder structure required for data storage. To do this tun the script:
-
-```shell
-sh init-runtime-environment.sh
-```
-Run services with Docker Compose:
-
-```shell
-docker compose --env-file ./public.env up -d
-```
-
 ## Building and running from source
 
 Clone and initialize required repositories:
@@ -46,13 +33,13 @@ sh init-dev-environment.sh
 Build images:
 
 ```shell
-sh build-images.sh ./dev.cfg
+sh build-images.sh ./.env
 ```
 
 Start the service with docker compose:
 
 ```shell
-docker compose --env-file ./dev.env up -d
+docker compose up -d
 ```
 
 ## Architecture
