@@ -94,7 +94,7 @@ fi
 
 # print config
 echo
-echo "SGX_APP_VERSION=$SGX_APP_VERSION"
+#echo "SGX_APP_VERSION=$SGX_APP_VERSION"
 echo "SGX_ACCOUNT_VERSION=$SGX_ACCOUNT_VERSION"
 echo "SGX_AUTH_VERSION=$SGX_AUTH_VERSION"
 echo "SGX_COMMON_VERSION=$SGX_COMMON_VERSION"
@@ -113,7 +113,7 @@ echo "SGX_WEBSITE_VERSION=$SGX_WEBSITE_VERSION"
 echo "SGX_REPORTS_VERSION=$SGX_REPORTS_VERSION"
 
 echo
-echo "SGX_APP_NAME=$SGX_APP_NAME"
+#echo "SGX_APP_NAME=$SGX_APP_NAME"
 echo "SGX_ACCOUNT_NAME=$SGX_ACCOUNT_NAME"
 echo "SGX_AUTH_NAME=$SGX_AUTH_NAME"
 echo "SGX_MS_NAME=$SGX_MS_NAME"
@@ -345,59 +345,59 @@ fi
 echo $SGX_AUTH_NAME:$SGX_AUTH_VERSION >> ../signomix/build-report.txt
 fi
 
-### signomix-ta-app
-if [ -z "$2" ] || [ "$2" = "signomix-ta-app" ]; then
-cd ../signomix-ta-app
-./mvnw versions:set -DnewVersion=$SGX_APP_VERSION
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-if [ -z "$SGX_DOCKER_REGISTRY" ]
-then
-    echo
-    ./mvnw \
-    -DSIGNOMIX_IMAGE_NAME=$SGX_APP_NAME \
-    -DSIGNOMIX_IMAGE_TAG=$SGX_APP_VERSION \
-    -Dquarkus.container-image.name=$SGX_APP_NAME \
-    -Dquarkus.container-image.tag=$SGX_APP_VERSION \
-    -Dquarkus.container-image.additional-tags=latest \
-    -Dquarkus.container-image.build=true \
-    clean package
-else
-    if [ $SGX_DOCKERHUB_TYPE = "true" ]
-    then
-    ./mvnw \
-    -DSIGNOMIX_IMAGE_NAME=$SGX_APP_NAME \
-    -DSIGNOMIX_IMAGE_TAG=$SGX_APP_VERSION \
-    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
-    -Dquarkus.container-image.name=$SGX_APP_NAME \
-    -Dquarkus.container-image.tag=$SGX_APP_VERSION \
-    -Dquarkus.container-image.additional-tags=latest \
-    -Dquarkus.container-image.push=true \
-    clean package
-    else
-    ./mvnw \
-    -DSIGNOMIX_IMAGE_NAME=$SGX_APP_NAME \
-    -DSIGNOMIX_IMAGE_TAG=$SGX_APP_VERSION \
-    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
-    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
-    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
-    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
-    -Dquarkus.container-image.name=$SGX_APP_NAME \
-    -Dquarkus.container-image.tag=$SGX_APP_VERSION \
-    -Dquarkus.container-image.additional-tags=latest \
-    -Dquarkus.container-image.push=true \
-    clean package
-    fi
-fi
-retVal=$?
-if [ $retVal -ne 0 ]; then
-    exit $retval
-fi
-echo $SGX_APP_NAME:$SGX_APP_VERSION >> ../signomix/build-report.txt
-echo
-fi
+#### signomix-ta-app
+#if [ -z "$2" ] || [ "$2" = "signomix-ta-app" ]; then
+#cd ../signomix-ta-app
+#./mvnw versions:set -DnewVersion=$SGX_APP_VERSION
+#retVal=$?
+#if [ $retVal -ne 0 ]; then
+#    exit $retval
+#fi
+#if [ -z "$SGX_DOCKER_REGISTRY" ]
+#then
+#    echo
+#    ./mvnw \
+#    -DSIGNOMIX_IMAGE_NAME=$SGX_APP_NAME \
+#    -DSIGNOMIX_IMAGE_TAG=$SGX_APP_VERSION \
+#    -Dquarkus.container-image.name=$SGX_APP_NAME \
+#    -Dquarkus.container-image.tag=$SGX_APP_VERSION \
+#    -Dquarkus.container-image.additional-tags=latest \
+#    -Dquarkus.container-image.build=true \
+#    clean package
+#else
+#    if [ $SGX_DOCKERHUB_TYPE = "true" ]
+#    then
+#    ./mvnw \
+#    -DSIGNOMIX_IMAGE_NAME=$SGX_APP_NAME \
+#    -DSIGNOMIX_IMAGE_TAG=$SGX_APP_VERSION \
+#    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+#    -Dquarkus.container-image.name=$SGX_APP_NAME \
+#    -Dquarkus.container-image.tag=$SGX_APP_VERSION \
+#    -Dquarkus.container-image.additional-tags=latest \
+#    -Dquarkus.container-image.push=true \
+#    clean package
+#    else
+#    ./mvnw \
+#    -DSIGNOMIX_IMAGE_NAME=$SGX_APP_NAME \
+#    -DSIGNOMIX_IMAGE_TAG=$SGX_APP_VERSION \
+#    -Dquarkus.container-image.registry=$SGX_DOCKER_REGISTRY \
+#    -Dquarkus.container-image.group=$SGX_DOCKER_GROUP \
+#    -Dquarkus.container-image.username=$SGX_DOCKER_USER \
+#    -Dquarkus.container-image.password=$SGX_DOCKER_PASSWORD \
+#    -Dquarkus.container-image.name=$SGX_APP_NAME \
+#    -Dquarkus.container-image.tag=$SGX_APP_VERSION \
+#    -Dquarkus.container-image.additional-tags=latest \
+#    -Dquarkus.container-image.push=true \
+#    clean package
+#    fi
+#fi
+#retVal=$?
+#if [ $retVal -ne 0 ]; then
+#    exit $retval
+#fi
+#echo $SGX_APP_NAME:$SGX_APP_VERSION >> ../signomix/build-report.txt
+#echo
+#fi
 
 ### signomix-ta-ms
 if [ -z "$2" ] || [ "$2" = "signomix-ta-ms" ]; then
@@ -888,7 +888,7 @@ then
     mkdir local-images
     rm local-images/*
     docker save $SGX_ACCOUNT_NAME:$SGX_ACCOUNT_VERSION | gzip > local-images/$SGX_ACCOUNT_NAME.tar.gz
-    docker save $SGX_APP_NAME:$SGX_APP_VERSION | gzip > local-images/$SGX_APP_NAME.tar.gz
+#    docker save $SGX_APP_NAME:$SGX_APP_VERSION | gzip > local-images/$SGX_APP_NAME.tar.gz
     docker save $SGX_MS_NAME:$SGX_MS_VERSION | gzip > local-images/$SGX_MS_NAME.tar.gz
     docker save $SGX_LB_NAME:$SGX_LB_VERSION | gzip > local-images/$SGX_LB_NAME.tar.gz
     docker save $SGX_GATEWAY_NAME:$SGX_GATEWAY_VERSION | gzip > local-images/$SGX_GATEWAY_NAME.tar.gz
