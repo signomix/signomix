@@ -307,11 +307,12 @@ services:
     networks:
       - signomix-network
     environment:
-      - FILE_TO_WATCH=signomix-documentation/version.txt;templates/version.txt
-      - FOLDERS_EXCLUDED=signomix-documentation/.git;signomix-documentation/attic;templates/.git;templates/attic
+      - FILE_TO_WATCH=signomix-documentation/version.txt;templates/version.txt;news/version.txt
+      - FOLDERS_EXCLUDED=signomix-documentation/.git;signomix-documentation/attic;templates/.git;templates/attic;news/.git;news/attic
     volumes:
       - ${SGX_VOLUMES}/doc-templates:/home/jboss/documents/templates
       - ${SGX_VOLUMES}/signomix-documentation:/home/jboss/documents/signomix-documentation
+      - ${SGX_VOLUMES}/news:/home/jboss/documents/news
 
   website-hcms:
     image: ${SGX_DOCKER_GROUP}${SGX_HCMS_NAME}:${SGX_WEBSITE_HCMS_VERSION}
