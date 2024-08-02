@@ -25,6 +25,7 @@ SGX_SENTINEL_VERSION=1.0.0
 SGX_HCMS_VERSION=1.0.0
 SGX_WEBSITE_VERSION=1.0.0
 SGX_REPORTS_VERSION=1.0.0
+SGX_EXTENSIONS_VERSION=1.0.0
 #orderformUrlPl=https://orderform.mydomain.com/pl
 #orderformUrlEn=https://orderform.mydomain.com/en
 
@@ -47,6 +48,7 @@ SGX_WEBAPP_NAME=signomix-webapp
 SGX_WEBSITE_NAME=signomix-website
 SGX_REPORTS_NAME=signomix-reports
 SGX_COMMON_NAME=signomix-common
+SGX_EXTENSIONS_NAME=signomix-extensions
 
 # decide if common lib should be built
 build_common_lib=no
@@ -111,6 +113,7 @@ echo "SGX_SENTINEL_VERSION=$SGX_SENTINEL_VERSION"
 echo "SGX_WEBAPP_VERSION=$SGX_WEBAPP_VERSION"
 echo "SGX_WEBSITE_VERSION=$SGX_WEBSITE_VERSION"
 echo "SGX_REPORTS_VERSION=$SGX_REPORTS_VERSION"
+echo "SGX_EXTENSIONS_VERSION=$SGX_EXTENSIONS_VERSION"
 
 echo
 #echo "SGX_APP_NAME=$SGX_APP_NAME"
@@ -202,6 +205,19 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo $SGX_COMMON_NAME:$SGX_COMMON_VERSION >> ../signomix/build-report.txt
+fi
+
+if [ -z "$2" ] || [ "$build_common_lib" = "yes" ]; then
+if [ -d "../signomix-extensions" ]; then
+cd ../signomix-extensions
+mvn versions:set -DnewVersion=$SGX_EXTENSIONS_VERSION
+mvn clean install
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    exit $retval
+fi
+echo $SGX_EXTENSIONS_NAME:$SGX_EXTENSIONS_VERSION >> ../signomix/build-report.txt
+fi
 fi
 
 ### signomix-jobs
