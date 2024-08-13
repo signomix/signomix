@@ -308,8 +308,14 @@ services:
     networks:
       - signomix-network
     environment:
-      - FILE_TO_WATCH=signomix-documentation/version.txt;templates/version.txt;news/version.txt
-      - FOLDERS_EXCLUDED=signomix-documentation/.git;signomix-documentation/attic;templates/.git;templates/attic;news/.git;news/attic
+      - FILE_TO_WATCH=version.txt;version.txt;version.txt
+      - FOLDERS_EXCLUDED=.git;attic;.git;attic;.git;attic
+      - FOLDERS_ROOT=documents
+      - HCMS_SERVICE_URL=http://documentation.localhost
+      - FOLDERS_ASSETS=assets;assets;assets
+      - FOLDERS_SITES=signomix-documentation;templates;news
+      - FOLDERS_INDEXES=index.md;index.md;index.md
+      - DATABASE_TYPE=h2
     volumes:
       - ${SGX_VOLUMES}/doc-templates:/home/jboss/documents/templates
       - ${SGX_VOLUMES}/signomix-documentation:/home/jboss/documents/signomix-documentation
@@ -323,8 +329,17 @@ services:
       - "8080"
     networks:
       - signomix-network
+    environment:
+      - FILE_TO_WATCH=version.txt
+      - FOLDERS_EXCLUDED=.git
+      - FOLDERS_ROOT=documents
+      - HCMS_SERVICE_URL=http://www.localhost
+      - FOLDERS_ASSETS=assets
+      - FOLDERS_SITES=signomix-website-content
+      - FOLDERS_INDEXES=index.html
+      - DATABASE_TYPE=h2
     volumes:
-      - ${SGX_VOLUMES}/signomix-website-content:/home/jboss/documents
+      - ${SGX_VOLUMES}/signomix-website-content:/home/jboss/documents/signomix-website-content
   
   signomix-docs-website:
     image: ${SGX_DOCKER_GROUP}${SGX_DOCS_NAME}:${SGX_DOCS_VERSION}
@@ -336,6 +351,12 @@ services:
       - "3000"
     networks:
       - signomix-network
+    environment:
+      PUBLIC_HCMS_URL: http://hcms:8080
+      PUBLIC_HCMS_INDEX: index.md
+      PUBLIC_HCMS_ROOT: signomix-documentation
+      PUBLIC_HCMS_LANGUAGE: pl
+      PUBLIC_HCMS_LANGUAGES: pl,en
 
   signomix-website:
     image: ${SGX_DOCKER_GROUP}${SGX_WEBSITE_NAME}:${SGX_WEBSITE_VERSION}
@@ -347,6 +368,12 @@ services:
       - "3000"
     networks:
       - signomix-network
+    environment:
+      PUBLIC_HCMS_URL: http://website-hcms:8080
+      PUBLIC_HCMS_INDEX: index.html
+      PUBLIC_HCMS_ROOT: signomix-website-content
+      PUBLIC_HCMS_LANGUAGE: pl
+      PUBLIC_HCMS_LANGUAGES: pl,en
 
   signomix-view:
     image: ${SGX_DOCKER_GROUP}${SGX_VIEW_NAME}:${SGX_VIEW_VERSION}
