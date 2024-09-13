@@ -311,12 +311,13 @@ services:
       - signomix-network
     environment:
       - FILE_TO_WATCH=version.txt;version.txt;version.txt
-      - FOLDERS_EXCLUDED=.git;attic;.git;attic;.git;attic
-      - FOLDERS_ROOT=documents
-      - HCMS_SERVICE_URL=http://documentation.localhost
+      - FOLDERS_EXCLUDED=.git,attic;.git,attic;.git,attic
+      - HCMS_SERVICE_URL=http://documentation.localhost;http://documentation.localhost;http://documentation.localhost
       - FOLDERS_ASSETS=assets;assets;assets
       - FOLDERS_SITES=signomix-documentation;templates;news
       - FOLDERS_INDEXES=index.md;index.md;index.md
+      - HCMS_REPOSITORY_LANGUAGE_MAIN=pl
+      - HCMS_REPOSITORY_LANGUAGES=pl
       - DATABASE_TYPE=h2
     volumes:
       - ${SGX_VOLUMES}/doc-templates:/home/jboss/documents/templates
@@ -334,11 +335,12 @@ services:
     environment:
       - FILE_TO_WATCH=version.txt
       - FOLDERS_EXCLUDED=.git
-      - FOLDERS_ROOT=documents
       - HCMS_SERVICE_URL=http://www.localhost
       - FOLDERS_ASSETS=assets
       - FOLDERS_SITES=signomix-website-content
       - FOLDERS_INDEXES=index.html
+      - HCMS_REPOSITORY_LANGUAGE_MAIN=pl
+      - HCMS_REPOSITORY_LANGUAGES=pl
       - DATABASE_TYPE=h2
     volumes:
       - ${SGX_VOLUMES}/signomix-website-content:/home/jboss/documents/signomix-website-content
