@@ -10,7 +10,7 @@ cd ..
 # Clone Signomix repositories
 git clone https://github.com/signomix/signomix-ta-account.git
 git clone https://github.com/signomix/signomix-apigateway.git
-git clone https://github.com/signomix/signomix-ta-app.git
+#git clone https://github.com/signomix/signomix-ta-app.git
 git clone https://github.com/signomix/signomix-auth.git
 git clone https://github.com/signomix/signomix-common.git
 git clone https://github.com/signomix/signomix-docs-website.git
@@ -22,6 +22,7 @@ git clone https://github.com/signomix/signomix-ta-receiver.git
 git clone https://github.com/signomix/signomix-reports.git
 git clone https://github.com/signomix/signomix-sentinel.git
 git clone https://github.com/signomix/signomix-webapp.git
+git clone https://github.com/signomix/signomix-website.git
 git clone https://github.com/signomix/signomix-view.git
 
 # Create required folders for Docker volumes

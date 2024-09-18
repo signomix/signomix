@@ -610,6 +610,7 @@ fi
 ### hcms
 ### Cricket HCMS is a separate project, not part of Signomix.
 ### It is included here for convenience if you want to build it together with Signomix.
+if [ -d "../cricket-hcms" ]; then
 if [ -z "$2" ] || [ "$2" = "cricket-hcms" ] || [ "$2" = "hcms" ]; then
 cd ../cricket-hcms
 ./mvnw versions:set -DnewVersion=$SGX_HCMS_VERSION
@@ -654,6 +655,7 @@ if [ $retVal -ne 0 ]; then
     exit $retval
 fi
 echo
+fi
 fi
 
 ### signomix-webapp
