@@ -303,6 +303,7 @@ services:
 
   hcms:
     image: ${SGX_DOCKER_GROUP}${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
+    #image: gskorupa/cricket-hcms:1.1.0
     container_name: hcms
     hostname: hcms
     expose:
@@ -313,6 +314,7 @@ services:
       - FILE_TO_WATCH=version.txt;version.txt;version.txt
       - FOLDERS_EXCLUDED=.git,attic;.git,attic;.git,attic
       - HCMS_SERVICE_URL=http://documentation.localhost;http://documentation.localhost;http://documentation.localhost
+      
       - FOLDERS_ASSETS=assets;assets;assets
       - FOLDERS_SITES=signomix-documentation;templates;news
       - FOLDERS_INDEXES=index.md;index.md;index.md
@@ -325,7 +327,7 @@ services:
       - ${SGX_VOLUMES}/news:/home/jboss/documents/news
 
   website-hcms:
-    image: ${SGX_DOCKER_GROUP}${SGX_HCMS_NAME}:${SGX_WEBSITE_HCMS_VERSION}
+    image: gskorupa/cricket-hcms:1.1.0
     container_name: website-hcms
     hostname: website-hcms
     expose:
@@ -336,14 +338,18 @@ services:
       - FILE_TO_WATCH=version.txt
       - FOLDERS_EXCLUDED=.git
       - HCMS_SERVICE_URL=http://www.localhost
+      - HCMS_FILE_API=/api/_file
       - FOLDERS_ASSETS=assets
       - FOLDERS_SITES=signomix-website-content
       - FOLDERS_INDEXES=index.html
       - HCMS_REPOSITORY_LANGUAGE_MAIN=pl
-      - HCMS_REPOSITORY_LANGUAGES=pl
-      - DATABASE_TYPE=h2
+      - HCMS_REPOSITORY_LANGUAGES=pl,en
+      - HCMS_TRANSLATOR_TYPE=deepl
+      - DEEPL_API_KEY_FILE=/run/secrets/deepl_api_key
     volumes:
       - ${SGX_VOLUMES}/signomix-website-content:/home/jboss/documents/signomix-website-content
+    secrets:
+       - deepl_api_key
   
   signomix-docs-website:
     image: ${SGX_DOCKER_GROUP}${SGX_DOCS_NAME}:${SGX_DOCS_VERSION}
@@ -392,8 +398,10 @@ services:
     image: ${SGX_DOCKER_GROUP}${SGX_WEBAPP_NAME}:${SGX_WEBAPP_VERSION}
     container_name: signomix-webapp
     hostname: signomix-webapp
-    ports:
-      - "3000:3000"
+    environment:
+      - PUBLIC_WEBAPP_MODE=full
+    #ports:
+    #  - "3000:3000"
     expose:
       - "3000"
     networks:
@@ -508,3 +516,7 @@ services:
 networks:
   signomix-network:
     driver: bridge
+
+secrets:
+  deepl_api_key:
+    file: ~/.secrets/deepl_api_key.txt
