@@ -314,7 +314,7 @@ services:
       - FILE_TO_WATCH=version.txt;version.txt;version.txt
       - FOLDERS_EXCLUDED=.git,attic;.git,attic;.git,attic
       - HCMS_SERVICE_URL=http://documentation.localhost;http://documentation.localhost;http://documentation.localhost
-      
+      - HCMS_FILE_API=/api/file;/api/file;/api/file
       - FOLDERS_ASSETS=assets;assets;assets
       - FOLDERS_SITES=signomix-documentation;templates;news
       - FOLDERS_INDEXES=index.md;index.md;index.md
