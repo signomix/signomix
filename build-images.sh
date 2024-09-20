@@ -717,21 +717,21 @@ fi
 ### signomix-view is created from signomix-webapp by copying the files and removing some routes
 if [ -z "$2" ] || [ "$2" = "signomix-view" ]; then
 mkdir ../signomix-view-generated
-rm -rf ../signomix-view-generated/*
-cp -rf ../signomix-webapp/* ../signomix-view-generated
-rm -rf ../signomix-view-generated/src/routes/account
-rm -rf ../signomix-view-generated/src/routes/admin
-rm -rf ../signomix-view-generated/src/routes/alarms
-rm -rf ../signomix-view-generated/src/routes/devices
-rm -rf ../signomix-view-generated/src/routes/groups
-rm -rf ../signomix-view-generated/src/routes/login
-rm -rf ../signomix-view-generated/src/routes/notifications
-rm -rf ../signomix-view-generated/src/routes/organization
-rm -rf ../signomix-view-generated/src/routes/sentinels
-rm -f ../signomix-view-generated/src/routes/+page.svelte
+rm -rfv ../signomix-view-generated/*
+cp -rfv ../signomix-webapp/* ../signomix-view-generated
+rm -rfv ../signomix-view-generated/src/routes/account
+rm -rfv ../signomix-view-generated/src/routes/admin
+rm -rfv ../signomix-view-generated/src/routes/alarms
+rm -rfv ../signomix-view-generated/src/routes/devices
+rm -rfv ../signomix-view-generated/src/routes/groups
+rm -rfv ../signomix-view-generated/src/routes/login
+rm -rfv ../signomix-view-generated/src/routes/notifications
+rm -rfv ../signomix-view-generated/src/routes/organization
+rm -rfv ../signomix-view-generated/src/routes/sentinels
+rm -fv ../signomix-view-generated/src/routes/+page.svelte
 # two files need to be renamed to repalce files from signomix-webapp
-mv -f ../signomix-view-generated/src/routes/[slug]/+page.view_mode ../signomix-view-generated/src/routes/[slug]/+page.svelte
-mv -f ../signomix-view-generated/src/routes/+layout.view_mode ../signomix-view-generated/src/routes/+layout.svelte
+mv -fv ../signomix-view-generated/src/routes/[slug]/+page.view_mode ../signomix-view-generated/src/routes/[slug]/+page.svelte
+mv -fv ../signomix-view-generated/src/routes/+layout.view_mode ../signomix-view-generated/src/routes/+layout.svelte
 #echo "PUBLIC_WEBAPP_MODE=view" > ../signomix-view2/.env
 cd ../signomix-view-generated
 if [ -z "$SGX_DOCKER_REGISTRY" ]
