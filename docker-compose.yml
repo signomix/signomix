@@ -327,7 +327,7 @@ services:
       - ${SGX_VOLUMES}/news:/home/jboss/documents/news
 
   website-hcms:
-    image: gskorupa/cricket-hcms:1.1.0
+    image: ${SGX_DOCKER_GROUP}${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
     container_name: website-hcms
     hostname: website-hcms
     expose:
