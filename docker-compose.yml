@@ -102,7 +102,7 @@ services:
       - QUEUE_PORT=5672
       - QUEUE_USER=user
       - QUEUE_PASSWORD=user
-      - QUEUE_NOTIFICATIONS=notifications
+      #- QUEUE_NOTIFICATIONS=notifications
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
       - SIGNOMIX_DOC_WELCOME=/admin/welcomedoc
@@ -205,6 +205,7 @@ services:
       - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
       - GELF_ENABLED=${SGX_GELF_ENABLED}
       - SIGNOMIX_SIGNALS_USED=true
+      - SIGNOMIX_DEVICES_PROTECTED=${SGX_DEVICES_PROTECTED}
     env_file:
       - ${SGX_SECRET_VARIABLES_FILE}
 

@@ -21,19 +21,43 @@ sequenceDiagram
     jobs->>+notifications: service shutdown
     notifications-->>-notifications: e-mail admin
 ```
-## Notifications
+## New sensor data handling
 
 ```mermaid
 sequenceDiagram
+    participant device as device
     participant receiver as signomix-ta-receiver
-    participant B as MQ notifications
+    participant D as database
+    participant B as MQTT broker
     participant C as signomix-ta-ms
-    participant D as MQ admin_email
-    receiver->>B: notification message
-    B->>+C: notification message
-    C-->>C: save message
+    participant F as signomix-sentinel
+    device<<->>+receiver: data:in
+    receiver->>D: check device availability
+    receiver->>D: save data
+    receiver->>D: update device status
+    receiver-->>D: save notifications
+    receiver-->>D: save device commands
+    receiver-->>B: mqtt: /notification
+    receiver->>-B: mqtt: /new-data
+    device->>+receiver: data:io
+    receiver->>D: check device availability
+    receiver->>D: save data
+    receiver->>D: update device status
+    receiver-->>D: save notifications
+    receiver-->>D: save device commands
+    receiver-->>B: mqtt: /notification
+    receiver->>B: mqtt: /new-data
+    receiver-->>-device: command (optional)
+    B-->>+C: mqtt: /notification 
+    C-->>C: save
     opt
       C-->>C: email
       C-->>C: webhok
     end
+    B->>+F: mqtt: /new-data
+    F->>F: check rules
+    F-->>D: save alerts
+    F-->>-C:alert
+
+
 ```
