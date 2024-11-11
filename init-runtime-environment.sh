@@ -10,3 +10,7 @@ mkdir -p ~/signomix/volumes/mosquitto/log
 mkdir -p ~/signomix/volumes/volume-postgres
 mkdir -p ~/signomix/volumes/volume-questdb
 git clone https://github.com/signomix/signomix-documentation.git ~/signomix/volumes/signomix-documentation
+
+# User's secret configuration files
+mkdir -p ~/.secrets
+cp -n ./secrets/* ~/.secrets

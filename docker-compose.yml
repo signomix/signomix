@@ -36,31 +36,31 @@ services:
     #  - ${SGX_VOLUME_PROXY}/ssl:/etc/ssl/certs:rw
     #  - ${SGX_VOLUME_PROXY}/etc:/usr/local/etc/haproxy:rw
 
-  # MQ
-  signomix-mq:
-    image: rabbitmq:3-management-alpine
-    container_name: signomix-mq
-    hostname: signomix-mq
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASS=user
-    networks:
-      - signomix-network
-    expose:
-      # AMQP protocol port
-      - "5672"
-      # HTTP management UI
-      - "15672"
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
-      interval: 5s
-      timeout: 15s
-      retries: 3
+  # # MQ
+  # signomix-mq:
+  #   image: rabbitmq:3-management-alpine
+  #   container_name: signomix-mq
+  #   hostname: signomix-mq
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "200k"
+  #       max-file: "10"
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=user
+  #     - RABBITMQ_DEFAULT_PASS=user
+  #   networks:
+  #     - signomix-network
+  #   expose:
+  #     # AMQP protocol port
+  #     - "5672"
+  #     # HTTP management UI
+  #     - "15672"
+  #   healthcheck:
+  #     test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+  #     interval: 5s
+  #     timeout: 15s
+  #     retries: 3
 
   signomix-ta-ms:
     image: ${SGX_DOCKER_GROUP}${SGX_MS_NAME}:${SGX_MS_VERSION}
@@ -74,19 +74,19 @@ services:
         max-file: "10"
     networks:
       - signomix-network
-    depends_on:
-      - signomix-mq
+    # depends_on:
+    #   - signomix-mq
     environment:
       - SIGNOMIX_TITLE=${SGX_TITLE}
       - SIGNOMIX_URL=${SGX_URL}
       - SIGNOMIX_ENV_NAME=${SGX_ENV_NAME}
       - SIGNOMIX_PUSHOVER_TOKEN=${SGX_PUSHOVER_TOKEN}
-      - SIGNOMIX_SMTP_FROM=${SGX_SMTP_FROM}
+      #- SIGNOMIX_SMTP_FROM=${SGX_SMTP_FROM}
       - SIGNOMIX_SMTP_HOST=${SGX_SMTP_HOST}
-      - SIGNOMIX_SMTP_LOGIN=${SGX_SMTP_LOGIN}
+      #- SIGNOMIX_SMTP_LOGIN=${SGX_SMTP_LOGIN}
       - SIGNOMIX_SMTP_TRUST_ALL=${SGX_SMTP_TRUST_ALL}
-      - SIGNOMIX_SMTP_USER=${SGX_SMTP_USER}
-      - SIGNOMIX_SMTP_PASSWORD=${SGX_SMTP_PASSWORD}
+      #- SIGNOMIX_SMTP_USER=${SGX_SMTP_USER}
+      #- SIGNOMIX_SMTP_PASSWORD=${SGX_SMTP_PASSWORD}
       - SIGNOMIX_SMTP_PORT=${SGX_SMTP_PORT}
       - SIGNOMIX_SMTP_SSL=${SGX_SMTP_SSL}
       - SIGNOMIX_SMTP_START_TLS=${SGX_SMTP_START_TLS}
@@ -96,7 +96,7 @@ services:
       - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
       - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
       - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
-      - SIGNOMIX_ADMIN_EMAIL=${SGX_ADMIN_NOTIFICATION_EMAIL}
+      # - SIGNOMIX_ADMIN_EMAIL=${SGX_ADMIN_NOTIFICATION_EMAIL}
       - SIGNOMIX_QUESTDB_CONFIG=${SGX_QUESTDB_CONFIG}
       - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
@@ -109,9 +109,10 @@ services:
       - SIGNOMIX_SMSPLANET_KEY=${SGX_SMSPLANET_KEY}
       - SIGNOMIX_SMSPLANET_PASSWORD=${SGX_SMSPLANET_PASSWORD}
       - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
-      - GELF_ENABLED=${SGX_GELF_ENABLED}
+      #- GELF_ENABLED=${SGX_GELF_ENABLED}
     env_file:
-      - ${SGX_SECRET_VARIABLES_FILE}
+    #  - ${SGX_SECRET_VARIABLES_FILE}
+      - path: ~/.secrets/smtp_properties.env
 
   signomix-auth:
     image: ${SGX_DOCKER_GROUP}${SGX_AUTH_NAME}:${SGX_AUTH_VERSION}
@@ -153,7 +154,7 @@ services:
     networks:
       - signomix-network
     depends_on:
-      - signomix-mq
+    #  - signomix-mq
       - signomix-ta-ms
     environment:
       - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
@@ -186,7 +187,7 @@ services:
     networks:
       - signomix-network
     depends_on:
-      - signomix-mq
+    #  - signomix-mq
       - signomix-ta-ms
     environment:
       - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
@@ -245,8 +246,8 @@ services:
         max-file: "10"
     networks:
       - signomix-network
-    depends_on:
-      - signomix-mq
+    # depends_on:
+    #   - signomix-mq
     environment:
       - MQ_HOST=signomix-mq
       - MQ_PORT=5672
@@ -288,7 +289,7 @@ services:
     networks:
       - signomix-network
     depends_on:
-      - signomix-mq
+    #  - signomix-mq
       - signomix-ta-ms
     environment:
       - MQ_HOST=signomix-mq
@@ -431,7 +432,6 @@ services:
       - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
       - GELF_ENABLED=${SGX_GELF_ENABLED}
       - SIGNOMIX_SIGNALS_USED=true
-
     env_file:
       - ${SGX_SECRET_VARIABLES_FILE}
 
@@ -523,3 +523,4 @@ networks:
 secrets:
   deepl_api_key:
     file: ~/.secrets/deepl_api_key.txt
+
