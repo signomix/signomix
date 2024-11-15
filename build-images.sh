@@ -690,6 +690,8 @@ cd ../signomix-docs-website
 echo "PUBLIC_HCMS_URL = 'http://hcms:8080/api/docs'" > .env
 echo "PUBLIC_HCMS_INDEX = 'index.md'" >> .env
 echo "PUBLIC_HCMS_ROOT = 'signomix-documentation'" >> .env
+#echo "PUBLIC_HCMS_LANGUAGE = 'pl'" >> .env
+#echo "PUBLIC_HCMS_LANGUAGES = 'pl,en'" >> .env
 if [ -z "$SGX_DOCKER_REGISTRY" ]
 then
     docker build -t $SGX_DOCS_NAME:$SGX_DOCS_VERSION -t $SGX_DOCS_NAME:latest .

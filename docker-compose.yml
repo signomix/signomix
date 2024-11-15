@@ -36,32 +36,6 @@ services:
     #  - ${SGX_VOLUME_PROXY}/ssl:/etc/ssl/certs:rw
     #  - ${SGX_VOLUME_PROXY}/etc:/usr/local/etc/haproxy:rw
 
-  # # MQ
-  # signomix-mq:
-  #   image: rabbitmq:3-management-alpine
-  #   container_name: signomix-mq
-  #   hostname: signomix-mq
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "200k"
-  #       max-file: "10"
-  #   environment:
-  #     - RABBITMQ_DEFAULT_USER=user
-  #     - RABBITMQ_DEFAULT_PASS=user
-  #   networks:
-  #     - signomix-network
-  #   expose:
-  #     # AMQP protocol port
-  #     - "5672"
-  #     # HTTP management UI
-  #     - "15672"
-  #   healthcheck:
-  #     test: [ "CMD", "nc", "-z", "localhost", "5672" ]
-  #     interval: 5s
-  #     timeout: 15s
-  #     retries: 3
-
   signomix-ta-ms:
     image: ${SGX_DOCKER_GROUP}${SGX_MS_NAME}:${SGX_MS_VERSION}
     container_name: signomix-ta-ms
@@ -74,19 +48,13 @@ services:
         max-file: "10"
     networks:
       - signomix-network
-    # depends_on:
-    #   - signomix-mq
     environment:
       - SIGNOMIX_TITLE=${SGX_TITLE}
       - SIGNOMIX_URL=${SGX_URL}
       - SIGNOMIX_ENV_NAME=${SGX_ENV_NAME}
       - SIGNOMIX_PUSHOVER_TOKEN=${SGX_PUSHOVER_TOKEN}
-      #- SIGNOMIX_SMTP_FROM=${SGX_SMTP_FROM}
       - SIGNOMIX_SMTP_HOST=${SGX_SMTP_HOST}
-      #- SIGNOMIX_SMTP_LOGIN=${SGX_SMTP_LOGIN}
       - SIGNOMIX_SMTP_TRUST_ALL=${SGX_SMTP_TRUST_ALL}
-      #- SIGNOMIX_SMTP_USER=${SGX_SMTP_USER}
-      #- SIGNOMIX_SMTP_PASSWORD=${SGX_SMTP_PASSWORD}
       - SIGNOMIX_SMTP_PORT=${SGX_SMTP_PORT}
       - SIGNOMIX_SMTP_SSL=${SGX_SMTP_SSL}
       - SIGNOMIX_SMTP_START_TLS=${SGX_SMTP_START_TLS}
@@ -96,22 +64,18 @@ services:
       - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
       - SIGNOMIX_DATABASE_USER=${POSTGRES_USER}
       - SIGNOMIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
-      # - SIGNOMIX_ADMIN_EMAIL=${SGX_ADMIN_NOTIFICATION_EMAIL}
       - SIGNOMIX_QUESTDB_CONFIG=${SGX_QUESTDB_CONFIG}
       - QUEUE_HOST=signomix-mq
       - QUEUE_PORT=5672
       - QUEUE_USER=user
       - QUEUE_PASSWORD=user
-      #- QUEUE_NOTIFICATIONS=notifications
       - QUEUE_MAILING=mailing
       - QUEUE_ADMIN_EMAIL=admin_email
       - SIGNOMIX_DOC_WELCOME=/admin/welcomedoc
       - SIGNOMIX_SMSPLANET_KEY=${SGX_SMSPLANET_KEY}
       - SIGNOMIX_SMSPLANET_PASSWORD=${SGX_SMSPLANET_PASSWORD}
       - SIGNOMIX_LOG_LEVEL=${SGX_LOG_LEVEL}
-      #- GELF_ENABLED=${SGX_GELF_ENABLED}
     env_file:
-    #  - ${SGX_SECRET_VARIABLES_FILE}
       - path: ~/.secrets/smtp_properties.env
 
   signomix-auth:
@@ -154,7 +118,6 @@ services:
     networks:
       - signomix-network
     depends_on:
-    #  - signomix-mq
       - signomix-ta-ms
     environment:
       - SIGNOMIX_DATABASE_URL=${POSTGRES_URL}
@@ -167,7 +130,6 @@ services:
       - MQ_USER=user
       - MQ_PASSWORD=user
       - MQ_EVENTS_EXCHANGE=events
-      #- QUARKUS_OTEL_TRACES_EXPORTER=${QUARKUS_OTEL_TRACES_EXPORTER}
       - QUARKUS_DATASOURCE_JDBC_MAX_SIZE=100
       - SIGNOMIX_LOG_LEVEL=INFO
       - GELF_ENABLED=${SGX_GELF_ENABLED}
@@ -187,7 +149,6 @@ services:
     networks:
       - signomix-network
     depends_on:
-    #  - signomix-mq
       - signomix-ta-ms
     environment:
       - SIGNOMIX_DATABASE_TYPE=${SGX_DATABASE_TYPE}
@@ -246,8 +207,6 @@ services:
         max-file: "10"
     networks:
       - signomix-network
-    # depends_on:
-    #   - signomix-mq
     environment:
       - MQ_HOST=signomix-mq
       - MQ_PORT=5672
@@ -321,12 +280,16 @@ services:
       - FOLDERS_SITES=signomix-documentation;templates;news
       - FOLDERS_INDEXES=index.md;index.md;index.md
       - HCMS_REPOSITORY_LANGUAGE_MAIN=pl
-      - HCMS_REPOSITORY_LANGUAGES=pl
-      - DATABASE_TYPE=h2
+      - HCMS_REPOSITORY_LANGUAGES=pl,en
+      - HCMS_TRANSLATOR_TYPE=deepl
+      - DEEPL_API_KEY_FILE=/run/secrets/deepl_api_key
+      #- DATABASE_TYPE=h2
     volumes:
       - ${SGX_VOLUMES}/doc-templates:/home/jboss/documents/templates
-      - ${SGX_VOLUMES}/signomix-documentation:/home/jboss/documents/signomix-documentation
+      - ${SGX_VOLUMES}/documentation:/home/jboss/documents/signomix-documentation
       - ${SGX_VOLUMES}/news:/home/jboss/documents/news
+    secrets:
+       - deepl_api_key
 
   website-hcms:
     image: ${SGX_DOCKER_GROUP}${SGX_HCMS_NAME}:${SGX_HCMS_VERSION}
