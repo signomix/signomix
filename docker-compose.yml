@@ -50,6 +50,7 @@ services:
       - signomix-network
     environment:
       - SIGNOMIX_TITLE=${SGX_TITLE}
+      - SIGNOMIX_API_URL=${SGX_API_URL}
       - SIGNOMIX_URL=${SGX_URL}
       - SIGNOMIX_ENV_NAME=${SGX_ENV_NAME}
       - SIGNOMIX_PUSHOVER_TOKEN=${SGX_PUSHOVER_TOKEN}
@@ -281,7 +282,7 @@ services:
       - FOLDERS_INDEXES=index.md;index.md;index.md
       - HCMS_REPOSITORY_LANGUAGE_MAIN=pl
       - HCMS_REPOSITORY_LANGUAGES=pl,en
-      - HCMS_TRANSLATOR_TYPE=deepl
+      #- HCMS_TRANSLATOR_TYPE=deepl
       - DEEPL_API_KEY_FILE=/run/secrets/deepl_api_key
       #- DATABASE_TYPE=h2
     volumes:
@@ -309,7 +310,7 @@ services:
       - FOLDERS_INDEXES=index.html
       - HCMS_REPOSITORY_LANGUAGE_MAIN=pl
       - HCMS_REPOSITORY_LANGUAGES=pl,en
-      - HCMS_TRANSLATOR_TYPE=deepl
+      #- HCMS_TRANSLATOR_TYPE=none
       - DEEPL_API_KEY_FILE=/run/secrets/deepl_api_key
     volumes:
       - ${SGX_VOLUMES}/signomix-website-content:/home/jboss/documents/signomix-website-content
