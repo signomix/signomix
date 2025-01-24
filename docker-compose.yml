@@ -289,6 +289,7 @@ services:
       - ${SGX_VOLUMES}/doc-templates:/home/jboss/documents/templates
       - ${SGX_VOLUMES}/documentation:/home/jboss/documents/signomix-documentation
       - ${SGX_VOLUMES}/news:/home/jboss/documents/news
+      - ${SGX_VOLUMES}/database:/home/jboss/database
     secrets:
        - deepl_api_key
 
@@ -314,6 +315,7 @@ services:
       - DEEPL_API_KEY_FILE=/run/secrets/deepl_api_key
     volumes:
       - ${SGX_VOLUMES}/signomix-website-content:/home/jboss/documents/signomix-website-content
+      - ${SGX_VOLUMES}/database:/home/jboss/database
     secrets:
        - deepl_api_key
   
